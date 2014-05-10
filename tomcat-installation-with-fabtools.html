@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:og="http://ogp.me/ns#"
+      xmlns:fb="https://www.facebook.com/2008/fbml">
+<head>
+    <title>Fabtools - Tomcat - fast provisioning - myGithubBlog</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+
+    <!-- Open Graph tags -->
+        <meta property="og:site_name" content="myGithubBlog" />
+            <meta property="og:type" content="article"/>
+            <meta property="og:title" content="Fabtools - Tomcat - fast provisioning"/>
+            <meta property="og:url" content="/tomcat-installation-with-fabtools.html"/>
+            <meta property="og:description" content="I am a big fun of making developers life easier. I wish all open source projects could be build right away without any previous db or ldap setup. That is why I like Vagrant so much. The biggest benefit of vagranfile (Vagrant’s setup file) is that you can keep ..."/>
+            <meta property="article:published_time" content="2014-04-25" />
+                <meta property="article:section" content="fabtools" />
+                <meta property="article:tag" content="tomcat" />
+                <meta property="article:tag" content="fabtools" />
+                <meta property="article:tag" content="vagrant" />
+                <meta property="article:tag" content="python" />
+                <meta property="article:author" content="Jan" />
+
+    <!-- Bootstrap -->
+        <link rel="stylesheet" href="/theme/css/bootstrap.min.css" type="text/css"/>
+    <link href="/theme/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="/theme/css/pygments/native.css" rel="stylesheet">
+    <link rel="stylesheet" href="/theme/css/style.css" type="text/css"/>
+
+
+</head>
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="/" class="navbar-brand">
+            </a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                        <li class="active">
+                            <a href="/category/fabtools.html">Fabtools</a>
+                        </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archives</span></a></li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="/tomcat-installation-with-fabtools.html"
+                       rel="bookmark"
+                       title="Permalink to Fabtools - Tomcat - fast provisioning">
+                        Fabtools - Tomcat - fast provisioning
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2014-04-25T14:36:00"> pią 25 kwiecień 2014</time>
+    </span>
+
+
+
+<span class="label label-default">Tags</span>
+	<a href="/tag/tomcat.html">tomcat</a>
+        /
+	<a href="/tag/fabtools.html">fabtools</a>
+        /
+	<a href="/tag/vagrant.html">vagrant</a>
+        /
+	<a href="/tag/python.html">python</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <p>I am a big fun of making developers life easier. I wish all open source projects could be build right away without any previous db or ldap setup. That is why I like <a href="http://www.vagrantup.com/">Vagrant</a> so much. </p>
+<blockquote>
+<p>The biggest benefit of vagranfile (Vagrant’s setup file) is that you can keep it as a code in your favorite VCS. Each team member will build his own local dev env from scratch. You don’t need to distribute huge .vmdk files anymore. </p>
+</blockquote>
+<p>Vagrant with puppet manifests might help to completely separate local development environment (it might happen to you to be dependent to company’s ldap server - but you can create own instance locally and create demo user or mock up it completely). </p>
+<p><a href="http://fabfile.org">Fabric</a>  is great and it’s scripts help to automate many tedious tasks: copy this from that host, link, create user, replace configuration etc. Fabric is a python library so it’s code it readable, pleasant and compact. </p>
+<p><a href="http://fabtools.readthedocs.org">Fabtools</a> is a natural extension of it’s possibilities. The idea behind it - is comparable to that from puppet and chef. It must provision a box. </p>
+<blockquote>
+<p><a href="http://fabtools.readthedocs.org/en/latest/api/python.html">In upcoming 0.18 release of fabtools</a> you will be able to find tomcat module which will help you to automatically provision virtual machine on you computer with apache tomcat server within few minutes.</p>
+</blockquote>
+<p>You minght need to install:</p>
+<p>[ubuntu: sudo apt-get install python-pip]</p>
+<ol>
+<li><a href="http://www.vagrantup.com/">Vagrant</a> </li>
+<li><a href="https://www.virtualbox.org/">Oracle VirtualBox</a></li>
+<li>Fabric  </li>
+<li>Fabtools</li>
+</ol>
+<p>last two you on ubuntu can simply type in terminal:</p>
+<div class="highlight"><pre>pip install fabric
+pip install fabtools
+</pre></div>
+
+
+<h2>Example</h2>
+<p>All you have to do is to create fabfile.py in your directory with vagranfile. For apache tomcat server you need java first.</p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">fabtools</span> <span class="kn">import</span> <span class="n">require</span><span class="p">,</span> <span class="n">tomcat</span>
+<span class="kn">from</span> <span class="nn">fabtools.vagrant</span> <span class="kn">import</span> <span class="n">vagrant</span>
+
+<span class="nd">@task</span>
+<span class="k">def</span> <span class="nf">provision</span><span class="p">():</span>
+    <span class="n">require</span><span class="o">.</span><span class="n">oracle_jdk</span><span class="o">.</span><span class="n">installed</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="s">&#39;7u55-b13&#39;</span><span class="p">)</span>
+    <span class="n">require</span><span class="o">.</span><span class="n">tomcat</span><span class="o">.</span><span class="n">installed</span><span class="p">(</span><span class="s">&#39;7.0.53&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<p>or go and <a href="https://github.com/hanskoff/vagrant-fabric">clone my github repo</a>,</p>
+<p>navigate to tomcat and:</p>
+<div class="highlight"><pre><span class="n">fab</span> <span class="n">vagrant</span> <span class="n">provision</span>
+<span class="n">vagrant</span> <span class="n">ssh</span>
+</pre></div>
+
+
+<p><strong>As puppet manifest, fabtools fabfiles might be reused to provision remote boxes.</strong></p>
+<h2>Reusing fabfile.py to provision remote box:</h2>
+<p>When having fabfile already built for your local dev box you can then reuse it for automation of provisioning remote boxes.
+You can define your hosts in fabfile or you can just call</p>
+<div class="highlight"><pre>fab -H &lt;user&gt;@&lt;hostname&gt;:&lt;sshPort&gt; provision
+</pre></div>
+
+
+<p>Above command will install java and apache tomcat on any <code>&lt;hostname&gt;</code> with one bash call.</p>
+            </div>
+            <!-- /.entry-content -->
+        </article>
+    </section>
+
+        </div>
+    </div>
+</div>
+<footer>
+   <div class="container">
+      <hr>
+      <div class="row">
+         <div class="col-xs-10">&copy; 2014 jan
+            &middot; Powered by <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
+            <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
+            <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
+         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p></div>
+      </div>
+   </div>
+</footer>
+<script src="/theme/js/jquery.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/theme/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="/theme/js/respond.min.js"></script>
+
+</body>
+</html>
