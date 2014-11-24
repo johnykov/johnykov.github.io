@@ -2,7 +2,7 @@
 <html lang="en"
 >
 <head>
-    <title>Fabtools - Tomcat - fast provisioning - myGithubBlog</title>
+    <title>Latest bootzooka changes - myGithubBlog</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -10,11 +10,11 @@
 
 
 
-<link rel="canonical" href="http://hanskoff.github.io/tomcat-installation-with-fabtools.html">
+<link rel="canonical" href="http://hanskoff.github.io/latest-bootzooka-changes.html">
 
         <meta name="author" content="Jan" />
-        <meta name="keywords" content="tomcat,fabtools,vagrant,python" />
-        <meta name="description" content="As every other developer I&#39;m a fun of easy developer life. I wish all open source projects could be build right away without any previous database or ldap mocking setup. Just fire it right away! That is why I like Vagrant so much. Vagrant with puppet manifests [chef|ansible ..." />
+        <meta name="keywords" content="bootzooka,scala,angular,bower,grunt" />
+        <meta name="description" content="At the beginning of my carrer in Softwaremill I was working on trial project for booking company. We were building demo app starting with bootzooka as a base. We&#39;ve changed much in that code. After that experience I brought back some of them to bootzooka. Definition: Bootzooka is a ..." />
 
 
 
@@ -60,17 +60,17 @@ myGithubBlog            </a>
         <div class="col-lg-12">
             <ol class="breadcrumb">
                 <li><a href="http://hanskoff.github.io" title="myGithubBlog"><i class="fa fa-home fa-lg"></i></a></li>
-                <li class="active">Fabtools - Tomcat - fast provisioning</li>
+                <li class="active">Latest bootzooka changes</li>
             </ol>
 
     <section id="content">
         <article>
             <header class="page-header">
                 <h1>
-                    <a href="http://hanskoff.github.io/tomcat-installation-with-fabtools.html"
+                    <a href="http://hanskoff.github.io/latest-bootzooka-changes.html"
                        rel="bookmark"
-                       title="Permalink to Fabtools - Tomcat - fast provisioning">
-                        Fabtools - Tomcat - fast provisioning
+                       title="Permalink to Latest bootzooka changes">
+                        Latest bootzooka changes
                     </a>
                 </h1>
             </header>
@@ -80,75 +80,48 @@ myGithubBlog            </a>
 <footer class="post-info">
     <span class="label label-default">Date</span>
     <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2014-04-25T14:36:00+02:00"> Fri 25 April 2014</time>
+        <i class="fa fa-calendar"></i><time datetime="2014-11-11T17:28:00+01:00"> Tue 11 November 2014</time>
     </span>
 
 
 
 <span class="label label-default">Tags</span>
-	<a href="http://hanskoff.github.io/tag/tomcat.html">tomcat</a>
+	<a href="http://hanskoff.github.io/tag/bootzooka.html">bootzooka</a>
         /
-	<a href="http://hanskoff.github.io/tag/fabtools.html">fabtools</a>
+	<a href="http://hanskoff.github.io/tag/scala.html">scala</a>
         /
-	<a href="http://hanskoff.github.io/tag/vagrant.html">vagrant</a>
+	<a href="http://hanskoff.github.io/tag/angular.html">angular</a>
         /
-	<a href="http://hanskoff.github.io/tag/python.html">python</a>
+	<a href="http://hanskoff.github.io/tag/bower.html">bower</a>
+        /
+	<a href="http://hanskoff.github.io/tag/grunt.html">grunt</a>
     
 </footer><!-- /.post-info -->                    </div>
                 </div>
-                <p>As every other developer I'm a fun of easy developer life. I wish all open source projects could be build right away without any previous database or ldap mocking setup. Just fire it right away! That is why I like <a href="http://www.vagrantup.com/">Vagrant</a> so much. </p>
-<p>Vagrant with puppet manifests [chef|ansible|bash] might help to completely separate your local development environment from office network. From now on you can work from the basement without network connection - is't that sweet? (You might just need to mock company's ldap server). </p>
-<blockquote>
-<p>The main benefit of <code>Vagranfile</code> (Vagrant’s setup file) is that you can keep it as a code in your favorite VCS. Each team member will build his own local developement environment from scratch. You don’t need to distribute huge .vmdk files anymore. </p>
-</blockquote>
-<p><em>Fabric</em> is great python tool that helps you to automate many tedious tasks: copy files from one to another host, link, create users, replace configurations etc. </p>
-<p><em>Fabtools</em> is a natural extension of Fabric possibilities. The idea behind it - is comparable to that from puppet and chef. It might be considered as another provisioner. </p>
-<p><a href="http://fabtools.readthedocs.org/en/latest/api/python.html">In current 0.18 release of fabtools</a> you are be able to find tomcat module which will help you to automatically provision virtual machine on you computer with apache tomcat server within few minutes.</p>
-<p>You might need to install</p>
-<div class="highlight"><pre>sudo apt-get install python-pip
-</pre></div>
-
-
-<ol>
-<li><a href="http://www.vagrantup.com/">Vagrant</a> </li>
-<li><a href="https://www.virtualbox.org/">Oracle VirtualBox</a></li>
-<li><a href="http://fabfile.org">Fabric</a>  </li>
-<li><a href="http://fabtools.readthedocs.org">Fabtools</a></li>
-</ol>
-<p>last two you on ubuntu can simply type in terminal:</p>
-<div class="highlight"><pre>pip install fabric
-pip install fabtools
-</pre></div>
-
-
-<h2>Example</h2>
-<p>All you have to do is to create fabfile.py in your directory with vagranfile. For apache tomcat server you need java first.</p>
-<div class="highlight"><pre><span class="kn">from</span> <span class="nn">fabtools</span> <span class="kn">import</span> <span class="n">require</span><span class="p">,</span> <span class="n">tomcat</span>
-<span class="kn">from</span> <span class="nn">fabtools.vagrant</span> <span class="kn">import</span> <span class="n">vagrant</span>
-
-<span class="nd">@task</span>
-<span class="k">def</span> <span class="nf">provision</span><span class="p">():</span>
-    <span class="n">require</span><span class="o">.</span><span class="n">oracle_jdk</span><span class="o">.</span><span class="n">installed</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="s">&#39;7u55-b13&#39;</span><span class="p">)</span>
-    <span class="n">require</span><span class="o">.</span><span class="n">tomcat</span><span class="o">.</span><span class="n">installed</span><span class="p">(</span><span class="s">&#39;7.0.53&#39;</span><span class="p">)</span>
-</pre></div>
-
-
-<p>or go and <a href="https://github.com/hanskoff/vagrant-fabric">clone my github repo</a>,</p>
-<p>navigate to tomcat and:</p>
-<div class="highlight"><pre>fab vagrant provision
-vagrant ssh
-</pre></div>
-
-
-<p><strong>As puppet manifest, fabtools fabfiles might be reused to provision remote boxes.</strong></p>
-<h2>Reusing fabfile.py to provision remote box:</h2>
-<p>When having fabfile already built for your local dev box you can then reuse it for automation of provisioning remote boxes.
-You can define your hosts in fabfile or you can just call</p>
-<div class="highlight"><pre>fab -H &lt;user&gt;@&lt;hostname&gt;:&lt;sshPort&gt; provision
-</pre></div>
-
-
-<p>Above command will install java and apache tomcat on any <code>&lt;hostname&gt;</code> with one bash call.</p>
+                <p>At the beginning of my carrer in Softwaremill I was working on trial project for booking company. We were building demo app starting with bootzooka as a base. We've changed much in that code. After that experience I brought back some of them to bootzooka.</p>
+<p>Definition:
+    <a href="https://github.com/softwaremill/bootzooka">Bootzooka</a> is a simple application scaffolding project to allow quick start of development for modern web based applications.
+    Live demo is available on <a href="http://bootzooka.softwaremill.com">http://bootzooka.softwaremill.com</a>.</p>
+<h3>Latest changes:</h3>
+<ul>
+<li>bower support (dependency management tools for frontend dependencies) <a href="https://github.com/softwaremill/bootzooka/commit/ed3afb89237c0c49e8d28f31e90ac4ed8258e3db">commit</a></li>
+<li>fakeMongo for integration tests (replacing previous implementation) <a href="https://github.com/softwaremill/bootzooka/commit/59cbebb34dcd16f3c912c1f6f867f543f01473d5">commit</a></li>
+<li>migration from twitter boostrap 2 to 3 (it's good just to be up-to-date, right?)</li>
+<li>"angular business value module reorganization" - accordingly to good practises from sources listed below</li>
+</ul>
+<h3>Sources:</h3>
+<ul>
+<li><a href="http://google-styleguide.googlecode.com/svn/trunk/angularjs-google-style.html">An AngularJS Style Guide for Closure Users at Google</a></li>
+<li><a href="http://www.thoughtworks.com/insights/blog/good-practices-build-your-angularjs-application">Good Practices to Build Your AngularJS Application</a></li>
+<li><a href="https://medium.com/@dickeyxxx/best-practices-for-building-angular-js-apps-266c1a4a6917">Best Practices for Building Angular.js Apps</a></li>
+<li><a href="http://toddmotto.com/opinionated-angular-js-styleguide-for-teams/">Opinionated AngularJS styleguide for teams</a></li>
+</ul>
+<p>TODO:</p>
+<ul>
+<li>dockerize app</li>
+<li>add travis ci</li>
+<li>refurbish old school way of notifying users about changes <a href="http://keepachangelog.com/">keepachangelog.com</a>, this post is a kind of changelog note ;)</li>
+</ul>
             </div>
             <!-- /.entry-content -->
     <hr/>
@@ -160,8 +133,8 @@ You can define your hosts in fabfile or you can just call</p>
             /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
             var disqus_shortname = 'hanskoff'; // required: replace example with your forum shortname
 
-                    var disqus_identifier = 'tomcat-installation-with-fabtools';
-                var disqus_url = 'http://hanskoff.github.io/tomcat-installation-with-fabtools.html';
+                    var disqus_identifier = 'latest-bootzooka-changes';
+                var disqus_url = 'http://hanskoff.github.io/latest-bootzooka-changes.html';
 
             var disqus_config = function () {
                 this.language = "en";
