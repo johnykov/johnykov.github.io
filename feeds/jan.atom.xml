@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>myGithubBlog</title><link href="http://hanskoff.github.io/" rel="alternate"></link><link href="http://hanskoff.github.io/feeds/jan.atom.xml" rel="self"></link><id>http://hanskoff.github.io/</id><updated>2014-11-11T17:28:00+01:00</updated><entry><title>Latest bootzooka changes</title><link href="http://hanskoff.github.io/latest-bootzooka-changes.html" rel="alternate"></link><updated>2014-11-11T17:28:00+01:00</updated><author><name>Jan</name></author><id>tag:hanskoff.github.io,2014-11-11:latest-bootzooka-changes.html</id><summary type="html">&lt;p&gt;At the beginning of my carrer in Softwaremill I was working on trial project for booking company. We were building demo app starting with bootzooka as a base. We've changed much in that code. After that experience I brought back some of them to bootzooka.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>myGithubBlog</title><link href="http://hanskoff.github.io/" rel="alternate"></link><link href="http://hanskoff.github.io/feeds/jan.atom.xml" rel="self"></link><id>http://hanskoff.github.io/</id><updated>2014-11-11T17:28:00+01:00</updated><entry><title>Outdated bootzooka changes</title><link href="http://hanskoff.github.io/latest-bootzooka-changes.html" rel="alternate"></link><updated>2014-11-11T17:28:00+01:00</updated><author><name>Jan</name></author><id>tag:hanskoff.github.io,2014-11-11:latest-bootzooka-changes.html</id><summary type="html">&lt;p&gt;[2015-07-08]
+Bootzooka has been strongly simplified lately and there were some conceptual changes that is why this post is no longer valid.&lt;/p&gt;
+&lt;h2&gt;Outdated:&lt;/h2&gt;
+&lt;p&gt;At the beginning of my carrer in Softwaremill I was working on trial project for booking company. We were building demo app starting with bootzooka as a base. We've changed much in that code. After that experience I brought back some of them to bootzooka.&lt;/p&gt;
 &lt;p&gt;Definition:
     &lt;a href="https://github.com/softwaremill/bootzooka"&gt;Bootzooka&lt;/a&gt; is a simple application scaffolding project to allow quick start of development for modern web based applications.
     Live demo is available on &lt;a href="http://bootzooka.softwaremill.com"&gt;http://bootzooka.softwaremill.com&lt;/a&gt;.&lt;/p&gt;
-&lt;h3&gt;Latest changes:&lt;/h3&gt;
+&lt;h3&gt;Outdated changes:&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;bower support (dependency management tools for frontend dependencies) &lt;a href="https://github.com/softwaremill/bootzooka/commit/ed3afb89237c0c49e8d28f31e90ac4ed8258e3db"&gt;commit&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;fakeMongo for integration tests (replacing previous implementation) &lt;a href="https://github.com/softwaremill/bootzooka/commit/59cbebb34dcd16f3c912c1f6f867f543f01473d5"&gt;commit&lt;/a&gt;&lt;/li&gt;
@@ -17,7 +20,8 @@
 &lt;li&gt;&lt;a href="https://medium.com/@dickeyxxx/best-practices-for-building-angular-js-apps-266c1a4a6917"&gt;Best Practices for Building Angular.js Apps&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="http://toddmotto.com/opinionated-angular-js-styleguide-for-teams/"&gt;Opinionated AngularJS styleguide for teams&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;TODO:&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h6&gt;TODO:&lt;/h6&gt;
 &lt;ul&gt;
 &lt;li&gt;dockerize app&lt;/li&gt;
 &lt;li&gt;add travis ci&lt;/li&gt;
