@@ -2,7 +2,7 @@
 <html lang="en"
 >
 <head>
-    <title>Fabtools - Tomcat - fast provisioning - myGithubBlog</title>
+    <title>Fabtools - Tomcat - fast provisioning - johny's blog</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -12,7 +12,7 @@
 
 <link rel="canonical" href="./tomcat-installation-with-fabtools.html">
 
-        <meta name="author" content="Jan" />
+        <meta name="author" content="johny" />
         <meta name="keywords" content="tomcat,fabtools,vagrant,python" />
         <meta name="description" content="As every other developer I&#39;m a fun of easy developer life. I wish all open source projects could be build right away without any previous database or ldap mocking setup. Just fire it right away! That is why I like Vagrant so much. Vagrant with puppet manifests [chef|ansible ..." />
 
@@ -39,7 +39,7 @@
                 <span class="icon-bar"></span>
             </button>
             <a href="./" class="navbar-brand">
-myGithubBlog            </a>
+johny's blog            </a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
@@ -59,7 +59,7 @@ myGithubBlog            </a>
     <div class="row">
         <div class="col-lg-12">
             <ol class="breadcrumb">
-                <li><a href="." title="myGithubBlog"><i class="fa fa-home fa-lg"></i></a></li>
+                <li><a href="." title="johny's blog"><i class="fa fa-home fa-lg"></i></a></li>
                 <li class="active">Fabtools - Tomcat - fast provisioning</li>
             </ol>
 
@@ -105,7 +105,7 @@ myGithubBlog            </a>
 <p><em>Fabtools</em> is a natural extension of Fabric possibilities. The idea behind it - is comparable to that from puppet and chef. It might be considered as another provisioner. </p>
 <p><a href="http://fabtools.readthedocs.org/en/latest/api/python.html">In current 0.18 release of fabtools</a> you are be able to find tomcat module which will help you to automatically provision virtual machine on you computer with apache tomcat server within few minutes.</p>
 <p>You might need to install</p>
-<div class="highlight"><pre>sudo apt-get install python-pip
+<div class="highlight"><pre><span></span>sudo apt-get install python-pip
 </pre></div>
 
 
@@ -116,26 +116,26 @@ myGithubBlog            </a>
 <li><a href="http://fabtools.readthedocs.org">Fabtools</a></li>
 </ol>
 <p>last two you on ubuntu can simply type in terminal:</p>
-<div class="highlight"><pre>pip install fabric
+<div class="highlight"><pre><span></span>pip install fabric
 pip install fabtools
 </pre></div>
 
 
 <h2>Example</h2>
 <p>All you have to do is to create fabfile.py in your directory with vagranfile. For apache tomcat server you need java first.</p>
-<div class="highlight"><pre><span class="kn">from</span> <span class="nn">fabtools</span> <span class="kn">import</span> <span class="n">require</span><span class="p">,</span> <span class="n">tomcat</span>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fabtools</span> <span class="kn">import</span> <span class="n">require</span><span class="p">,</span> <span class="n">tomcat</span>
 <span class="kn">from</span> <span class="nn">fabtools.vagrant</span> <span class="kn">import</span> <span class="n">vagrant</span>
 
 <span class="nd">@task</span>
 <span class="k">def</span> <span class="nf">provision</span><span class="p">():</span>
-    <span class="n">require</span><span class="o">.</span><span class="n">oracle_jdk</span><span class="o">.</span><span class="n">installed</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="s">&#39;7u55-b13&#39;</span><span class="p">)</span>
-    <span class="n">require</span><span class="o">.</span><span class="n">tomcat</span><span class="o">.</span><span class="n">installed</span><span class="p">(</span><span class="s">&#39;7.0.53&#39;</span><span class="p">)</span>
+    <span class="n">require</span><span class="o">.</span><span class="n">oracle_jdk</span><span class="o">.</span><span class="n">installed</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="s1">&#39;7u55-b13&#39;</span><span class="p">)</span>
+    <span class="n">require</span><span class="o">.</span><span class="n">tomcat</span><span class="o">.</span><span class="n">installed</span><span class="p">(</span><span class="s1">&#39;7.0.53&#39;</span><span class="p">)</span>
 </pre></div>
 
 
 <p>or go and <a href="https://github.com/hanskoff/vagrant-fabric">clone my github repo</a>,</p>
 <p>navigate to tomcat and:</p>
-<div class="highlight"><pre>fab vagrant provision
+<div class="highlight"><pre><span></span>fab vagrant provision
 vagrant ssh
 </pre></div>
 
@@ -144,7 +144,7 @@ vagrant ssh
 <h2>Reusing fabfile.py to provision remote box:</h2>
 <p>When having fabfile already built for your local dev box you can then reuse it for automation of provisioning remote boxes.
 You can define your hosts in fabfile or you can just call</p>
-<div class="highlight"><pre>fab -H &lt;user&gt;@&lt;hostname&gt;:&lt;sshPort&gt; provision
+<div class="highlight"><pre><span></span>fab -H &lt;user&gt;@&lt;hostname&gt;:&lt;sshPort&gt; provision
 </pre></div>
 
 
@@ -191,7 +191,7 @@ You can define your hosts in fabfile or you can just call</p>
    <div class="container">
       <hr>
       <div class="row">
-         <div class="col-xs-10">&copy; 2014 jan
+         <div class="col-xs-10">&copy; 2016 johny
             &middot; Powered by <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
             <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
             <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
