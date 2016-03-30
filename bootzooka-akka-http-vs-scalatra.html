@@ -14,7 +14,7 @@
 
         <meta name="author" content="johny" />
         <meta name="keywords" content="bootzooka,scala,scalatra,akka-http,gatling" />
-        <meta name="description" content="Abstract This article goal is to find any comparison between of two great web frameworks scalatra, akka-http from performance perspective but ultimately this article might be synchronous, blocking vs reactive as with the switch from scalatra to akka-http we changed the code to be reactive (async and non-blocking). [Maybe after ..." />
+        <meta name="description" content="This article goal is to find any comparison between of two great web frameworks scalatra, akka-http from performance perspective but ultimately this article might be synchronous, blocking vs reactive as with the switch from scalatra to akka-http we changed the code to be reactive (async and non-blocking). Maybe after latest ..." />
 
 
 
@@ -98,9 +98,14 @@ johny's blog            </a>
     
 </footer><!-- /.post-info -->                    </div>
                 </div>
-                <h2>Abstract</h2>
-<p>This article goal is to find any comparison between of two great web frameworks scalatra, akka-http from performance perspective but ultimately this article might be synchronous, blocking vs reactive as with the switch from scalatra to akka-http we changed the code to be reactive (async and non-blocking). [Maybe after latest changes in scalatra one would be able to write reactive apps? I like both of them.]</p>
-<p>Whenever you buy a car - you look for it's specification. How fast it is, how amazing acceleration it has, how much oil does it burn, how much load it can carry. I wish to know such a metrics of tools I use to build web applications. Authors doesn't always publish them or often I can't find them so when there are no benchmarks or absolute numbers let’s make some comparison;)</p>
+                <p>This article goal is to find any comparison between of two great web frameworks scalatra, akka-http from performance
+ perspective but ultimately this article might be synchronous, blocking vs reactive as with the switch from scalatra
+ to akka-http we changed the code to be reactive (async and non-blocking). </p>
+<p><em>Maybe after latest changes in scalatra one would be able to write reactive apps? I like both scalatra and akka-http.</em></p>
+<p>Whenever you buy a car - you look for it's specification. How fast it is, how amazing acceleration it has, how much 
+oil does it burn, how much load it can carry. I wish to know such a metrics of tools I use to build web applications
+. Authors doesn't always publish them or often I can't find them so when there are no benchmarks or absolute numbers
+ let’s make some comparison;)</p>
 <p>From Great Continuous Delivery book introduction to chapter 9 comes definition of app performance:</p>
 <blockquote>
 <p>First of all, let’s clear up some confusion around the terms. We’ll use the same
@@ -116,14 +121,16 @@ careful in this chapter.</p>
 </blockquote>
 <p>So I’ll try to find throughput and capacity of each versions of bootzooka.</p>
 <h2>Setup</h2>
-<p>Scalatra is thread based, handling servlets and requires servlet container like jetty to run, it can delegate work to akka (from it’s docs, never tried this one), and akka-http is actor per request, containerless, with actorSystem for free. Both have comparable pleasant DSL for writing routes.</p>
+<p>Scalatra is thread based, handling servlets and requires servlet container like jetty to run, it can delegate work 
+to akka (from it’s docs, never tried this one), and akka-http is actor per request, containerless, with actorSystem 
+for free. Both have comparable pleasant DSL for writing routes.</p>
 <p>So equipped with <a href="http://gatling.io">gatling.io</a> (for generating fake traffic of user scenarios) and GCViewer (for 
-watching a 
-memory consumption, this is influenced by <a href="http://bandrzejczak
+watching a memory consumption, this is influenced by <a href="http://bandrzejczak
 .com/blog/2015/02/15/the-cost-of-the-garbage-collection/">post</a> to see if something spectacular is going on, a kind of 
 bonus) I can measure what happens to my beloved framework(bootzooka) after web requests framework switch.</p>
 <p>The test was performed on macbook pro, 2,5 GHz Intel Core i7 with 16gigs of ram.
-I use default JVM flags what supposed to be Xss=1 mb (thread stack size) and InitialHeapSize ~ 260 mb (heroku 1 dyno standard is 350 mb). </p>
+I use default JVM flags what supposed to be Xss=1 mb (thread stack size) and InitialHeapSize ~ 260 mb (heroku 1 dyno
+ standard is 350 mb). </p>
 <div class="highlight"><pre><span></span>$ java -XX:+PrintFlagsFinal version 
     uintx InitialHeapSize                          :<span class="o">=</span> <span class="m">268435456</span>                           
     uintx MaxHeapSize                              :<span class="o">=</span> <span class="m">4294967296</span>                          
@@ -134,23 +141,30 @@ I use default JVM flags what supposed to be Xss=1 mb (thread stack size) and Ini
 </pre></div>
 
 
-<p>I’m running postgres 9.4 database locally with two separate schemas one for each scalatra and akka-http versions of bootzooka. 
-Gatling scenario is being run on local machine as well against bootzooka backends (as frontend is written in angular and it’s performance is fine). 
-So this configuration is a kind of “lab environment” where network latency and bandwidth doesn’t play any role, there is no sending data over the wire what often is the main issue with performance of webapps.</p>
+<p>I’m running postgres 9.4 database locally with two separate schemas one for each scalatra and akka-http versions of 
+bootzooka. Gatling scenario is being run on local machine as well against bootzooka backends (as frontend is written
+ in angular and it’s performance is fine). So this configuration is a kind of “lab environment” where network 
+ latency and bandwidth doesn’t play any role, there is no sending data over the wire what often is the main issue 
+ with performance of webapps.</p>
 <ul>
 <li><a href="https://github.com/softwaremill/bootzooka/releases/tag/last-scalatra">Scalatra bootzooka version</a></li>
 <li><a href="https://github.com/softwaremill/bootzooka/commit/83827361">Akka-http bootzooka version</a></li>
 <li><a href="https://github.com/hanskoff/gatling-bootzooka">I’ve created a simple scenario for the test</a> </li>
 </ul>
 <h3>Provisioning</h3>
-<div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">DATABASE_URL</span><span class="o">=</span>postgres://newbootzooka:newbootzooka@localhost:5432/newbootzooka <span class="o">&amp;&amp;</span> java -Dserver.port<span class="o">=</span><span class="m">8080</span> -Xloggc:newbootzooka-<span class="k">$(</span>date +<span class="s2">&quot;%Y-%m-%d_%H-%M-%S&quot;</span><span class="k">)</span>.log -XX:+PrintGCDetails -XX:+PrintGCDateStamps -jar new-bootzooka/bootzooka.jar
+<div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">DATABASE_URL</span><span class="o">=</span>postgres://newbootzooka:newbootzooka@localhost:5432/newbootzooka <span class="o">&amp;&amp;</span> <span class="se">\</span>
+java -Dserver.port<span class="o">=</span><span class="m">8080</span> -Xloggc:newbootzooka-<span class="k">$(</span>date +<span class="s2">&quot;%Y-%m-%d_%H-%M-%S&quot;</span><span class="k">)</span>.log <span class="se">\</span>
+-XX:+PrintGCDetails -XX:+PrintGCDateStamps -jar new-bootzooka/bootzooka.jar
 
-<span class="nb">export</span> <span class="nv">DATABASE_URL</span><span class="o">=</span>postgres://oldbootzooka:oldbootzooka@localhost:5432/oldbootzooka <span class="o">&amp;&amp;</span> java -Dembedded-jetty.port<span class="o">=</span><span class="m">8081</span> -Xloggc:oldbootzooka-<span class="k">$(</span>date +<span class="s2">&quot;%Y-%m-%d_%H-%M-%S&quot;</span><span class="k">)</span>.log -verbose:gc -jar old-bootzooka/bootzooka.jar
+<span class="nb">export</span> <span class="nv">DATABASE_URL</span><span class="o">=</span>postgres://oldbootzooka:oldbootzooka@localhost:5432/oldbootzooka <span class="o">&amp;&amp;</span> <span class="se">\</span>
+java -Dembedded-jetty.port<span class="o">=</span><span class="m">8081</span> -Xloggc:oldbootzooka-<span class="k">$(</span>date +<span class="s2">&quot;%Y-%m-%d_%H-%M-%S&quot;</span><span class="k">)</span>.log <span class="se">\</span>
+-verbose:gc -jar old-bootzooka/bootzooka.jar
 </pre></div>
 
 
 <h3>Scenario</h3>
-<p>It’s very basic as bootzooka doesn’t do complicated stuff. In the first step user goes to “/” - waits for http 200 code and in second he sends post request  to register himself and waits for “success” string in response body.</p>
+<p>It’s very basic as bootzooka doesn’t do complicated stuff. In the first step user goes to <code>/</code> - waits for http 200 
+code and in second he sends post request  to register himself and waits for “success” string in response body.</p>
 <h3>Scenario setup 1</h3>
 <p>Throwing at it 200 users at once just to see what happens <a href="https://github
 .com/hanskoff/gatling-bootzooka/blob/master/src/test/scala/pl/jan/BootzookaRegistrationScn.scala">BootzookaRegistrationScn</a></p>
@@ -380,7 +394,7 @@ requests: (again same setup, fifth round)</p>
 </pre></div>
 
 
-<p>50 mean req/sec with 29% of failed :/ and in app logs I see</p>
+<p>50 mean req/sec with 29% of failed :| and in app logs I see</p>
 <div class="highlight"><pre><span></span>java.sql.SQLTimeoutException: Timeout after 1003ms of waiting for a connection.
 </pre></div>
 
@@ -401,15 +415,15 @@ characteristic, it stops responding under much bigger load 800 users vs 200 at o
 req/sec). It looks like async and non-blocking approach handles resources in more efficient way. (I suppose this is 
 because of actors nature of queueing the requests?)</p>
 <p>In second case(scalatra) we can observe that access to database is a bottleneck. Naive approach is to 
-increase that database connections pool what should suffice for a while. Increasing timeout is highly undesirable because it would 
-only slows everything down. Another practise (this time expensive) is to set a database cluster or/and queue updates 
-and queries to database. But any of that moves requires expertise knowledge in every of touched areas (like distributed 
-setup of databases and applications).</p>
+increase that database connections pool what should suffice for a while. Increasing timeout is highly undesirable 
+because it would only slows everything down. Another practise (this time expensive) is to set a database cluster 
+or/and queue updates and queries to database. But any of that moves requires expertise knowledge in every of touched 
+areas (like distributed setup of databases and applications).</p>
 <h3>Scenario setup 2 (in progess)</h3>
 <p>Same scenario but load is different. The idea is to increase amount and pace of incoming request successively to 
-observe when (what level) server starts 
-to have a problem to handle requests. So the strategy is <code>rampUsersPerSec(10) to 250 during(1 minutes)</code> explanation of
- that scenario setup might found <a href="http://gatling.io/docs/2.1.7/general/simulation_setup.html">here</a></p>
+observe when (what level) server starts to have a problem to handle requests. So the strategy is <code>rampUsersPerSec
+(10) to 250 during(1 minutes)</code> explanation of that scenario setup might found <a href="http://gatling.io/docs/2.1
+.7/general/simulation_setup.html">here</a></p>
 <h4>Bootzooka akka-http version:</h4>
 <div class="highlight"><pre><span></span><span class="o">================================================================================</span>
 ---- Global Information --------------------------------------------------------
