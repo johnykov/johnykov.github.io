@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>johny's blog</title><link>https://hanskoff.github.io/</link><description></description><atom:link href="https://hanskoff.github.io/feeds/johny.rss.xml" rel="self"></atom:link><lastBuildDate>Tue, 29 Mar 2016 11:28:00 +0200</lastBuildDate><item><title>Performance akka-http vs scalatra</title><link>https://hanskoff.github.io/bootzooka-akka-http-vs-scalatra.html</link><description>&lt;p&gt;This article goal is to find any comparison between of two great web frameworks scalatra, akka-http from performance
- perspective but ultimately this article might be synchronous, blocking vs reactive as with the switch from scalatra
- to akka-http we changed the code to be reactive (async and non-blocking). &lt;/p&gt;
-&lt;p&gt;&lt;em&gt;Maybe after latest changes in scalatra one would be able to write reactive apps? I like both scalatra and akka-http.&lt;/em&gt;&lt;/p&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>johny's blog</title><link>https://hanskoff.github.io/</link><description></description><atom:link href="https://hanskoff.github.io/feeds/johny.rss.xml" rel="self"></atom:link><lastBuildDate>Tue, 29 Mar 2016 11:28:00 +0200</lastBuildDate><item><title>Performance akka-http vs scalatra</title><link>https://hanskoff.github.io/bootzooka-akka-http-vs-scalatra.html</link><description>&lt;p&gt;&lt;a href="https://softwaremill.com/bootzooka-akka-http-based/"&gt;Some time Adam changed Bootzooka's web framework.&lt;/a&gt;
+My goal is to compare two great web frameworks &lt;a href="http://scalatra.org/"&gt;scalatra&lt;/a&gt; and &lt;a href="http://doc.akka
+.io/docs/akka/2.4.2/scala/http/"&gt;akka-http&lt;/a&gt; from performance
+ perspective. I find both of them very helpful but they work in different way so the idea is to see how much that 
+ impacts the application and it's users. &lt;/p&gt;
+&lt;p&gt;Tested version of scalatra works in synchronous &amp;amp; blocking way as akka-http is by default reactive (asnyc and 
+  non-blocking - if it keeps that way depends on server implementation).&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Latest changes in scalatra might shift it to be reactive.&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;Whenever you buy a car - you look for it's specification. How fast it is, how amazing acceleration it has, how much 
-oil does it burn, how much load it can carry. I wish to know such a metrics of tools I use to build web applications
-. Authors doesn't always publish them or often I can't find them so when there are no benchmarks or absolute numbers
- let’s make some comparison;)&lt;/p&gt;
+oil does it burn, how much load it can carry. I wish to know such a metrics for tools I use to build web applications
+. Authors doesn't always publish them or often I can't find them. One way would be to compare given benchmarks numbers
+ but there are none so let’s make a comparison.&lt;/p&gt;
 &lt;p&gt;From Great Continuous Delivery book introduction to chapter 9 comes definition of app performance:&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;First of all, let’s clear up some confusion around the terms. We’ll use the same
@@ -21,17 +25,20 @@ Customers are usually interested in throughput or capacity. In real life,
 careful in this chapter.&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;So I’ll try to find throughput and capacity of each versions of bootzooka.&lt;/p&gt;
-&lt;h2&gt;Setup&lt;/h2&gt;
+&lt;h3&gt;Brief details of internals&lt;/h3&gt;
 &lt;p&gt;Scalatra is thread based, handling servlets and requires servlet container like jetty to run, it can delegate work 
-to akka (from it’s docs, never tried this one), and akka-http is actor per request, containerless, with actorSystem 
-for free. Both have comparable pleasant DSL for writing routes.&lt;/p&gt;
+to akka (from it’s docs, never tried this one), and akka-http is actor per request, doesn't require container, comes 
+with actorSystem which developer can use to write actor model code and by default should handle 1024 open connections
+ &lt;code&gt;akka.http.server.max-connections&lt;/code&gt; &lt;a href="http://doc.akka.io/docs/akka/2.4.2/scala/http/configuration
+ .html#akka-http-core"&gt;from docs&lt;/a&gt; . Both have comparable pleasant DSL for writing routes.&lt;/p&gt;
+&lt;h3&gt;Setup&lt;/h3&gt;
 &lt;p&gt;So equipped with &lt;a href="http://gatling.io"&gt;gatling.io&lt;/a&gt; (for generating fake traffic of user scenarios) and GCViewer (for 
 watching a memory consumption, this is influenced by &lt;a href="http://bandrzejczak
-.com/blog/2015/02/15/the-cost-of-the-garbage-collection/"&gt;post&lt;/a&gt; to see if something spectacular is going on, a kind of 
-bonus) I can measure what happens to my beloved framework(bootzooka) after web requests framework switch.&lt;/p&gt;
-&lt;p&gt;The test was performed on macbook pro, 2,5 GHz Intel Core i7 with 16gigs of ram.
-I use default JVM flags what supposed to be Xss=1 mb (thread stack size) and InitialHeapSize ~ 260 mb (heroku 1 dyno
- standard is 350 mb). &lt;/p&gt;
+.com/blog/2015/02/15/the-cost-of-the-garbage-collection/"&gt;Bartek post&lt;/a&gt; to see if something spectacular is going on) I can measure 
+what happens to my beloved framework(bootzooka) after web requests framework switch.&lt;/p&gt;
+&lt;p&gt;The test was performed on macbook pro, 2,5 GHz Intel Core i7 with 16 GB of ram.
+I use default JVM flags what is Xss=1 MB (thread stack size) and InitialHeapSize ~ 260 MB (heroku 1 dyno
+ standard is 350 MB). &lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ java -XX:+PrintFlagsFinal version 
     uintx InitialHeapSize                          :&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;268435456&lt;/span&gt;                           
     uintx MaxHeapSize                              :&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;4294967296&lt;/span&gt;                          
@@ -44,15 +51,16 @@ I use default JVM flags what supposed to be Xss=1 mb (thread stack size) and Ini
 
 &lt;p&gt;I’m running postgres 9.4 database locally with two separate schemas one for each scalatra and akka-http versions of 
 bootzooka. Gatling scenario is being run on local machine as well against bootzooka backends (as frontend is written
- in angular and it’s performance is fine). So this configuration is a kind of “lab environment” where network 
+ in angular and it’s performance is fine). &lt;strong&gt;This configuration is a kind of “lab environment” where network 
  latency and bandwidth doesn’t play any role, there is no sending data over the wire what often is the main issue 
- with performance of webapps.&lt;/p&gt;
+ with performance of webapps.&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;a href="https://github.com/softwaremill/bootzooka/releases/tag/last-scalatra"&gt;Scalatra bootzooka version&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="https://github.com/softwaremill/bootzooka/commit/83827361"&gt;Akka-http bootzooka version&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="https://github.com/hanskoff/gatling-bootzooka"&gt;I’ve created a simple scenario for the test&lt;/a&gt; &lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/softwaremill/bootzooka/tree/446255c88"&gt;Scalatra bootzooka version (tag last-scalatra)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/softwaremill/bootzooka/tree/83827361"&gt;Akka-http bootzooka version for this commit&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/hanskoff/gatling-bootzooka"&gt;Repository with simple scenario for the test&lt;/a&gt; &lt;/li&gt;
 &lt;/ul&gt;
-&lt;h3&gt;Provisioning&lt;/h3&gt;
+&lt;h4&gt;Provisioning&lt;/h4&gt;
+&lt;p&gt;The &lt;code&gt;newbootzooka&lt;/code&gt; schema is for akka-http bootzooka version and &lt;code&gt;oldbootzooka&lt;/code&gt; schema is for scalatra.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;DATABASE_URL&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;postgres://newbootzooka:newbootzooka@localhost:5432/newbootzooka &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
 java -Dserver.port&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;8080&lt;/span&gt; -Xloggc:newbootzooka-&lt;span class="k"&gt;$(&lt;/span&gt;date +&lt;span class="s2"&gt;&amp;quot;%Y-%m-%d_%H-%M-%S&amp;quot;&lt;/span&gt;&lt;span class="k"&gt;)&lt;/span&gt;.log &lt;span class="se"&gt;\&lt;/span&gt;
 -XX:+PrintGCDetails -XX:+PrintGCDateStamps -jar new-bootzooka/bootzooka.jar
@@ -65,7 +73,8 @@ java -Dembedded-jetty.port&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"
 
 &lt;h3&gt;Scenario&lt;/h3&gt;
 &lt;p&gt;It’s very basic as bootzooka doesn’t do complicated stuff. In the first step user goes to &lt;code&gt;/&lt;/code&gt; - waits for http 200 
-code and in second he sends post request  to register himself and waits for “success” string in response body.&lt;/p&gt;
+code and in second sends post request (to &lt;code&gt;/api/users/register&lt;/code&gt;) to register himself and awaits for &lt;code&gt;success&lt;/code&gt; string in 
+response body.&lt;/p&gt;
 &lt;h3&gt;Scenario setup 1&lt;/h3&gt;
 &lt;p&gt;Throwing at it 200 users at once just to see what happens &lt;a href="https://github
 .com/hanskoff/gatling-bootzooka/blob/master/src/test/scala/pl/jan/BootzookaRegistrationScn.scala"&gt;BootzookaRegistrationScn&lt;/a&gt;&lt;/p&gt;
@@ -116,7 +125,7 @@ code and in second he sends post request  to register himself and waits for “s
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Looks good how about doubling the requests to 400 users at once, third round:&lt;/p&gt;
+&lt;p&gt;Looks good, how about doubling the requests to 400 users at once, third round:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;================================================================================&lt;/span&gt;
 ---- Global Information --------------------------------------------------------
 &amp;gt; request count                                        &lt;span class="m"&gt;800&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;800&lt;/span&gt;    &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;     &lt;span class="o"&gt;)&lt;/span&gt;
@@ -136,49 +145,57 @@ code and in second he sends post request  to register himself and waits for “s
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;No failed requests, mean req/sec ~ 212. Let's double for forth round:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;================================================================================
+&lt;p&gt;No failed requests, mean req/sec ~ 212. Let's double users for forth round:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;================================================================================&lt;/span&gt;
 ---- Global Information --------------------------------------------------------
-&amp;gt; request count                                       1600 (OK=1565   KO=35    )
-&amp;gt; min response time                                      4 (OK=4      KO=159   )
-&amp;gt; max response time                                   4167 (OK=4167   KO=1625  )
-&amp;gt; mean response time                                  1016 (OK=1016   KO=991   )
-&amp;gt; std deviation                                       1032 (OK=1041   KO=428   )
-&amp;gt; response time 50th percentile                        896 (OK=895    KO=1285  )
-&amp;gt; response time 75th percentile                       1515 (OK=1519   KO=1288  )
-&amp;gt; mean requests/sec                                228.571 (OK=223.571 KO=5     )
+&amp;gt; request count                                       &lt;span class="m"&gt;1600&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1565&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;35&lt;/span&gt;    &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; min response &lt;span class="nb"&gt;time&lt;/span&gt;                                      &lt;span class="m"&gt;4&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;      &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;159&lt;/span&gt;   &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; max response &lt;span class="nb"&gt;time&lt;/span&gt;                                   &lt;span class="m"&gt;4167&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4167&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1625&lt;/span&gt;  &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; mean response &lt;span class="nb"&gt;time&lt;/span&gt;                                  &lt;span class="m"&gt;1016&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1016&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;991&lt;/span&gt;   &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; std deviation                                       &lt;span class="m"&gt;1032&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1041&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;428&lt;/span&gt;   &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; response &lt;span class="nb"&gt;time&lt;/span&gt; 50th percentile                        &lt;span class="m"&gt;896&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;895&lt;/span&gt;    &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1285&lt;/span&gt;  &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; response &lt;span class="nb"&gt;time&lt;/span&gt; 75th percentile                       &lt;span class="m"&gt;1515&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1519&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1288&lt;/span&gt;  &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; mean requests/sec                                228.571 &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;223.571 &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;5&lt;/span&gt;     &lt;span class="o"&gt;)&lt;/span&gt;
 ---- Response Time Distribution ------------------------------------------------
-&amp;gt; t &amp;lt; 800 ms                                           720 ( 45%)
-&amp;gt; 800 ms &amp;lt; t &amp;lt; 1200 ms                                 157 ( 10%)
-&amp;gt; t &amp;gt; 1200 ms                                          688 ( 43%)
-&amp;gt; failed                                                35 (  2%)
+&amp;gt; t &amp;lt; &lt;span class="m"&gt;800&lt;/span&gt; ms                                           &lt;span class="m"&gt;720&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 45%&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; &lt;span class="m"&gt;800&lt;/span&gt; ms &amp;lt; t &amp;lt; &lt;span class="m"&gt;1200&lt;/span&gt; ms                                 &lt;span class="m"&gt;157&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 10%&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; t &amp;gt; &lt;span class="m"&gt;1200&lt;/span&gt; ms                                          &lt;span class="m"&gt;688&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 43%&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; failed                                                &lt;span class="m"&gt;35&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;  2%&lt;span class="o"&gt;)&lt;/span&gt;
 ---- Errors --------------------------------------------------------------------
-&lt;span class="gh"&gt;&amp;gt; java.net.ConnectException: Connection reset by peer                35 (100.0%)&lt;/span&gt;
-&lt;span class="gh"&gt;================================================================================&lt;/span&gt;
+&amp;gt; java.net.ConnectException: Connection reset by peer                &lt;span class="m"&gt;35&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;100.0%&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;================================================================================&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;2% of failed requests but no error in logs (maybe we don't handle that case yet). And it might happen without failed 
-requests: (again same setup, fifth round)&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;================================================================================
+&lt;p&gt;2% of failed requests but no error in logs (maybe we don't handle that case yet). And in logs I've found:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;java.sql.SQLTimeoutException: Timeout after 1015ms of waiting for a connection.
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;and more:&lt;/p&gt;
+&lt;p&gt;13:53:45.304 [main-akka.actor.default-dispatcher-82] ERROR c.s.b.Main$$anon$1 - Exception during client request processing: Task slick.backend.DatabaseComponent$DatabaseDef$$anon$2@71688eb2 rejected from java.util.concurrent.ThreadPoolExecutor@4131e49e[Running, pool size = 20, active threads = 20, queued tasks = 1000, completed tasks = 4067]&lt;/p&gt;
+&lt;p&gt;Let's repeat, same setup, 
+fifth round:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;================================================================================&lt;/span&gt;
 ---- Global Information --------------------------------------------------------
-&amp;gt; request count                                       1600 (OK=1600   KO=0     )
-&amp;gt; min response time                                      4 (OK=4      KO=-     )
-&amp;gt; max response time                                   1905 (OK=1905   KO=-     )
-&amp;gt; mean response time                                   378 (OK=378    KO=-     )
-&amp;gt; std deviation                                        631 (OK=631    KO=-     )
-&amp;gt; response time 50th percentile                         57 (OK=57     KO=-     )
-&amp;gt; response time 75th percentile                        300 (OK=300    KO=-     )
-&amp;gt; mean requests/sec                                225.384 (OK=225.384 KO=-     )
+&amp;gt; request count                                       &lt;span class="m"&gt;1600&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1600&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;     &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; min response &lt;span class="nb"&gt;time&lt;/span&gt;                                      &lt;span class="m"&gt;4&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;      &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-     &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; max response &lt;span class="nb"&gt;time&lt;/span&gt;                                   &lt;span class="m"&gt;1905&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1905&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-     &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; mean response &lt;span class="nb"&gt;time&lt;/span&gt;                                   &lt;span class="m"&gt;378&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;378&lt;/span&gt;    &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-     &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; std deviation                                        &lt;span class="m"&gt;631&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;631&lt;/span&gt;    &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-     &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; response &lt;span class="nb"&gt;time&lt;/span&gt; 50th percentile                         &lt;span class="m"&gt;57&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;57&lt;/span&gt;     &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-     &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; response &lt;span class="nb"&gt;time&lt;/span&gt; 75th percentile                        &lt;span class="m"&gt;300&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;300&lt;/span&gt;    &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-     &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; mean requests/sec                                225.384 &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;225.384 &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-     &lt;span class="o"&gt;)&lt;/span&gt;
 ---- Response Time Distribution ------------------------------------------------
-&amp;gt; t &amp;lt; 800 ms                                          1310 ( 82%)
-&amp;gt; 800 ms &amp;lt; t &amp;lt; 1200 ms                                  23 (  1%)
-&amp;gt; t &amp;gt; 1200 ms                                          267 ( 17%)
-&lt;span class="gh"&gt;&amp;gt; failed                                                 0 (  0%)&lt;/span&gt;
-&lt;span class="gh"&gt;================================================================================&lt;/span&gt;
+&amp;gt; t &amp;lt; &lt;span class="m"&gt;800&lt;/span&gt; ms                                          &lt;span class="m"&gt;1310&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 82%&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; &lt;span class="m"&gt;800&lt;/span&gt; ms &amp;lt; t &amp;lt; &lt;span class="m"&gt;1200&lt;/span&gt; ms                                  &lt;span class="m"&gt;23&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;  1%&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; t &amp;gt; &lt;span class="m"&gt;1200&lt;/span&gt; ms                                          &lt;span class="m"&gt;267&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 17%&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; failed                                                 &lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;  0%&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;================================================================================&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;No failed requests with 75% of requests handled within below 300 milliseconds.&lt;/p&gt;
 &lt;h4&gt;Bootzooka scalatra version:&lt;/h4&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;./gradlew -Dserver.port&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;8081&lt;/span&gt; loadTest
 &lt;/pre&gt;&lt;/div&gt;
@@ -295,90 +312,301 @@ requests: (again same setup, fifth round)&lt;/p&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;50 mean req/sec with 29% of failed :| and in app logs I see&lt;/p&gt;
+&lt;p&gt;50 mean req/sec with 29% of failed and in app logs I see:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;java.sql.SQLTimeoutException: Timeout after 1003ms of waiting for a connection.
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;h4&gt;Memory usage&lt;/h4&gt;
 &lt;p&gt;In both cases memory usage is comparable, I saw same 99% of jvm code throughput and even almost same number of
- GC pasuses. I have two files but nothing spectacular here. The upper window is akka-http bootzooka version the lower
+ GC pauses. I have two files but nothing spectacular here. The upper window is akka-http bootzooka version the lower
   is scalatra version.&lt;/p&gt;
 &lt;p&gt;&lt;img alt="GCviewer bootzooka comparision" src="https://hanskoff.github.io/blog/img/gcviewer.png" /&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;newjvm-2016-03-29_15-11-42.log&lt;/li&gt;
 &lt;li&gt;oldjvm-2016-03-29_15-33-13.log&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h4&gt;SUMMARY OF SCENARIO SETUP 1&lt;/h4&gt;
-&lt;p&gt;This first scenario setup is naive and should show "something" and that is nothing unexpected that reactive style app
-behaves better with bigger traffic (more request in same unit of time). Because of async &amp;amp; non-blocking 
-characteristic, it stops responding under much bigger load 800 users vs 200 at once. (mean 225 req/sec vs 50-80 
-req/sec). It looks like async and non-blocking approach handles resources in more efficient way. (I suppose this is 
-because of actors nature of queueing the requests?)&lt;/p&gt;
-&lt;p&gt;In second case(scalatra) we can observe that access to database is a bottleneck. Naive approach is to 
-increase that database connections pool what should suffice for a while. Increasing timeout is highly undesirable 
-because it would only slows everything down. Another practise (this time expensive) is to set a database cluster 
-or/and queue updates and queries to database. But any of that moves requires expertise knowledge in every of touched 
-areas (like distributed setup of databases and applications).&lt;/p&gt;
-&lt;h3&gt;Scenario setup 2 (in progess)&lt;/h3&gt;
-&lt;p&gt;Same scenario but load is different. The idea is to increase amount and pace of incoming request successively to 
-observe when (what level) server starts to have a problem to handle requests. So the strategy is &lt;code&gt;rampUsersPerSec
-(10) to 250 during(1 minutes)&lt;/code&gt; explanation of that scenario setup might found &lt;a href="http://gatling.io/docs/2.1
-.7/general/simulation_setup.html"&gt;here&lt;/a&gt;&lt;/p&gt;
-&lt;h4&gt;Bootzooka akka-http version:&lt;/h4&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;================================================================================&lt;/span&gt;
----- Global Information --------------------------------------------------------
-&amp;gt; request count                                      &lt;span class="m"&gt;15600&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;13651&lt;/span&gt;  &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1949&lt;/span&gt;  &lt;span class="o"&gt;)&lt;/span&gt;
-&amp;gt; min response &lt;span class="nb"&gt;time&lt;/span&gt;                                      &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;      &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;     &lt;span class="o"&gt;)&lt;/span&gt;
-&amp;gt; max response &lt;span class="nb"&gt;time&lt;/span&gt;                                  &lt;span class="m"&gt;36080&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;36080&lt;/span&gt;  &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;34924&lt;/span&gt; &lt;span class="o"&gt;)&lt;/span&gt;
-&amp;gt; mean response &lt;span class="nb"&gt;time&lt;/span&gt;                                  &lt;span class="m"&gt;5470&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4090&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;15136&lt;/span&gt; &lt;span class="o"&gt;)&lt;/span&gt;
-&amp;gt; std deviation                                       &lt;span class="m"&gt;7782&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4849&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;14603&lt;/span&gt; &lt;span class="o"&gt;)&lt;/span&gt;
-&amp;gt; response &lt;span class="nb"&gt;time&lt;/span&gt; 50th percentile                       &lt;span class="m"&gt;2639&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2093&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;6731&lt;/span&gt;  &lt;span class="o"&gt;)&lt;/span&gt;
-&amp;gt; response &lt;span class="nb"&gt;time&lt;/span&gt; 75th percentile                       &lt;span class="m"&gt;8064&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;7732&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;32504&lt;/span&gt; &lt;span class="o"&gt;)&lt;/span&gt;
-&amp;gt; mean requests/sec                                169.652 &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;148.456 &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;21.196&lt;span class="o"&gt;)&lt;/span&gt;
----- Response Time Distribution ------------------------------------------------
-&amp;gt; t &amp;lt; &lt;span class="m"&gt;800&lt;/span&gt; ms                                          &lt;span class="m"&gt;5911&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 38%&lt;span class="o"&gt;)&lt;/span&gt;
-&amp;gt; &lt;span class="m"&gt;800&lt;/span&gt; ms &amp;lt; t &amp;lt; &lt;span class="m"&gt;1200&lt;/span&gt; ms                                 &lt;span class="m"&gt;356&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;  2%&lt;span class="o"&gt;)&lt;/span&gt;
-&amp;gt; t &amp;gt; &lt;span class="m"&gt;1200&lt;/span&gt; ms                                         &lt;span class="m"&gt;7384&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 47%&lt;span class="o"&gt;)&lt;/span&gt;
-&amp;gt; failed                                              &lt;span class="m"&gt;1949&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 12%&lt;span class="o"&gt;)&lt;/span&gt;
----- Errors --------------------------------------------------------------------
-&amp;gt; java.net.ConnectException: Operation timed out: localhost/127.    &lt;span class="m"&gt;763&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;39.15%&lt;span class="o"&gt;)&lt;/span&gt;
-0.0.1:8080
-&amp;gt; java.net.ConnectException: Connection reset by peer               &lt;span class="m"&gt;630&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;32.32%&lt;span class="o"&gt;)&lt;/span&gt;
-&amp;gt; regex&lt;span class="o"&gt;(&lt;/span&gt;success&lt;span class="o"&gt;)&lt;/span&gt;.find&lt;span class="o"&gt;(&lt;/span&gt;0&lt;span class="o"&gt;)&lt;/span&gt;.exists, found nothing                      &lt;span class="m"&gt;556&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;28.53%&lt;span class="o"&gt;)&lt;/span&gt;
-&lt;span class="o"&gt;================================================================================&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
+&lt;h3&gt;Conclusion after scenario setup 1&lt;/h3&gt;
+&lt;p&gt;This first scenario setup is naive and should show "something" and that is &lt;code&gt;akka-http app
+behaves better then scalatra&lt;/code&gt; and continue to operate while getting bigger traffic too. Akka-http stops responding 
+under much bigger load 800 users vs scalatra 200 users (mean 225 req/sec vs 50-80req/sec). It looks like akka-http 
+version has better default configuration (thread pool size?) and might handle resources (database connection pool)
+ in more efficient way. &lt;/p&gt;
+&lt;style type="text/css"&gt;
+table {
+  padding: 0; }
+  table tr {
+    border-top: 1px solid #cccccc;
+    background-color: white;
+    margin: 0;
+    padding: 0; }
+    table tr:nth-child(2n) {
+      background-color: #f8f8f8; }
+    table tr th {
+      font-weight: bold;
+      border: 1px solid #cccccc;
+      text-align: left;
+      margin: 0;
+      padding: 6px 13px; }
+    table tr td {
+      border: 1px solid #cccccc;
+      text-align: left;
+      margin: 0;
+      padding: 6px 13px; }
+    table tr th :first-child, table tr td :first-child {
+      margin-top: 0; }
+    table tr th :last-child, table tr td :last-child {
+      margin-bottom: 0; }
+&lt;/style&gt;
 
-
-&lt;p&gt;Full Gatling Report &lt;a href="report/bootzookaregistrationscn-1459333506954/index.html"&gt;bootzookaregistrationscn-1459333506954&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Second round:&lt;code&gt;rampUsersPerSec(10) to 250 during(2 minutes)&lt;/code&gt;&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;================================================================================&lt;/span&gt;
----- Global Information --------------------------------------------------------
-&amp;gt; request count                                      &lt;span class="m"&gt;31200&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;22362&lt;/span&gt;  &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;8838&lt;/span&gt;  &lt;span class="o"&gt;)&lt;/span&gt;
-&amp;gt; min response &lt;span class="nb"&gt;time&lt;/span&gt;                                      &lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt;      &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;     &lt;span class="o"&gt;)&lt;/span&gt;
-&amp;gt; max response &lt;span class="nb"&gt;time&lt;/span&gt;                                  &lt;span class="m"&gt;53611&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;47689&lt;/span&gt;  &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;53611&lt;/span&gt; &lt;span class="o"&gt;)&lt;/span&gt;
-&amp;gt; mean response &lt;span class="nb"&gt;time&lt;/span&gt;                                 &lt;span class="m"&gt;14358&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;8068&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;30273&lt;/span&gt; &lt;span class="o"&gt;)&lt;/span&gt;
-&amp;gt; std deviation                                      &lt;span class="m"&gt;16361&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;9463&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;19104&lt;/span&gt; &lt;span class="o"&gt;)&lt;/span&gt;
-&amp;gt; response &lt;span class="nb"&gt;time&lt;/span&gt; 50th percentile                       &lt;span class="m"&gt;8406&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4071&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;39269&lt;/span&gt; &lt;span class="o"&gt;)&lt;/span&gt;
-&amp;gt; response &lt;span class="nb"&gt;time&lt;/span&gt; 75th percentile                      &lt;span class="m"&gt;20601&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;13834&lt;/span&gt;  &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;47850&lt;/span&gt; &lt;span class="o"&gt;)&lt;/span&gt;
-&amp;gt; mean requests/sec                                149.533 &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;107.175 &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;42.358&lt;span class="o"&gt;)&lt;/span&gt;
----- Response Time Distribution ------------------------------------------------
-&amp;gt; t &amp;lt; &lt;span class="m"&gt;800&lt;/span&gt; ms                                          &lt;span class="m"&gt;6822&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 22%&lt;span class="o"&gt;)&lt;/span&gt;
-&amp;gt; &lt;span class="m"&gt;800&lt;/span&gt; ms &amp;lt; t &amp;lt; &lt;span class="m"&gt;1200&lt;/span&gt; ms                                 &lt;span class="m"&gt;631&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;  2%&lt;span class="o"&gt;)&lt;/span&gt;
-&amp;gt; t &amp;gt; &lt;span class="m"&gt;1200&lt;/span&gt; ms                                        &lt;span class="m"&gt;14909&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 48%&lt;span class="o"&gt;)&lt;/span&gt;
-&amp;gt; failed                                              &lt;span class="m"&gt;8838&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 28%&lt;span class="o"&gt;)&lt;/span&gt;
----- Errors --------------------------------------------------------------------
-&amp;gt; java.net.ConnectException: Operation timed out: localhost/127.   &lt;span class="m"&gt;4510&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;51.03%&lt;span class="o"&gt;)&lt;/span&gt;
-0.0.1:8080
-&amp;gt; java.net.ConnectException: Connection reset by peer              &lt;span class="m"&gt;2693&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;30.47%&lt;span class="o"&gt;)&lt;/span&gt;
-&amp;gt; regex&lt;span class="o"&gt;(&lt;/span&gt;success&lt;span class="o"&gt;)&lt;/span&gt;.find&lt;span class="o"&gt;(&lt;/span&gt;0&lt;span class="o"&gt;)&lt;/span&gt;.exists, found nothing                      &lt;span class="m"&gt;839&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 9.49%&lt;span class="o"&gt;)&lt;/span&gt;
-&amp;gt; java.net.SocketException: Too many open files in system           &lt;span class="m"&gt;678&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 7.67%&lt;span class="o"&gt;)&lt;/span&gt;
-&amp;gt; java.util.concurrent.TimeoutException: Request timed out to lo     &lt;span class="m"&gt;99&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 1.12%&lt;span class="o"&gt;)&lt;/span&gt;
-calhost/127.0.0.1:8080 of &lt;span class="m"&gt;60000&lt;/span&gt; ms
-&amp;gt; java.io.IOException: Remotely closed                               &lt;span class="m"&gt;18&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 0.20%&lt;span class="o"&gt;)&lt;/span&gt;
-&amp;gt; java.net.SocketException: Operation timed out                       &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 0.01%&lt;span class="o"&gt;)&lt;/span&gt;
-&lt;span class="o"&gt;================================================================================&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">johny</dc:creator><pubDate>Tue, 29 Mar 2016 11:28:00 +0200</pubDate><guid>tag:hanskoff.github.io,2016-03-29:bootzooka-akka-http-vs-scalatra.html</guid><category>bootzooka</category><category>scala</category><category>scalatra</category><category>akka-http</category><category>gatling</category></item><item><title>Fabtools - Tomcat - fast provisioning</title><link>https://hanskoff.github.io/tomcat-installation-with-fabtools.html</link><description>&lt;p&gt;As every other developer I'm a fun of easy developer life. I wish all open source projects could be build right away without any previous database or ldap mocking setup. Just fire it right away! That is why I like &lt;a href="http://www.vagrantup.com/"&gt;Vagrant&lt;/a&gt; so much. &lt;/p&gt;
+&lt;h4&gt;Comparison of second round of both frameworks:&lt;/h4&gt;
+&lt;p&gt;For comparison I've used &lt;a href="https://github.com/nuxeo/gatling-report"&gt;gatling-reports&lt;/a&gt; and the &lt;a href="https://github
+.com/nuxeo/gatling-report#output-csv-stats"&gt;legend&lt;/a&gt;.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align="center"&gt;simulation&lt;/th&gt;
+&lt;th align="center"&gt;duration&lt;/th&gt;
+&lt;th align="center"&gt;successCount&lt;/th&gt;
+&lt;th align="center"&gt;errorCount&lt;/th&gt;
+&lt;th align="center"&gt;min&lt;/th&gt;
+&lt;th align="center"&gt;p50&lt;/th&gt;
+&lt;th align="center"&gt;p95&lt;/th&gt;
+&lt;th align="center"&gt;p99&lt;/th&gt;
+&lt;th align="center"&gt;max&lt;/th&gt;
+&lt;th align="center"&gt;avg&lt;/th&gt;
+&lt;th align="center"&gt;stddev&lt;/th&gt;
+&lt;th align="center"&gt;requestPerSecond&lt;/th&gt;
+&lt;th align="center"&gt;apdex&lt;/th&gt;
+&lt;th align="center"&gt;rating&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align="center"&gt;akka-http&lt;/td&gt;
+&lt;td align="center"&gt;1.98&lt;/td&gt;
+&lt;td align="center"&gt;400&lt;/td&gt;
+&lt;td align="center"&gt;0&lt;/td&gt;
+&lt;td align="center"&gt;4&lt;/td&gt;
+&lt;td align="center"&gt;43&lt;/td&gt;
+&lt;td align="center"&gt;581&lt;/td&gt;
+&lt;td align="center"&gt;678&lt;/td&gt;
+&lt;td align="center"&gt;679&lt;/td&gt;
+&lt;td align="center"&gt;191.2&lt;/td&gt;
+&lt;td align="center"&gt;217&lt;/td&gt;
+&lt;td align="center"&gt;201.71&lt;/td&gt;
+&lt;td align="center"&gt;1&lt;/td&gt;
+&lt;td align="center"&gt;Excellent&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align="center"&gt;scalatra&lt;/td&gt;
+&lt;td align="center"&gt;5.48&lt;/td&gt;
+&lt;td align="center"&gt;327&lt;/td&gt;
+&lt;td align="center"&gt;73&lt;/td&gt;
+&lt;td align="center"&gt;0&lt;/td&gt;
+&lt;td align="center"&gt;65&lt;/td&gt;
+&lt;td align="center"&gt;4901&lt;/td&gt;
+&lt;td align="center"&gt;4984&lt;/td&gt;
+&lt;td align="center"&gt;5015&lt;/td&gt;
+&lt;td align="center"&gt;2014.55&lt;/td&gt;
+&lt;td align="center"&gt;2284&lt;/td&gt;
+&lt;td align="center"&gt;59.73&lt;/td&gt;
+&lt;td align="center"&gt;0.79&lt;/td&gt;
+&lt;td align="center"&gt;Fair&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;ul&gt;
+&lt;li&gt;duration = seconds&lt;/li&gt;
+&lt;li&gt;succesCount = number of requests&lt;/li&gt;
+&lt;li&gt;min, p50, p95, p99, max, avg, stddev = miliseconds&lt;/li&gt;
+&lt;/ul&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;test duration (test takes longer when errors appear)&lt;/th&gt;
+&lt;th&gt;duration &amp;amp; throughput&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;img alt="second round bootzooka comparision" src="https://hanskoff.github.io/blog/img/secondRoundDuration.png" /&gt;&lt;/td&gt;
+&lt;td&gt;&lt;img alt="second round bootzooka comparision" src="https://hanskoff.github.io/blog/img/secondRoundRps.png" /&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h4&gt;Comparison of best runs for 200 users:&lt;/h4&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align="center"&gt;simulation&lt;/th&gt;
+&lt;th align="center"&gt;duration&lt;/th&gt;
+&lt;th align="center"&gt;successCount&lt;/th&gt;
+&lt;th align="center"&gt;errorCount&lt;/th&gt;
+&lt;th align="center"&gt;min&lt;/th&gt;
+&lt;th align="center"&gt;p50&lt;/th&gt;
+&lt;th align="center"&gt;p95&lt;/th&gt;
+&lt;th align="center"&gt;p99&lt;/th&gt;
+&lt;th align="center"&gt;max&lt;/th&gt;
+&lt;th align="center"&gt;avg&lt;/th&gt;
+&lt;th align="center"&gt;stddev&lt;/th&gt;
+&lt;th align="center"&gt;requestPerSecond&lt;/th&gt;
+&lt;th align="center"&gt;apdex&lt;/th&gt;
+&lt;th align="center"&gt;rating&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align="center"&gt;akka-http&lt;/td&gt;
+&lt;td align="center"&gt;1.98&lt;/td&gt;
+&lt;td align="center"&gt;400&lt;/td&gt;
+&lt;td align="center"&gt;0&lt;/td&gt;
+&lt;td align="center"&gt;4&lt;/td&gt;
+&lt;td align="center"&gt;43&lt;/td&gt;
+&lt;td align="center"&gt;581&lt;/td&gt;
+&lt;td align="center"&gt;678&lt;/td&gt;
+&lt;td align="center"&gt;679&lt;/td&gt;
+&lt;td align="center"&gt;191.2&lt;/td&gt;
+&lt;td align="center"&gt;217&lt;/td&gt;
+&lt;td align="center"&gt;201.71&lt;/td&gt;
+&lt;td align="center"&gt;1&lt;/td&gt;
+&lt;td align="center"&gt;Excellent&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align="center"&gt;scalatra&lt;/td&gt;
+&lt;td align="center"&gt;4.49&lt;/td&gt;
+&lt;td align="center"&gt;357&lt;/td&gt;
+&lt;td align="center"&gt;43&lt;/td&gt;
+&lt;td align="center"&gt;0&lt;/td&gt;
+&lt;td align="center"&gt;259&lt;/td&gt;
+&lt;td align="center"&gt;3770&lt;/td&gt;
+&lt;td align="center"&gt;3869&lt;/td&gt;
+&lt;td align="center"&gt;3928&lt;/td&gt;
+&lt;td align="center"&gt;1473.31&lt;/td&gt;
+&lt;td align="center"&gt;1654&lt;/td&gt;
+&lt;td align="center"&gt;79.49&lt;/td&gt;
+&lt;td align="center"&gt;0.8&lt;/td&gt;
+&lt;td align="center"&gt;Fair&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h4&gt;Comparison for 400 users:&lt;/h4&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align="center"&gt;simulation&lt;/th&gt;
+&lt;th align="center"&gt;duration&lt;/th&gt;
+&lt;th align="center"&gt;successCount&lt;/th&gt;
+&lt;th align="center"&gt;errorCount&lt;/th&gt;
+&lt;th align="center"&gt;min&lt;/th&gt;
+&lt;th align="center"&gt;p50&lt;/th&gt;
+&lt;th align="center"&gt;p95&lt;/th&gt;
+&lt;th align="center"&gt;p99&lt;/th&gt;
+&lt;th align="center"&gt;max&lt;/th&gt;
+&lt;th align="center"&gt;avg&lt;/th&gt;
+&lt;th align="center"&gt;stddev&lt;/th&gt;
+&lt;th align="center"&gt;requestPerSecond&lt;/th&gt;
+&lt;th align="center"&gt;apdex&lt;/th&gt;
+&lt;th align="center"&gt;rating&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align="center"&gt;akka-http&lt;/td&gt;
+&lt;td align="center"&gt;3.41&lt;/td&gt;
+&lt;td align="center"&gt;800&lt;/td&gt;
+&lt;td align="center"&gt;0&lt;/td&gt;
+&lt;td align="center"&gt;4&lt;/td&gt;
+&lt;td align="center"&gt;199&lt;/td&gt;
+&lt;td align="center"&gt;1390&lt;/td&gt;
+&lt;td align="center"&gt;1438&lt;/td&gt;
+&lt;td align="center"&gt;1443&lt;/td&gt;
+&lt;td align="center"&gt;436.42&lt;/td&gt;
+&lt;td align="center"&gt;474&lt;/td&gt;
+&lt;td align="center"&gt;234.33&lt;/td&gt;
+&lt;td align="center"&gt;1&lt;/td&gt;
+&lt;td align="center"&gt;Excellent&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align="center"&gt;scalatra&lt;/td&gt;
+&lt;td align="center"&gt;15.33&lt;/td&gt;
+&lt;td align="center"&gt;572&lt;/td&gt;
+&lt;td align="center"&gt;228&lt;/td&gt;
+&lt;td align="center"&gt;0&lt;/td&gt;
+&lt;td align="center"&gt;111&lt;/td&gt;
+&lt;td align="center"&gt;14156&lt;/td&gt;
+&lt;td align="center"&gt;14398&lt;/td&gt;
+&lt;td align="center"&gt;14464&lt;/td&gt;
+&lt;td align="center"&gt;5529.42&lt;/td&gt;
+&lt;td align="center"&gt;6674&lt;/td&gt;
+&lt;td align="center"&gt;37.3&lt;/td&gt;
+&lt;td align="center"&gt;0.59&lt;/td&gt;
+&lt;td align="center"&gt;Poor&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;test duration (test takes longer when errors appear)&lt;/th&gt;
+&lt;th&gt;duration &amp;amp; throughput&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;img alt="second round bootzooka comparision" src="https://hanskoff.github.io/blog/img/finalRoundDuration.png" /&gt;&lt;/td&gt;
+&lt;td&gt;&lt;img alt="second round bootzooka comparision" src="https://hanskoff.github.io/blog/img/finalRoundRps.png" /&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h4&gt;Comparison for 800 users (where akka-http started to have a problems):&lt;/h4&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align="center"&gt;simulation&lt;/th&gt;
+&lt;th align="center"&gt;duration&lt;/th&gt;
+&lt;th align="center"&gt;successCount&lt;/th&gt;
+&lt;th align="center"&gt;errorCount&lt;/th&gt;
+&lt;th align="center"&gt;min&lt;/th&gt;
+&lt;th align="center"&gt;p50&lt;/th&gt;
+&lt;th align="center"&gt;p95&lt;/th&gt;
+&lt;th align="center"&gt;p99&lt;/th&gt;
+&lt;th align="center"&gt;max&lt;/th&gt;
+&lt;th align="center"&gt;avg&lt;/th&gt;
+&lt;th align="center"&gt;stddev&lt;/th&gt;
+&lt;th align="center"&gt;requestPerSecond&lt;/th&gt;
+&lt;th align="center"&gt;apdex&lt;/th&gt;
+&lt;th align="center"&gt;rating&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align="center"&gt;akka-http&lt;/td&gt;
+&lt;td align="center"&gt;8.69&lt;/td&gt;
+&lt;td align="center"&gt;1564&lt;/td&gt;
+&lt;td align="center"&gt;36&lt;/td&gt;
+&lt;td align="center"&gt;4&lt;/td&gt;
+&lt;td align="center"&gt;418&lt;/td&gt;
+&lt;td align="center"&gt;3095&lt;/td&gt;
+&lt;td align="center"&gt;3296&lt;/td&gt;
+&lt;td align="center"&gt;3345&lt;/td&gt;
+&lt;td align="center"&gt;1011.16&lt;/td&gt;
+&lt;td align="center"&gt;1117&lt;/td&gt;
+&lt;td align="center"&gt;180.06&lt;/td&gt;
+&lt;td align="center"&gt;0.85&lt;/td&gt;
+&lt;td align="center"&gt;Fair&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h4&gt;Hints for tuning&lt;/h4&gt;
+&lt;p&gt;Very often performance tests reveal that access to database is a bottleneck. In second (scalatra) of above cases we can 
+observe it quite soon. &lt;/p&gt;
+&lt;p&gt;First natural approach is to increase that database connections pool what should suffice for a
+ while. Increasing timeout is highly undesirable because it would only slows everything down. Another practise (this
+  time expensive) is to set a database cluster or/and queue updates and queries to database. But any of that moves 
+  requires expertise knowledge in every of touched areas (like distributed setup of databases and applications). But 
+  that is not the case here, tests are being run on defaults.&lt;/p&gt;
+&lt;hr /&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">johny</dc:creator><pubDate>Tue, 29 Mar 2016 11:28:00 +0200</pubDate><guid>tag:hanskoff.github.io,2016-03-29:bootzooka-akka-http-vs-scalatra.html</guid><category>bootzooka</category><category>scala</category><category>scalatra</category><category>akka-http</category><category>gatling</category></item><item><title>Fabtools - Tomcat - fast provisioning</title><link>https://hanskoff.github.io/tomcat-installation-with-fabtools.html</link><description>&lt;p&gt;As every other developer I'm a fun of easy developer life. I wish all open source projects could be build right away without any previous database or ldap mocking setup. Just fire it right away! That is why I like &lt;a href="http://www.vagrantup.com/"&gt;Vagrant&lt;/a&gt; so much. &lt;/p&gt;
 &lt;p&gt;Vagrant with puppet manifests [chef|ansible|bash] might help to completely separate your local development environment from office network. From now on you can work from the basement without network connection - is't that sweet? (You might just need to mock company's ldap server). &lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;The main benefit of &lt;code&gt;Vagranfile&lt;/code&gt; (Vagrant’s setup file) is that you can keep it as a code in your favorite VCS. Each team member will build his own local developement environment from scratch. You don’t need to distribute huge .vmdk files anymore. &lt;/p&gt;
