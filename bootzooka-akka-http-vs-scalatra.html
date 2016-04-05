@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"
->
+<html lang="en" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
     <title>Performance akka-http vs scalatra - johny's blog</title>
     <!-- Using the latest rendering mode for IE -->
@@ -10,27 +9,43 @@
 
 
 
-<link rel="canonical" href="./bootzooka-akka-http-vs-scalatra.html">
+<link rel="canonical" href="https://hanskoff.github.io/bootzooka-akka-http-vs-scalatra.html">
 
         <meta name="author" content="johny" />
         <meta name="keywords" content="bootzooka,scala,scalatra,akka-http,gatling" />
         <meta name="description" content="Some time ago we changed how Bootzooka handles HTTP requests. My goal is to compare two great tools: complete web framework scalatra 2.3.1 (latest stable) called by one of it&#39;s project leaders a web toolkit akka-http 2.4.2 from a performance perspective. I find both of ..." />
 
+        <meta property="og:site_name" content="johny's blog" />
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Performance akka-http vs scalatra"/>
+        <meta property="og:url" content="https://hanskoff.github.io/bootzooka-akka-http-vs-scalatra.html"/>
+        <meta property="og:description" content="Some time ago we changed how Bootzooka handles HTTP requests. My goal is to compare two great tools: complete web framework scalatra 2.3.1 (latest stable) called by one of it&#39;s project leaders a web toolkit akka-http 2.4.2 from a performance perspective. I find both of ..."/>
+        <meta property="article:published_time" content="2016-03-29" />
+            <meta property="article:section" content="bootzooka" />
+            <meta property="article:tag" content="bootzooka" />
+            <meta property="article:tag" content="scala" />
+            <meta property="article:tag" content="scalatra" />
+            <meta property="article:tag" content="akka-http" />
+            <meta property="article:tag" content="gatling" />
+            <meta property="article:author" content="johny" />
 
 
     <!-- Bootstrap -->
-        <link rel="stylesheet" href="./theme/css/bootstrap.flatly.min.css" type="text/css"/>
-    <link href="./theme/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://hanskoff.github.io/theme/css/bootstrap.flatly.min.css" type="text/css"/>
+    <link href="https://hanskoff.github.io/theme/css/font-awesome.min.css" rel="stylesheet">
 
-    <link href="./theme/css/pygments/native.css" rel="stylesheet">
-    <link rel="stylesheet" href="./theme/css/style.css" type="text/css"/>
+    <link href="https://hanskoff.github.io/theme/css/pygments/native.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://hanskoff.github.io/theme/css/style.css" type="text/css"/>
+
+
+
 
 
 </head>
 <body>
 
 <div class="navbar navbar-default navbar-fixed-top" role="navigation">
-    <div class="container">
+	<div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
                 <span class="sr-only">Toggle navigation</span>
@@ -38,36 +53,36 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a href="./" class="navbar-brand">
+            <a href="https://hanskoff.github.io/" class="navbar-brand">
 johny's blog            </a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                         <li><a href="./pages/about.html">
+                         <li><a href="https://hanskoff.github.io/pages/about.html">
                              About
                           </a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="./archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archives</span></a></li>
+              <li><a href="https://hanskoff.github.io/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archives</span></a></li>
             </ul>
         </div>
         <!-- /.navbar-collapse -->
     </div>
 </div> <!-- /.navbar -->
-
+<!-- Banner -->
+<!-- End Banner -->
 <div class="container">
     <div class="row">
         <div class="col-lg-12">
             <ol class="breadcrumb">
-                <li><a href="." title="johny's blog"><i class="fa fa-home fa-lg"></i></a></li>
+                <li><a href="https://hanskoff.github.io" title="johny's blog"><i class="fa fa-home fa-lg"></i></a></li>
                 <li class="active">Performance akka-http vs scalatra</li>
             </ol>
-
     <section id="content">
         <article>
             <header class="page-header">
                 <h1>
-                    <a href="./bootzooka-akka-http-vs-scalatra.html"
+                    <a href="https://hanskoff.github.io/bootzooka-akka-http-vs-scalatra.html"
                        rel="bookmark"
                        title="Permalink to Performance akka-http vs scalatra">
                         Performance akka-http vs scalatra
@@ -85,16 +100,18 @@ johny's blog            </a>
 
 
 
+
+
 <span class="label label-default">Tags</span>
-	<a href="./tag/bootzooka.html">bootzooka</a>
+	<a href="https://hanskoff.github.io/tag/bootzooka.html">bootzooka</a>
         /
-	<a href="./tag/scala.html">scala</a>
+	<a href="https://hanskoff.github.io/tag/scala.html">scala</a>
         /
-	<a href="./tag/scalatra.html">scalatra</a>
+	<a href="https://hanskoff.github.io/tag/scalatra.html">scalatra</a>
         /
-	<a href="./tag/akka-http.html">akka-http</a>
+	<a href="https://hanskoff.github.io/tag/akka-http.html">akka-http</a>
         /
-	<a href="./tag/gatling.html">gatling</a>
+	<a href="https://hanskoff.github.io/tag/gatling.html">gatling</a>
     
 </footer><!-- /.post-info -->                    </div>
                 </div>
@@ -393,7 +410,7 @@ There were 13 timeouts, so maybe because of JIT compilation, let's run test a se
 
 <h4>Memory usage</h4>
 <p>In both cases, memory usage is comparable, I saw same 99.97% of jvm code throughput and even almost same number of GC pauses. I have two files but nothing spectacular here. The upper window is akka-http bootzooka version the lower is scalatra version.</p>
-<p><img alt="GCviewer bootzooka comparision" src="./blog/img/gcviewer.png" /></p>
+<p><img alt="GCviewer bootzooka comparision" src="https://hanskoff.github.io/blog/img/gcviewer.png" /></p>
 <ul>
 <li>newjvm-2016-03-29_15-11-42.log</li>
 <li>oldjvm-2016-03-29_15-33-13.log</li>
@@ -497,8 +514,8 @@ table {
 </thead>
 <tbody>
 <tr>
-<td><img alt="second round bootzooka comparision" src="./blog/img/secondRoundDuration.png" /></td>
-<td><img alt="second round bootzooka comparision" src="./blog/img/secondRoundRps.png" /></td>
+<td><img alt="second round bootzooka comparision" src="https://hanskoff.github.io/blog/img/secondRoundDuration.png" /></td>
+<td><img alt="second round bootzooka comparision" src="https://hanskoff.github.io/blog/img/secondRoundRps.png" /></td>
 </tr>
 </tbody>
 </table>
@@ -621,8 +638,8 @@ table {
 </thead>
 <tbody>
 <tr>
-<td><img alt="second round bootzooka comparision" src="./blog/img/finalRoundDuration.png" /></td>
-<td><img alt="second round bootzooka comparision" src="./blog/img/finalRoundRps.png" /></td>
+<td><img alt="second round bootzooka comparision" src="https://hanskoff.github.io/blog/img/finalRoundDuration.png" /></td>
+<td><img alt="second round bootzooka comparision" src="https://hanskoff.github.io/blog/img/finalRoundRps.png" /></td>
 </tr>
 </tbody>
 </table>
@@ -681,7 +698,7 @@ table {
             var disqus_shortname = 'hanskoff'; // required: replace example with your forum shortname
 
                     var disqus_identifier = 'bootzooka-akka-http-vs-scalatra';
-                var disqus_url = './bootzooka-akka-http-vs-scalatra.html';
+                var disqus_url = 'https://hanskoff.github.io/bootzooka-akka-http-vs-scalatra.html';
 
             var disqus_config = function () {
                 this.language = "en";
@@ -719,13 +736,13 @@ table {
       </div>
    </div>
 </footer>
-<script src="./theme/js/jquery.min.js"></script>
+<script src="https://hanskoff.github.io/theme/js/jquery.min.js"></script>
 
 <!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="./theme/js/bootstrap.min.js"></script>
+<script src="https://hanskoff.github.io/theme/js/bootstrap.min.js"></script>
 
 <!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
-<script src="./theme/js/respond.min.js"></script>
+<script src="https://hanskoff.github.io/theme/js/respond.min.js"></script>
 
     <!-- Disqus -->
     <script type="text/javascript">
@@ -759,5 +776,6 @@ table {
         })();
     </script>
     <!-- End Google Analytics Code -->
+
 </body>
 </html>
