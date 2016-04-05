@@ -410,7 +410,7 @@ There were 13 timeouts, so maybe because of JIT compilation, let's run test a se
 
 <h4>Memory usage</h4>
 <p>In both cases, memory usage is comparable, I saw same 99.97% of jvm code throughput and even almost same number of GC pauses. I have two files but nothing spectacular here. The upper window is akka-http bootzooka version the lower is scalatra version.</p>
-<p><img src="https://hanskoff.github.io/blog/img/gcviewer.png" alt="GCviewer bootzooka comparision" style="width: 1000px; height:1000px;" /></p>
+<p><img src="https://hanskoff.github.io/blog/img/gcviewer.jpg" alt="GCviewer bootzooka comparision" style="width: 1000px; height:1000px;" /></p>
 <ul>
 <li>newjvm-2016-03-29_15-11-42.log</li>
 <li>oldjvm-2016-03-29_15-33-13.log</li>
@@ -505,20 +505,17 @@ table {
 <li>succesCount = number of requests</li>
 <li>min, p50, p95, p99, max, avg, stddev = miliseconds</li>
 </ul>
-<table>
-  <thead>
-    <tr>
-      <th>test duration (test takes longer when errors appear)</th>
-      <th>duration &amp; throughput</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><img src="https://hanskoff.github.io/blog/img/secondRoundDuration.png" alt="second round bootzooka comparision" style="width: 524px; height:350px;" /></td>
-      <td><img src="https://hanskoff.github.io/blog/img/secondRoundRps.png" alt="second round bootzooka comparision" style="width: 524px; height:350px;" /></td>
-    </tr>
-  </tbody>
-</table>
+<div class="row">
+  <div class="col-md-4">errors
+    <img src="https://hanskoff.github.io/blog/img/secondErrors.jpg" alt="second round bootzooka comparision" />
+  </div>
+  <div class="col-md-4">duration
+    <img src="https://hanskoff.github.io/blog/img/secondDuration.jpg" alt="second round bootzooka comparision" />
+  </div>
+  <div class="col-md-4">throughput
+    <img src="https://hanskoff.github.io/blog/img/secondRps.jpg" alt="second round bootzooka comparision" />
+  </div>
+</div>
 
 <h4>Comparison of best runs for 200 users:</h4>
 <table>
@@ -630,20 +627,17 @@ table {
 </tr>
 </tbody>
 </table>
-<table>
-  <thead>
-    <tr>
-      <th>test duration (test takes longer when errors appear)</th>
-      <th>duration &amp; throughput</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><img src="https://hanskoff.github.io/blog/img/finalRoundDuration.png" alt="final round bootzooka comparision" style="width: 524px; height:350px;" /></td>
-      <td><img src="https://hanskoff.github.io/blog/img/finalRoundRps.png" alt="final round bootzooka comparision" style="width: 524px; height:350px;" /></td>
-    </tr>
-  </tbody>
-</table>
+<div class="row">
+  <div class="col-md-4">errors
+    <img src="https://hanskoff.github.io/blog/img/finalErrors.jpg" alt="final round bootzooka comparision" />
+  </div>
+  <div class="col-md-4">duration
+    <img src="https://hanskoff.github.io/blog/img/finalDuration.jpg" alt="final round bootzooka comparision" />
+  </div>
+  <div class="col-md-4">throughput
+    <img src="https://hanskoff.github.io/blog/img/finalRps.jpg" alt="final round bootzooka comparision" />
+  </div>
+</div>
 
 <h4>Comparison for 800 users (where akka-http started to have a problems):</h4>
 <table>

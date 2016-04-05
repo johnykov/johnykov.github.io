@@ -294,7 +294,7 @@ There were 13 timeouts, so maybe because of JIT compilation, let's run test a se
 
 &lt;h4&gt;Memory usage&lt;/h4&gt;
 &lt;p&gt;In both cases, memory usage is comparable, I saw same 99.97% of jvm code throughput and even almost same number of GC pauses. I have two files but nothing spectacular here. The upper window is akka-http bootzooka version the lower is scalatra version.&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://hanskoff.github.io/blog/img/gcviewer.png" alt="GCviewer bootzooka comparision" style="width: 1000px; height:1000px;" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://hanskoff.github.io/blog/img/gcviewer.jpg" alt="GCviewer bootzooka comparision" style="width: 1000px; height:1000px;" /&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;newjvm-2016-03-29_15-11-42.log&lt;/li&gt;
 &lt;li&gt;oldjvm-2016-03-29_15-33-13.log&lt;/li&gt;
@@ -389,20 +389,17 @@ table {
 &lt;li&gt;succesCount = number of requests&lt;/li&gt;
 &lt;li&gt;min, p50, p95, p99, max, avg, stddev = miliseconds&lt;/li&gt;
 &lt;/ul&gt;
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th&gt;test duration (test takes longer when errors appear)&lt;/th&gt;
-      &lt;th&gt;duration &amp;amp; throughput&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;img src="https://hanskoff.github.io/blog/img/secondRoundDuration.png" alt="second round bootzooka comparision" style="width: 524px; height:350px;" /&gt;&lt;/td&gt;
-      &lt;td&gt;&lt;img src="https://hanskoff.github.io/blog/img/secondRoundRps.png" alt="second round bootzooka comparision" style="width: 524px; height:350px;" /&gt;&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
+&lt;div class="row"&gt;
+  &lt;div class="col-md-4"&gt;errors
+    &lt;img src="https://hanskoff.github.io/blog/img/secondErrors.jpg" alt="second round bootzooka comparision" /&gt;
+  &lt;/div&gt;
+  &lt;div class="col-md-4"&gt;duration
+    &lt;img src="https://hanskoff.github.io/blog/img/secondDuration.jpg" alt="second round bootzooka comparision" /&gt;
+  &lt;/div&gt;
+  &lt;div class="col-md-4"&gt;throughput
+    &lt;img src="https://hanskoff.github.io/blog/img/secondRps.jpg" alt="second round bootzooka comparision" /&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
 
 &lt;h4&gt;Comparison of best runs for 200 users:&lt;/h4&gt;
 &lt;table&gt;
@@ -514,20 +511,17 @@ table {
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th&gt;test duration (test takes longer when errors appear)&lt;/th&gt;
-      &lt;th&gt;duration &amp;amp; throughput&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;img src="https://hanskoff.github.io/blog/img/finalRoundDuration.png" alt="final round bootzooka comparision" style="width: 524px; height:350px;" /&gt;&lt;/td&gt;
-      &lt;td&gt;&lt;img src="https://hanskoff.github.io/blog/img/finalRoundRps.png" alt="final round bootzooka comparision" style="width: 524px; height:350px;" /&gt;&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
+&lt;div class="row"&gt;
+  &lt;div class="col-md-4"&gt;errors
+    &lt;img src="https://hanskoff.github.io/blog/img/finalErrors.jpg" alt="final round bootzooka comparision" /&gt;
+  &lt;/div&gt;
+  &lt;div class="col-md-4"&gt;duration
+    &lt;img src="https://hanskoff.github.io/blog/img/finalDuration.jpg" alt="final round bootzooka comparision" /&gt;
+  &lt;/div&gt;
+  &lt;div class="col-md-4"&gt;throughput
+    &lt;img src="https://hanskoff.github.io/blog/img/finalRps.jpg" alt="final round bootzooka comparision" /&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
 
 &lt;h4&gt;Comparison for 800 users (where akka-http started to have a problems):&lt;/h4&gt;
 &lt;table&gt;
