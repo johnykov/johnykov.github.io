@@ -6,7 +6,7 @@
 &lt;li&gt;called by one of it's project leaders a web toolkit &lt;a href="http://doc.akka.io/docs/akka/2.4.2/scala/http/"&gt;akka-http 2.4.2&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;from a performance perspective. I find both of them very helpful but they work in different ways so the idea is to see how much that impacts the application and it's users. &lt;/p&gt;
-&lt;p&gt;Whenever you buy a car - you look at it's specification. How fast it is, how amazing is the acceleration, how much petrol does it burn, how much load it can carry. I'd like to know such metrics for tools I use to build web applications. Authors don't always publish such metrics and often Google doesn't find any. One such metric would be to compare benchmarks but there are none so let’s make a comparison.&lt;/p&gt;
+&lt;p&gt;Whenever you buy a car - you look at its specification. How fast it is, how amazing is the acceleration, how much petrol does it burn, how much load it can carry. I'd like to know such metrics for tools I use to build web applications. Authors don't always publish such metrics and often Google doesn't find any. One such metric would be to compare benchmarks but there are none so let’s make a comparison.&lt;/p&gt;
 &lt;p&gt;From the Great Jez Humble's Continuous Delivery book, introduction to chapter 9, comes the definition of app performance:&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;First of all, let’s clear up some confusion around the terms. We’ll use the same terminology as Michael Nygard.1 To paraphrase, performance is a measure of the time taken to process a single transaction, and can be measured either in isolation or under load. Throughput is the number of transactions a system can process in a given timespan. It is always limited by some bottleneck in the system.
@@ -300,7 +300,7 @@ There were 13 timeouts, so maybe because of JIT compilation, let's run test a se
 &lt;li&gt;oldjvm-2016-03-29_15-33-13.log&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h3&gt;Conclusion after scenario setup 1&lt;/h3&gt;
-&lt;p&gt;This first scenario setup is naive and should show "something" and that is &lt;code&gt;akka-http app behaves better then scalatra&lt;/code&gt; and continue to operate while getting bigger traffic too. Akka-http stops responding under much bigger load 800 users vs scalatra 200 users (mean 225 req/sec vs 50-80req/sec). It looks like akka-http version has better default configuration (thread pool size) and integrates well with &lt;a href="http://slick.typesafe.com/"&gt;slick&lt;/a&gt; (functional relational mapping tool) and hikari-cp (tool that managed database connection pool) which overall handles resources in more efficient way.&lt;/p&gt;
+&lt;p&gt;This first scenario setup is naive and should show "something" and that is &lt;code&gt;akka-http app behaves better than scalatra&lt;/code&gt; and continue to operate while getting bigger traffic too. Akka-http stops responding under much bigger load 800 users vs scalatra 200 users (mean 225 req/sec vs 50-80req/sec). It looks like akka-http version has better default configuration (thread pool size) and integrates well with &lt;a href="http://slick.typesafe.com/"&gt;slick&lt;/a&gt; (functional relational mapping tool) and hikari-cp (tool that managed database connection pool) which overall handles resources in more efficient way.&lt;/p&gt;
 &lt;style type="text/css"&gt;
 table {
   padding: 0; }
