@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>johny's blog</title><link href="https://hanskoff.github.io/" rel="alternate"></link><link href="https://hanskoff.github.io/feeds/fabtools.atom.xml" rel="self"></link><id>https://hanskoff.github.io/</id><updated>2014-04-25T14:36:00+02:00</updated><entry><title>Fabtools - Tomcat - fast provisioning</title><link href="https://hanskoff.github.io/tomcat-installation-with-fabtools.html" rel="alternate"></link><updated>2014-04-25T14:36:00+02:00</updated><author><name>johny</name></author><id>tag:hanskoff.github.io,2014-04-25:tomcat-installation-with-fabtools.html</id><summary type="html">&lt;p&gt;As every other developer I'm a fun of easy developer life. I wish all open source projects could be build right away without any previous database or ldap mocking setup. Just fire it right away! That is why I like &lt;a href="http://www.vagrantup.com/"&gt;Vagrant&lt;/a&gt; so much. &lt;/p&gt;
+&lt;p&gt;Vagrant with puppet manifests [chef|ansible|bash] might help to completely separate your local development environment from office network. From now on you can work from the basement without network connection - is't that sweet? (You might just need to mock company's ldap server). &lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The main benefit of &lt;code&gt;Vagranfile&lt;/code&gt; (Vagrant’s setup file) is that you can keep it as a code in your favorite VCS. Each team member will build his own local developement environment from scratch. You don’t need to distribute huge .vmdk files anymore. &lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;em&gt;Fabric&lt;/em&gt; is great python tool that helps you to automate many tedious tasks: copy files from one to another host, link, create users, replace configurations etc. &lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Fabtools&lt;/em&gt; is a natural extension of Fabric possibilities. The idea behind it - is comparable to that from puppet and chef. It might be considered as another provisioner. &lt;/p&gt;
+&lt;p&gt;&lt;a href="http://fabtools.readthedocs.org/en/latest/api/python.html"&gt;In current 0.18 release of fabtools&lt;/a&gt; you are be able to find tomcat module which will help you to automatically provision virtual machine on you computer with apache tomcat server within few minutes.&lt;/p&gt;
+&lt;p&gt;You might need to install&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo apt-get install python-pip
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href="http://www.vagrantup.com/"&gt;Vagrant&lt;/a&gt; &lt;/li&gt;
+&lt;li&gt;&lt;a href="https://www.virtualbox.org/"&gt;Oracle VirtualBox&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://fabfile.org"&gt;Fabric&lt;/a&gt;  &lt;/li&gt;
+&lt;li&gt;&lt;a href="http://fabtools.readthedocs.org"&gt;Fabtools&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;last two you on ubuntu can simply type in terminal:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;pip install fabric
+pip install fabtools
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Example&lt;/h2&gt;
+&lt;p&gt;All you have to do is to create fabfile.py in your directory with vagranfile. For apache tomcat server you need java first.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;fabtools&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;require&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;tomcat&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;fabtools.vagrant&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;vagrant&lt;/span&gt;
+
+&lt;span class="nd"&gt;@task&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;provision&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="n"&gt;require&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;oracle_jdk&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;installed&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;version&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;7u55-b13&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;require&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;tomcat&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;installed&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;7.0.53&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;or go and &lt;a href="https://github.com/hanskoff/vagrant-fabric"&gt;clone my github repo&lt;/a&gt;,&lt;/p&gt;
+&lt;p&gt;navigate to tomcat and:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;fab vagrant provision
+vagrant ssh
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;As puppet manifest, fabtools fabfiles might be reused to provision remote boxes.&lt;/strong&gt;&lt;/p&gt;
+&lt;h2&gt;Reusing fabfile.py to provision remote box:&lt;/h2&gt;
+&lt;p&gt;When having fabfile already built for your local dev box you can then reuse it for automation of provisioning remote boxes.
+You can define your hosts in fabfile or you can just call&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;fab -H &amp;lt;user&amp;gt;@&amp;lt;hostname&amp;gt;:&amp;lt;sshPort&amp;gt; provision
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Above command will install java and apache tomcat on any &lt;code&gt;&amp;lt;hostname&amp;gt;&lt;/code&gt; with one bash call.&lt;/p&gt;</summary><category term="tomcat"></category><category term="fabtools"></category><category term="vagrant"></category><category term="python"></category></entry></feed>

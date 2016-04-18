@@ -1,0 +1,647 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>johny's blog</title><link href="https://hanskoff.github.io/" rel="alternate"></link><link href="https://hanskoff.github.io/feeds/all.atom.xml" rel="self"></link><id>https://hanskoff.github.io/</id><updated>2016-03-29T11:28:00+02:00</updated><entry><title>Performance akka-http vs scalatra</title><link href="https://hanskoff.github.io/bootzooka-akka-http-vs-scalatra.html" rel="alternate"></link><updated>2016-03-29T11:28:00+02:00</updated><author><name>johny</name></author><id>tag:hanskoff.github.io,2016-03-29:bootzooka-akka-http-vs-scalatra.html</id><summary type="html">&lt;p&gt;&lt;a href="https://softwaremill.com/bootzooka-akka-http-based/"&gt;Some time ago we changed how Bootzooka handles HTTP requests.&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;My goal is to compare two great tools:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;complete web framework &lt;a href="http://scalatra.org/"&gt;scalatra 2.3.1&lt;/a&gt; (latest stable)&lt;/li&gt;
+&lt;li&gt;called by one of it's project leaders a web toolkit &lt;a href="http://doc.akka.io/docs/akka/2.4.2/scala/http/"&gt;akka-http 2.4.2&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;from a performance perspective. I find both of them very helpful but they work in different ways so the idea is to see how much that impacts the application and it's users. &lt;/p&gt;
+&lt;p&gt;Whenever you buy a car - you look at its specification. How fast it is, how amazing is the acceleration, how much petrol does it burn, how much load it can carry. I'd like to know such metrics for tools I use to build web applications. Authors don't always publish such metrics and often Google doesn't find any. One such metric would be to compare benchmarks but there are none so let’s make a comparison.&lt;/p&gt;
+&lt;p&gt;From the Great Jez Humble's Continuous Delivery book, introduction to chapter 9, comes the definition of app performance:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;First of all, let’s clear up some confusion around the terms. We’ll use the same terminology as Michael Nygard.1 To paraphrase, performance is a measure of the time taken to process a single transaction, and can be measured either in isolation or under load. Throughput is the number of transactions a system can process in a given timespan. It is always limited by some bottleneck in the system.
+The maximum throughput a system can sustain, for a given workload, while maintaining an acceptable response time for each individual request, is its capacity.
+Customers are usually interested in throughput or capacity. In real life, “performance” is often used as a catch-all term; we will try to be rather more careful in this chapter.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;So I’ll try to find &lt;strong&gt;throughput&lt;/strong&gt; and &lt;strong&gt;capacity&lt;/strong&gt; for each versions of bootzooka.&lt;/p&gt;
+&lt;h3&gt;Brief details of tested tools internals&lt;/h3&gt;
+&lt;p&gt;The version of Scalatra that I've tested works in synchronous &amp;amp; blocking way while akka-http is by default "reactive" (asynchronous and non-blocking - ”reactive” trait might be easily lost when the implementation is blocking, so our code also needs to process asnychronously).&lt;/p&gt;
+&lt;p&gt;Scalatra is thread based, handling servlets and requires servlet container like jetty to run, it can delegate work to akka (from its docs, never tried this one), while akka-http is actor per request, doesn't require a container and writing actor model code is more natural pattern to follow in this case. Both have comparably pleasant DSLs for writing routes.&lt;/p&gt;
+&lt;h3&gt;Setup&lt;/h3&gt;
+&lt;p&gt;Equipped with &lt;a href="http://gatling.io"&gt;gatling.io&lt;/a&gt; (for generating fake traffic of user scenarios) and GCViewer (for watching a memory consumption, this is influenced by &lt;a href="http://bandrzejczak.com/blog/2015/02/15/the-cost-of-the-garbage-collection/"&gt;Bartek's post&lt;/a&gt; to see if something spectacular is going on) I can measure what happens to my beloved framework (bootzooka) after switching web frameworks. &lt;/p&gt;
+&lt;p&gt;The test was performed on macbook pro, 2,5 GHz Intel Core i7 with 16 GB of ram.
+I use default JVM flags what is Xss=1 MB (thread stack size) and InitialHeapSize ~ 260 MB and Xmx ~ 4 GB (note: heroku 1 dyno standard is 350 MB). &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ java -XX:+PrintFlagsFinal version 
+    uintx InitialHeapSize                          :&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;268435456&lt;/span&gt;                           
+    uintx MaxHeapSize                              :&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;4294967296&lt;/span&gt;                          
+    uintx MaxNewSize                               :&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;1431306240&lt;/span&gt;                          
+    uintx NewSize                                  :&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;89128960&lt;/span&gt;                            
+    uintx OldSize                                  :&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;179306496&lt;/span&gt;                           
+     intx &lt;span class="nv"&gt;ThreadStackSize&lt;/span&gt;                           &lt;span class="o"&gt;=&lt;/span&gt; 1024
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;I’m running postgres 9.4 database locally with two separate schemas one for each scalatra and akka-http versions of bootzooka. So database configuration is same for each system. Gatling scenarios are being run on same local machine as bootzooka backends are deployed ( frontend is written in angular and it’s performance is fine). &lt;strong&gt;This configuration is a kind of “lab environment” where network latency and bandwidth doesn’t play any role, there is no data transmission over the wire what often is the main issue of webapp performance.&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://github.com/softwaremill/bootzooka/tree/446255c88"&gt;Scalatra bootzooka version (tag last-scalatra)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/softwaremill/bootzooka/tree/83827361"&gt;Akka-http bootzooka version for this commit&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/hanskoff/gatling-bootzooka"&gt;Repository with simple scenario for the test&lt;/a&gt; &lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;Provisioning&lt;/h4&gt;
+&lt;p&gt;The &lt;code&gt;newbootzooka&lt;/code&gt; schema is for akka-http bootzooka version and &lt;code&gt;oldbootzooka&lt;/code&gt; schema is for scalatra.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;DATABASE_URL&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;postgres://newbootzooka:newbootzooka@localhost:5432/newbootzooka &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+java -Dserver.port&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;8081&lt;/span&gt; -Xloggc:newbootzooka-&lt;span class="k"&gt;$(&lt;/span&gt;date +&lt;span class="s2"&gt;&amp;quot;%Y-%m-%d_%H-%M-%S&amp;quot;&lt;/span&gt;&lt;span class="k"&gt;)&lt;/span&gt;.log &lt;span class="se"&gt;\&lt;/span&gt;
+-XX:+PrintGCDetails -XX:+PrintGCDateStamps -verbose:gc -jar new-bootzooka/bootzooka.jar
+
+&lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;DATABASE_URL&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;postgres://oldbootzooka:oldbootzooka@localhost:5432/oldbootzooka &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+java -Dembedded-jetty.port&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;8082&lt;/span&gt; -Xloggc:oldbootzooka-&lt;span class="k"&gt;$(&lt;/span&gt;date +&lt;span class="s2"&gt;&amp;quot;%Y-%m-%d_%H-%M-%S&amp;quot;&lt;/span&gt;&lt;span class="k"&gt;)&lt;/span&gt;.log &lt;span class="se"&gt;\&lt;/span&gt;
+-XX:+PrintGCDetails -XX:+PrintGCDateStamps -verbose:gc -jar old-bootzooka/bootzooka.jar
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;Scenario&lt;/h3&gt;
+&lt;p&gt;It’s very basic as bootzooka doesn’t do complicated stuff. In the first step user goes to &lt;code&gt;/&lt;/code&gt;, waits for http 200 code and in second sends post request (to &lt;code&gt;/api/users/register&lt;/code&gt;) to register himself and awaits for &lt;code&gt;success&lt;/code&gt; string in response body.&lt;/p&gt;
+&lt;h4&gt;Scenario setup 1&lt;/h4&gt;
+&lt;p&gt;Throwing at each system 200 users at once just to see what happens &lt;a href="https://github.com/hanskoff/gatling-bootzooka/blob/master/src/test/scala/pl/jan/BootzookaRegistrationScn.scala"&gt;BootzookaRegistrationScn&lt;/a&gt;&lt;/p&gt;
+&lt;h3&gt;Bootzooka akka-http version:&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;./gradlew -Dserver.port&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;8081&lt;/span&gt; loadTest
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;First round results:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;================================================================================&lt;/span&gt;
+---- Global Information --------------------------------------------------------
+&amp;gt; request count                                        &lt;span class="m"&gt;400&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;387&lt;/span&gt;    &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;13&lt;/span&gt;    &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; min response &lt;span class="nb"&gt;time&lt;/span&gt;                                     &lt;span class="m"&gt;18&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;18&lt;/span&gt;     &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;111&lt;/span&gt;   &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; max response &lt;span class="nb"&gt;time&lt;/span&gt;                                   &lt;span class="m"&gt;3991&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;3991&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1227&lt;/span&gt;  &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; mean response &lt;span class="nb"&gt;time&lt;/span&gt;                                  &lt;span class="m"&gt;1364&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1397&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;403&lt;/span&gt;   &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; std deviation                                       &lt;span class="m"&gt;1226&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1232&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;331&lt;/span&gt;   &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; response &lt;span class="nb"&gt;time&lt;/span&gt; 50th percentile                        &lt;span class="m"&gt;957&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1103&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;333&lt;/span&gt;   &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; response &lt;span class="nb"&gt;time&lt;/span&gt; 75th percentile                       &lt;span class="m"&gt;2445&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2446&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;552&lt;/span&gt;   &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; mean requests/sec                                 79.586 &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;77&lt;/span&gt;     &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;2.587 &lt;span class="o"&gt;)&lt;/span&gt;
+---- Response Time Distribution ------------------------------------------------
+&amp;gt; t &amp;lt; &lt;span class="m"&gt;800&lt;/span&gt; ms                                           &lt;span class="m"&gt;170&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 43%&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; &lt;span class="m"&gt;800&lt;/span&gt; ms &amp;lt; t &amp;lt; &lt;span class="m"&gt;1200&lt;/span&gt; ms                                  &lt;span class="m"&gt;33&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;  8%&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; t &amp;gt; &lt;span class="m"&gt;1200&lt;/span&gt; ms                                          &lt;span class="m"&gt;184&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 46%&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; failed                                                &lt;span class="m"&gt;13&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;  3%&lt;span class="o"&gt;)&lt;/span&gt;
+---- Errors --------------------------------------------------------------------
+&amp;gt; java.net.ConnectException: Connection reset by peer                &lt;span class="m"&gt;13&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;100.0%&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;================================================================================&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;You can see there was 400 requests as each user makes 2 requests.
+There were 13 timeouts, so maybe because of JIT compilation, let's run test a second round:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;================================================================================&lt;/span&gt;
+---- Global Information --------------------------------------------------------
+&amp;gt; request count                                        &lt;span class="m"&gt;400&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;400&lt;/span&gt;    &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;     &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; min response &lt;span class="nb"&gt;time&lt;/span&gt;                                      &lt;span class="m"&gt;7&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;7&lt;/span&gt;      &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-     &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; max response &lt;span class="nb"&gt;time&lt;/span&gt;                                    &lt;span class="m"&gt;679&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;679&lt;/span&gt;    &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-     &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; mean response &lt;span class="nb"&gt;time&lt;/span&gt;                                   &lt;span class="m"&gt;193&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;193&lt;/span&gt;    &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-     &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; std deviation                                        &lt;span class="m"&gt;215&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;215&lt;/span&gt;    &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-     &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; response &lt;span class="nb"&gt;time&lt;/span&gt; 50th percentile                         &lt;span class="m"&gt;45&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;45&lt;/span&gt;     &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-     &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; response &lt;span class="nb"&gt;time&lt;/span&gt; 75th percentile                        &lt;span class="m"&gt;404&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;404&lt;/span&gt;    &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-     &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; mean requests/sec                                171.969 &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;171.969 &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-     &lt;span class="o"&gt;)&lt;/span&gt;
+---- Response Time Distribution ------------------------------------------------
+&amp;gt; t &amp;lt; &lt;span class="m"&gt;800&lt;/span&gt; ms                                           &lt;span class="m"&gt;400&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;100%&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; &lt;span class="m"&gt;800&lt;/span&gt; ms &amp;lt; t &amp;lt; &lt;span class="m"&gt;1200&lt;/span&gt; ms                                   &lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;  0%&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; t &amp;gt; &lt;span class="m"&gt;1200&lt;/span&gt; ms                                            &lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;  0%&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; failed                                                 &lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;  0%&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;================================================================================&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Looks good, how about doubling number to 400 users at once, third round:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;================================================================================&lt;/span&gt;
+---- Global Information --------------------------------------------------------
+&amp;gt; request count                                        &lt;span class="m"&gt;800&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;800&lt;/span&gt;    &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;     &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; min response &lt;span class="nb"&gt;time&lt;/span&gt;                                      &lt;span class="m"&gt;7&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;7&lt;/span&gt;      &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-     &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; max response &lt;span class="nb"&gt;time&lt;/span&gt;                                   &lt;span class="m"&gt;1443&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1443&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-     &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; mean response &lt;span class="nb"&gt;time&lt;/span&gt;                                   &lt;span class="m"&gt;440&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;440&lt;/span&gt;    &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-     &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; std deviation                                        &lt;span class="m"&gt;471&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;471&lt;/span&gt;    &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-     &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; response &lt;span class="nb"&gt;time&lt;/span&gt; 50th percentile                        &lt;span class="m"&gt;200&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;200&lt;/span&gt;    &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-     &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; response &lt;span class="nb"&gt;time&lt;/span&gt; 75th percentile                        &lt;span class="m"&gt;920&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;920&lt;/span&gt;    &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-     &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; mean requests/sec                                212.993 &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;212.993 &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-     &lt;span class="o"&gt;)&lt;/span&gt;
+---- Response Time Distribution ------------------------------------------------
+&amp;gt; t &amp;lt; &lt;span class="m"&gt;800&lt;/span&gt; ms                                           &lt;span class="m"&gt;541&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 68%&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; &lt;span class="m"&gt;800&lt;/span&gt; ms &amp;lt; t &amp;lt; &lt;span class="m"&gt;1200&lt;/span&gt; ms                                 &lt;span class="m"&gt;183&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 23%&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; t &amp;gt; &lt;span class="m"&gt;1200&lt;/span&gt; ms                                           &lt;span class="m"&gt;76&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 10%&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; failed                                                 &lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;  0%&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;================================================================================&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;No failed requests, mean req/sec ~ 212. Let's double users for forth round:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;================================================================================&lt;/span&gt;
+---- Global Information --------------------------------------------------------
+&amp;gt; request count                                       &lt;span class="m"&gt;1600&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1565&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;35&lt;/span&gt;    &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; min response &lt;span class="nb"&gt;time&lt;/span&gt;                                      &lt;span class="m"&gt;4&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;      &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;159&lt;/span&gt;   &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; max response &lt;span class="nb"&gt;time&lt;/span&gt;                                   &lt;span class="m"&gt;4167&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4167&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1625&lt;/span&gt;  &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; mean response &lt;span class="nb"&gt;time&lt;/span&gt;                                  &lt;span class="m"&gt;1016&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1016&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;991&lt;/span&gt;   &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; std deviation                                       &lt;span class="m"&gt;1032&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1041&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;428&lt;/span&gt;   &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; response &lt;span class="nb"&gt;time&lt;/span&gt; 50th percentile                        &lt;span class="m"&gt;896&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;895&lt;/span&gt;    &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1285&lt;/span&gt;  &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; response &lt;span class="nb"&gt;time&lt;/span&gt; 75th percentile                       &lt;span class="m"&gt;1515&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1519&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1288&lt;/span&gt;  &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; mean requests/sec                                228.571 &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;223.571 &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;5&lt;/span&gt;     &lt;span class="o"&gt;)&lt;/span&gt;
+---- Response Time Distribution ------------------------------------------------
+&amp;gt; t &amp;lt; &lt;span class="m"&gt;800&lt;/span&gt; ms                                           &lt;span class="m"&gt;720&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 45%&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; &lt;span class="m"&gt;800&lt;/span&gt; ms &amp;lt; t &amp;lt; &lt;span class="m"&gt;1200&lt;/span&gt; ms                                 &lt;span class="m"&gt;157&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 10%&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; t &amp;gt; &lt;span class="m"&gt;1200&lt;/span&gt; ms                                          &lt;span class="m"&gt;688&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 43%&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; failed                                                &lt;span class="m"&gt;35&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;  2%&lt;span class="o"&gt;)&lt;/span&gt;
+---- Errors --------------------------------------------------------------------
+&amp;gt; java.net.ConnectException: Connection reset by peer                &lt;span class="m"&gt;35&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;100.0%&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;================================================================================&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;2% of failed requests but no error in logs (maybe we don't handle that case yet). And in logs I've found:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;java.sql.SQLTimeoutException: Timeout after 1015ms of waiting for a connection.
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;and more:&lt;/p&gt;
+&lt;p&gt;13:53:45.304 [main-akka.actor.default-dispatcher-82] ERROR c.s.b.Main$$anon$1 - Exception during client request processing: Task slick.backend.DatabaseComponent$DatabaseDef$$anon$2@71688eb2 rejected from java.util.concurrent.ThreadPoolExecutor@4131e49e[Running, pool size = 20, active threads = 20, queued tasks = 1000, completed tasks = 4067]&lt;/p&gt;
+&lt;p&gt;Let's repeat, same setup, fifth round:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;================================================================================&lt;/span&gt;
+---- Global Information --------------------------------------------------------
+&amp;gt; request count                                       &lt;span class="m"&gt;1600&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1600&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;     &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; min response &lt;span class="nb"&gt;time&lt;/span&gt;                                      &lt;span class="m"&gt;4&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;      &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-     &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; max response &lt;span class="nb"&gt;time&lt;/span&gt;                                   &lt;span class="m"&gt;1905&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1905&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-     &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; mean response &lt;span class="nb"&gt;time&lt;/span&gt;                                   &lt;span class="m"&gt;378&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;378&lt;/span&gt;    &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-     &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; std deviation                                        &lt;span class="m"&gt;631&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;631&lt;/span&gt;    &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-     &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; response &lt;span class="nb"&gt;time&lt;/span&gt; 50th percentile                         &lt;span class="m"&gt;57&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;57&lt;/span&gt;     &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-     &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; response &lt;span class="nb"&gt;time&lt;/span&gt; 75th percentile                        &lt;span class="m"&gt;300&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;300&lt;/span&gt;    &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-     &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; mean requests/sec                                225.384 &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;225.384 &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-     &lt;span class="o"&gt;)&lt;/span&gt;
+---- Response Time Distribution ------------------------------------------------
+&amp;gt; t &amp;lt; &lt;span class="m"&gt;800&lt;/span&gt; ms                                          &lt;span class="m"&gt;1310&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 82%&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; &lt;span class="m"&gt;800&lt;/span&gt; ms &amp;lt; t &amp;lt; &lt;span class="m"&gt;1200&lt;/span&gt; ms                                  &lt;span class="m"&gt;23&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;  1%&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; t &amp;gt; &lt;span class="m"&gt;1200&lt;/span&gt; ms                                          &lt;span class="m"&gt;267&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 17%&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; failed                                                 &lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;  0%&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;================================================================================&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;No failed requests this time,75th percentile means: 75% of requests handled within below 300 milliseconds.&lt;/p&gt;
+&lt;h3&gt;Bootzooka scalatra version:&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;./gradlew -Dserver.port&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;8082&lt;/span&gt; loadTest
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;First round: &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;================================================================================&lt;/span&gt;
+---- Global Information --------------------------------------------------------
+&amp;gt; request count                                        &lt;span class="m"&gt;400&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;284&lt;/span&gt;    &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;116&lt;/span&gt;   &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; min response &lt;span class="nb"&gt;time&lt;/span&gt;                                     &lt;span class="m"&gt;61&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;61&lt;/span&gt;     &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;10486&lt;/span&gt; &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; max response &lt;span class="nb"&gt;time&lt;/span&gt;                                  &lt;span class="m"&gt;11823&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;11823&lt;/span&gt;  &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;11805&lt;/span&gt; &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; mean response &lt;span class="nb"&gt;time&lt;/span&gt;                                  &lt;span class="m"&gt;5800&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;3502&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;11426&lt;/span&gt; &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; std deviation                                       &lt;span class="m"&gt;5640&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;5156&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;199&lt;/span&gt;   &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; response &lt;span class="nb"&gt;time&lt;/span&gt; 50th percentile                       &lt;span class="m"&gt;1747&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;224&lt;/span&gt;    &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;11447&lt;/span&gt; &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; response &lt;span class="nb"&gt;time&lt;/span&gt; 75th percentile                      &lt;span class="m"&gt;11470&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;11334&lt;/span&gt;  &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;11571&lt;/span&gt; &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; mean requests/sec                                 31.464 &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;22.339 &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;9.125 &lt;span class="o"&gt;)&lt;/span&gt;
+---- Response Time Distribution ------------------------------------------------
+&amp;gt; t &amp;lt; &lt;span class="m"&gt;800&lt;/span&gt; ms                                           &lt;span class="m"&gt;200&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 50%&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; &lt;span class="m"&gt;800&lt;/span&gt; ms &amp;lt; t &amp;lt; &lt;span class="m"&gt;1200&lt;/span&gt; ms                                   &lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;  0%&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; t &amp;gt; &lt;span class="m"&gt;1200&lt;/span&gt; ms                                           &lt;span class="m"&gt;84&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 21%&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; failed                                               &lt;span class="m"&gt;116&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 29%&lt;span class="o"&gt;)&lt;/span&gt;
+---- Errors --------------------------------------------------------------------
+&amp;gt; regex&lt;span class="o"&gt;(&lt;/span&gt;success&lt;span class="o"&gt;)&lt;/span&gt;.find&lt;span class="o"&gt;(&lt;/span&gt;0&lt;span class="o"&gt;)&lt;/span&gt;.exists, found nothing                      &lt;span class="m"&gt;116&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;100.0%&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;================================================================================&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;116 failed request, same case let's give a JIT a chance. Second round: &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;================================================================================&lt;/span&gt;
+---- Global Information --------------------------------------------------------
+&amp;gt; request count                                        &lt;span class="m"&gt;400&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;327&lt;/span&gt;    &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;73&lt;/span&gt;    &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; min response &lt;span class="nb"&gt;time&lt;/span&gt;                                      &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;      &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4298&lt;/span&gt;  &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; max response &lt;span class="nb"&gt;time&lt;/span&gt;                                   &lt;span class="m"&gt;5015&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;5015&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4773&lt;/span&gt;  &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; mean response &lt;span class="nb"&gt;time&lt;/span&gt;                                  &lt;span class="m"&gt;2016&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1449&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4556&lt;/span&gt;  &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; std deviation                                       &lt;span class="m"&gt;2279&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2143&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;101&lt;/span&gt;   &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; response &lt;span class="nb"&gt;time&lt;/span&gt; 50th percentile                         &lt;span class="m"&gt;67&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;53&lt;/span&gt;     &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4576&lt;/span&gt;  &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; response &lt;span class="nb"&gt;time&lt;/span&gt; 75th percentile                       &lt;span class="m"&gt;4623&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4583&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4627&lt;/span&gt;  &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; mean requests/sec                                 67.261 &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;54.986 &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;12.275&lt;span class="o"&gt;)&lt;/span&gt;
+---- Response Time Distribution ------------------------------------------------
+&amp;gt; t &amp;lt; &lt;span class="m"&gt;800&lt;/span&gt; ms                                           &lt;span class="m"&gt;222&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 56%&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; &lt;span class="m"&gt;800&lt;/span&gt; ms &amp;lt; t &amp;lt; &lt;span class="m"&gt;1200&lt;/span&gt; ms                                   &lt;span class="m"&gt;6&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;  2%&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; t &amp;gt; &lt;span class="m"&gt;1200&lt;/span&gt; ms                                           &lt;span class="m"&gt;99&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 25%&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; failed                                                &lt;span class="m"&gt;73&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 18%&lt;span class="o"&gt;)&lt;/span&gt;
+---- Errors --------------------------------------------------------------------
+&amp;gt; regex&lt;span class="o"&gt;(&lt;/span&gt;success&lt;span class="o"&gt;)&lt;/span&gt;.find&lt;span class="o"&gt;(&lt;/span&gt;0&lt;span class="o"&gt;)&lt;/span&gt;.exists, found nothing                       &lt;span class="m"&gt;73&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;100.0%&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;================================================================================&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;73 failed, ok it's better then 116 but let's keep it warming. Third round: &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;================================================================================&lt;/span&gt;
+---- Global Information --------------------------------------------------------
+&amp;gt; request count                                        &lt;span class="m"&gt;400&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;357&lt;/span&gt;    &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;43&lt;/span&gt;    &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; min response &lt;span class="nb"&gt;time&lt;/span&gt;                                      &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;      &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;3261&lt;/span&gt;  &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; max response &lt;span class="nb"&gt;time&lt;/span&gt;                                   &lt;span class="m"&gt;3929&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;3929&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;3667&lt;/span&gt;  &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; mean response &lt;span class="nb"&gt;time&lt;/span&gt;                                  &lt;span class="m"&gt;1505&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1269&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;3463&lt;/span&gt;  &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; std deviation                                       &lt;span class="m"&gt;1626&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1563&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;109&lt;/span&gt;   &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; response &lt;span class="nb"&gt;time&lt;/span&gt; 50th percentile                        &lt;span class="m"&gt;291&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;250&lt;/span&gt;    &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;3468&lt;/span&gt;  &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; response &lt;span class="nb"&gt;time&lt;/span&gt; 75th percentile                       &lt;span class="m"&gt;3507&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;3462&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;3553&lt;/span&gt;  &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; mean requests/sec                                  80.89 &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;72.194 &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;8.696 &lt;span class="o"&gt;)&lt;/span&gt;
+---- Response Time Distribution ------------------------------------------------
+&amp;gt; t &amp;lt; &lt;span class="m"&gt;800&lt;/span&gt; ms                                           &lt;span class="m"&gt;229&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 57%&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; &lt;span class="m"&gt;800&lt;/span&gt; ms &amp;lt; t &amp;lt; &lt;span class="m"&gt;1200&lt;/span&gt; ms                                   &lt;span class="m"&gt;9&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;  2%&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; t &amp;gt; &lt;span class="m"&gt;1200&lt;/span&gt; ms                                          &lt;span class="m"&gt;119&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 30%&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; failed                                                &lt;span class="m"&gt;43&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 11%&lt;span class="o"&gt;)&lt;/span&gt;
+---- Errors --------------------------------------------------------------------
+&amp;gt; regex&lt;span class="o"&gt;(&lt;/span&gt;success&lt;span class="o"&gt;)&lt;/span&gt;.find&lt;span class="o"&gt;(&lt;/span&gt;0&lt;span class="o"&gt;)&lt;/span&gt;.exists, found nothing                       &lt;span class="m"&gt;43&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;100.0%&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;================================================================================&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;43 failed, number is decreasing but we see mean 80 req/sec with 11% of failures. Forth round:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;================================================================================&lt;/span&gt;
+---- Global Information --------------------------------------------------------
+&amp;gt; request count                                        &lt;span class="m"&gt;400&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;339&lt;/span&gt;    &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;61&lt;/span&gt;    &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; min response &lt;span class="nb"&gt;time&lt;/span&gt;                                      &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;      &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2005&lt;/span&gt;  &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; max response &lt;span class="nb"&gt;time&lt;/span&gt;                                   &lt;span class="m"&gt;5830&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;5830&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;5528&lt;/span&gt;  &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; mean response &lt;span class="nb"&gt;time&lt;/span&gt;                                  &lt;span class="m"&gt;2162&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1648&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;5021&lt;/span&gt;  &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; std deviation                                       &lt;span class="m"&gt;2601&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2466&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;957&lt;/span&gt;   &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; response &lt;span class="nb"&gt;time&lt;/span&gt; 50th percentile                         &lt;span class="m"&gt;61&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;21&lt;/span&gt;     &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;5370&lt;/span&gt;  &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; response &lt;span class="nb"&gt;time&lt;/span&gt; 75th percentile                       &lt;span class="m"&gt;5412&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;5318&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;5451&lt;/span&gt;  &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; mean requests/sec                                 58.651 &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;49.707 &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;8.944 &lt;span class="o"&gt;)&lt;/span&gt;
+---- Response Time Distribution ------------------------------------------------
+&amp;gt; t &amp;lt; &lt;span class="m"&gt;800&lt;/span&gt; ms                                           &lt;span class="m"&gt;230&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 58%&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; &lt;span class="m"&gt;800&lt;/span&gt; ms &amp;lt; t &amp;lt; &lt;span class="m"&gt;1200&lt;/span&gt; ms                                   &lt;span class="m"&gt;7&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;  2%&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; t &amp;gt; &lt;span class="m"&gt;1200&lt;/span&gt; ms                                          &lt;span class="m"&gt;102&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 26%&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; failed                                                &lt;span class="m"&gt;61&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 15%&lt;span class="o"&gt;)&lt;/span&gt;
+---- Errors --------------------------------------------------------------------
+&amp;gt; regex&lt;span class="o"&gt;(&lt;/span&gt;success&lt;span class="o"&gt;)&lt;/span&gt;.find&lt;span class="o"&gt;(&lt;/span&gt;0&lt;span class="o"&gt;)&lt;/span&gt;.exists, found nothing                       &lt;span class="m"&gt;61&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;100.0%&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;================================================================================&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;61 failed, looks like won't be better, however let's double users to compare it with akka-http system. Fifth round:&lt;/p&gt;
+&lt;p&gt;400 requests at once:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;================================================================================&lt;/span&gt;
+---- Global Information --------------------------------------------------------
+&amp;gt; request count                                        &lt;span class="m"&gt;800&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;572&lt;/span&gt;    &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;228&lt;/span&gt;   &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; min response &lt;span class="nb"&gt;time&lt;/span&gt;                                      &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;      &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1993&lt;/span&gt;  &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; max response &lt;span class="nb"&gt;time&lt;/span&gt;                                  &lt;span class="m"&gt;14464&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;14464&lt;/span&gt;  &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;14065&lt;/span&gt; &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; mean response &lt;span class="nb"&gt;time&lt;/span&gt;                                  &lt;span class="m"&gt;5533&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2370&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;13468&lt;/span&gt; &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; std deviation                                       &lt;span class="m"&gt;6667&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;5087&lt;/span&gt;   &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1723&lt;/span&gt;  &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; response &lt;span class="nb"&gt;time&lt;/span&gt; 50th percentile                        &lt;span class="m"&gt;116&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;35&lt;/span&gt;     &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;13728&lt;/span&gt; &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; response &lt;span class="nb"&gt;time&lt;/span&gt; 75th percentile                      &lt;span class="m"&gt;13715&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;144&lt;/span&gt;    &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;13827&lt;/span&gt; &lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; mean requests/sec                                 50.614 &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;OK&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;36.189 &lt;span class="nv"&gt;KO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;14.425&lt;span class="o"&gt;)&lt;/span&gt;
+---- Response Time Distribution ------------------------------------------------
+&amp;gt; t &amp;lt; &lt;span class="m"&gt;800&lt;/span&gt; ms                                           &lt;span class="m"&gt;458&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 57%&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; &lt;span class="m"&gt;800&lt;/span&gt; ms &amp;lt; t &amp;lt; &lt;span class="m"&gt;1200&lt;/span&gt; ms                                   &lt;span class="m"&gt;5&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;  1%&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; t &amp;gt; &lt;span class="m"&gt;1200&lt;/span&gt; ms                                          &lt;span class="m"&gt;109&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 14%&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt; failed                                               &lt;span class="m"&gt;228&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt; 29%&lt;span class="o"&gt;)&lt;/span&gt;
+---- Errors --------------------------------------------------------------------
+&amp;gt; regex&lt;span class="o"&gt;(&lt;/span&gt;success&lt;span class="o"&gt;)&lt;/span&gt;.find&lt;span class="o"&gt;(&lt;/span&gt;0&lt;span class="o"&gt;)&lt;/span&gt;.exists, found nothing                      &lt;span class="m"&gt;228&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;100.0%&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;================================================================================&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;50 mean req/sec with 29% of failed and in app logs I see:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;java.sql.SQLTimeoutException: Timeout after 1003ms of waiting for a connection.
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h4&gt;Memory usage&lt;/h4&gt;
+&lt;p&gt;In both cases, memory usage is comparable, I saw same 99.97% of jvm code throughput and even almost same number of GC pauses. I have two files but nothing spectacular here. The upper window is akka-http bootzooka version the lower is scalatra version.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://hanskoff.github.io/blog/img/gcviewer.jpg" alt="GCviewer bootzooka comparision" style="width: 1000px; height:1000px;" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;newjvm-2016-03-29_15-11-42.log&lt;/li&gt;
+&lt;li&gt;oldjvm-2016-03-29_15-33-13.log&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;Conclusion after scenario setup 1&lt;/h3&gt;
+&lt;p&gt;This first scenario setup is naive and should show "something" and that is &lt;code&gt;akka-http app behaves better than scalatra&lt;/code&gt; and continue to operate while getting bigger traffic too. Akka-http stops responding under much bigger load 800 users vs scalatra 200 users (mean 225 req/sec vs 50-80req/sec). It looks like akka-http version has better default configuration (thread pool size) and integrates well with &lt;a href="http://slick.typesafe.com/"&gt;slick&lt;/a&gt; (functional relational mapping tool) and hikari-cp (tool that managed database connection pool) which overall handles resources in more efficient way.&lt;/p&gt;
+&lt;style type="text/css"&gt;
+table {
+  padding: 0; }
+  table tr {
+    border-top: 1px solid #cccccc;
+    background-color: white;
+    margin: 0;
+    padding: 0; }
+    table tr:nth-child(2n) {
+      background-color: #f8f8f8; }
+    table tr th {
+      font-weight: bold;
+      border: 1px solid #cccccc;
+      text-align: left;
+      margin: 0;
+      padding: 6px 13px; }
+    table tr td {
+      border: 1px solid #cccccc;
+      text-align: left;
+      margin: 0;
+      padding: 6px 13px; }
+    table tr th :first-child, table tr td :first-child {
+      margin-top: 0; }
+    table tr th :last-child, table tr td :last-child {
+      margin-bottom: 0; }
+&lt;/style&gt;
+
+&lt;h4&gt;Comparison of second round of both frameworks:&lt;/h4&gt;
+&lt;p&gt;For comparison I've used &lt;a href="https://github.com/nuxeo/gatling-report"&gt;gatling-reports&lt;/a&gt; and the &lt;a href="https://github.com/nuxeo/gatling-report#output-csv-stats"&gt;legend&lt;/a&gt;.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align="center"&gt;simulation&lt;/th&gt;
+&lt;th align="center"&gt;duration&lt;/th&gt;
+&lt;th align="center"&gt;successCount&lt;/th&gt;
+&lt;th align="center"&gt;errorCount&lt;/th&gt;
+&lt;th align="center"&gt;min&lt;/th&gt;
+&lt;th align="center"&gt;p50&lt;/th&gt;
+&lt;th align="center"&gt;p95&lt;/th&gt;
+&lt;th align="center"&gt;p99&lt;/th&gt;
+&lt;th align="center"&gt;max&lt;/th&gt;
+&lt;th align="center"&gt;avg&lt;/th&gt;
+&lt;th align="center"&gt;stddev&lt;/th&gt;
+&lt;th align="center"&gt;requestPerSecond&lt;/th&gt;
+&lt;th align="center"&gt;apdex&lt;/th&gt;
+&lt;th align="center"&gt;rating&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align="center"&gt;akka-http&lt;/td&gt;
+&lt;td align="center"&gt;1.98&lt;/td&gt;
+&lt;td align="center"&gt;400&lt;/td&gt;
+&lt;td align="center"&gt;0&lt;/td&gt;
+&lt;td align="center"&gt;4&lt;/td&gt;
+&lt;td align="center"&gt;43&lt;/td&gt;
+&lt;td align="center"&gt;581&lt;/td&gt;
+&lt;td align="center"&gt;678&lt;/td&gt;
+&lt;td align="center"&gt;679&lt;/td&gt;
+&lt;td align="center"&gt;191.2&lt;/td&gt;
+&lt;td align="center"&gt;217&lt;/td&gt;
+&lt;td align="center"&gt;201.71&lt;/td&gt;
+&lt;td align="center"&gt;1&lt;/td&gt;
+&lt;td align="center"&gt;Excellent&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align="center"&gt;scalatra&lt;/td&gt;
+&lt;td align="center"&gt;5.48&lt;/td&gt;
+&lt;td align="center"&gt;327&lt;/td&gt;
+&lt;td align="center"&gt;73&lt;/td&gt;
+&lt;td align="center"&gt;0&lt;/td&gt;
+&lt;td align="center"&gt;65&lt;/td&gt;
+&lt;td align="center"&gt;4901&lt;/td&gt;
+&lt;td align="center"&gt;4984&lt;/td&gt;
+&lt;td align="center"&gt;5015&lt;/td&gt;
+&lt;td align="center"&gt;2014.55&lt;/td&gt;
+&lt;td align="center"&gt;2284&lt;/td&gt;
+&lt;td align="center"&gt;59.73&lt;/td&gt;
+&lt;td align="center"&gt;0.79&lt;/td&gt;
+&lt;td align="center"&gt;Fair&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;ul&gt;
+&lt;li&gt;duration = seconds&lt;/li&gt;
+&lt;li&gt;succesCount = number of requests&lt;/li&gt;
+&lt;li&gt;min, p50, p95, p99, max, avg, stddev = miliseconds&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="row"&gt;
+  &lt;div class="col-md-4"&gt;errors
+    &lt;img src="https://hanskoff.github.io/blog/img/secondErrors.jpg" alt="second round bootzooka comparision" /&gt;
+  &lt;/div&gt;
+  &lt;div class="col-md-4"&gt;duration
+    &lt;img src="https://hanskoff.github.io/blog/img/secondDuration.jpg" alt="second round bootzooka comparision" /&gt;
+  &lt;/div&gt;
+  &lt;div class="col-md-4"&gt;throughput
+    &lt;img src="https://hanskoff.github.io/blog/img/secondRps.jpg" alt="second round bootzooka comparision" /&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h4&gt;Comparison of best runs for 200 users:&lt;/h4&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align="center"&gt;simulation&lt;/th&gt;
+&lt;th align="center"&gt;duration&lt;/th&gt;
+&lt;th align="center"&gt;successCount&lt;/th&gt;
+&lt;th align="center"&gt;errorCount&lt;/th&gt;
+&lt;th align="center"&gt;min&lt;/th&gt;
+&lt;th align="center"&gt;p50&lt;/th&gt;
+&lt;th align="center"&gt;p95&lt;/th&gt;
+&lt;th align="center"&gt;p99&lt;/th&gt;
+&lt;th align="center"&gt;max&lt;/th&gt;
+&lt;th align="center"&gt;avg&lt;/th&gt;
+&lt;th align="center"&gt;stddev&lt;/th&gt;
+&lt;th align="center"&gt;requestPerSecond&lt;/th&gt;
+&lt;th align="center"&gt;apdex&lt;/th&gt;
+&lt;th align="center"&gt;rating&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align="center"&gt;akka-http&lt;/td&gt;
+&lt;td align="center"&gt;1.98&lt;/td&gt;
+&lt;td align="center"&gt;400&lt;/td&gt;
+&lt;td align="center"&gt;0&lt;/td&gt;
+&lt;td align="center"&gt;4&lt;/td&gt;
+&lt;td align="center"&gt;43&lt;/td&gt;
+&lt;td align="center"&gt;581&lt;/td&gt;
+&lt;td align="center"&gt;678&lt;/td&gt;
+&lt;td align="center"&gt;679&lt;/td&gt;
+&lt;td align="center"&gt;191.2&lt;/td&gt;
+&lt;td align="center"&gt;217&lt;/td&gt;
+&lt;td align="center"&gt;201.71&lt;/td&gt;
+&lt;td align="center"&gt;1&lt;/td&gt;
+&lt;td align="center"&gt;Excellent&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align="center"&gt;scalatra&lt;/td&gt;
+&lt;td align="center"&gt;4.49&lt;/td&gt;
+&lt;td align="center"&gt;357&lt;/td&gt;
+&lt;td align="center"&gt;43&lt;/td&gt;
+&lt;td align="center"&gt;0&lt;/td&gt;
+&lt;td align="center"&gt;259&lt;/td&gt;
+&lt;td align="center"&gt;3770&lt;/td&gt;
+&lt;td align="center"&gt;3869&lt;/td&gt;
+&lt;td align="center"&gt;3928&lt;/td&gt;
+&lt;td align="center"&gt;1473.31&lt;/td&gt;
+&lt;td align="center"&gt;1654&lt;/td&gt;
+&lt;td align="center"&gt;79.49&lt;/td&gt;
+&lt;td align="center"&gt;0.8&lt;/td&gt;
+&lt;td align="center"&gt;Fair&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h4&gt;Comparison for 400 users:&lt;/h4&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align="center"&gt;simulation&lt;/th&gt;
+&lt;th align="center"&gt;duration&lt;/th&gt;
+&lt;th align="center"&gt;successCount&lt;/th&gt;
+&lt;th align="center"&gt;errorCount&lt;/th&gt;
+&lt;th align="center"&gt;min&lt;/th&gt;
+&lt;th align="center"&gt;p50&lt;/th&gt;
+&lt;th align="center"&gt;p95&lt;/th&gt;
+&lt;th align="center"&gt;p99&lt;/th&gt;
+&lt;th align="center"&gt;max&lt;/th&gt;
+&lt;th align="center"&gt;avg&lt;/th&gt;
+&lt;th align="center"&gt;stddev&lt;/th&gt;
+&lt;th align="center"&gt;requestPerSecond&lt;/th&gt;
+&lt;th align="center"&gt;apdex&lt;/th&gt;
+&lt;th align="center"&gt;rating&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align="center"&gt;akka-http&lt;/td&gt;
+&lt;td align="center"&gt;3.41&lt;/td&gt;
+&lt;td align="center"&gt;800&lt;/td&gt;
+&lt;td align="center"&gt;0&lt;/td&gt;
+&lt;td align="center"&gt;4&lt;/td&gt;
+&lt;td align="center"&gt;199&lt;/td&gt;
+&lt;td align="center"&gt;1390&lt;/td&gt;
+&lt;td align="center"&gt;1438&lt;/td&gt;
+&lt;td align="center"&gt;1443&lt;/td&gt;
+&lt;td align="center"&gt;436.42&lt;/td&gt;
+&lt;td align="center"&gt;474&lt;/td&gt;
+&lt;td align="center"&gt;234.33&lt;/td&gt;
+&lt;td align="center"&gt;1&lt;/td&gt;
+&lt;td align="center"&gt;Excellent&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align="center"&gt;scalatra&lt;/td&gt;
+&lt;td align="center"&gt;15.33&lt;/td&gt;
+&lt;td align="center"&gt;572&lt;/td&gt;
+&lt;td align="center"&gt;228&lt;/td&gt;
+&lt;td align="center"&gt;0&lt;/td&gt;
+&lt;td align="center"&gt;111&lt;/td&gt;
+&lt;td align="center"&gt;14156&lt;/td&gt;
+&lt;td align="center"&gt;14398&lt;/td&gt;
+&lt;td align="center"&gt;14464&lt;/td&gt;
+&lt;td align="center"&gt;5529.42&lt;/td&gt;
+&lt;td align="center"&gt;6674&lt;/td&gt;
+&lt;td align="center"&gt;37.3&lt;/td&gt;
+&lt;td align="center"&gt;0.59&lt;/td&gt;
+&lt;td align="center"&gt;Poor&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;div class="row"&gt;
+  &lt;div class="col-md-4"&gt;errors
+    &lt;img src="https://hanskoff.github.io/blog/img/finalErrors.jpg" alt="final round bootzooka comparision" /&gt;
+  &lt;/div&gt;
+  &lt;div class="col-md-4"&gt;duration
+    &lt;img src="https://hanskoff.github.io/blog/img/finalDuration.jpg" alt="final round bootzooka comparision" /&gt;
+  &lt;/div&gt;
+  &lt;div class="col-md-4"&gt;throughput
+    &lt;img src="https://hanskoff.github.io/blog/img/finalRps.jpg" alt="final round bootzooka comparision" /&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h4&gt;Comparison for 800 users (where akka-http started to have a problems):&lt;/h4&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align="center"&gt;simulation&lt;/th&gt;
+&lt;th align="center"&gt;duration&lt;/th&gt;
+&lt;th align="center"&gt;successCount&lt;/th&gt;
+&lt;th align="center"&gt;errorCount&lt;/th&gt;
+&lt;th align="center"&gt;min&lt;/th&gt;
+&lt;th align="center"&gt;p50&lt;/th&gt;
+&lt;th align="center"&gt;p95&lt;/th&gt;
+&lt;th align="center"&gt;p99&lt;/th&gt;
+&lt;th align="center"&gt;max&lt;/th&gt;
+&lt;th align="center"&gt;avg&lt;/th&gt;
+&lt;th align="center"&gt;stddev&lt;/th&gt;
+&lt;th align="center"&gt;requestPerSecond&lt;/th&gt;
+&lt;th align="center"&gt;apdex&lt;/th&gt;
+&lt;th align="center"&gt;rating&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align="center"&gt;akka-http&lt;/td&gt;
+&lt;td align="center"&gt;8.69&lt;/td&gt;
+&lt;td align="center"&gt;1564&lt;/td&gt;
+&lt;td align="center"&gt;36&lt;/td&gt;
+&lt;td align="center"&gt;4&lt;/td&gt;
+&lt;td align="center"&gt;418&lt;/td&gt;
+&lt;td align="center"&gt;3095&lt;/td&gt;
+&lt;td align="center"&gt;3296&lt;/td&gt;
+&lt;td align="center"&gt;3345&lt;/td&gt;
+&lt;td align="center"&gt;1011.16&lt;/td&gt;
+&lt;td align="center"&gt;1117&lt;/td&gt;
+&lt;td align="center"&gt;180.06&lt;/td&gt;
+&lt;td align="center"&gt;0.85&lt;/td&gt;
+&lt;td align="center"&gt;Fair&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h4&gt;Hints for tuning&lt;/h4&gt;
+&lt;p&gt;Very often performance tests reveal that access to database is a bottleneck. In second (scalatra) of above cases we can observe it quite soon. &lt;/p&gt;
+&lt;p&gt;First natural approach is to increase the database connection pool what should suffice for a while. Increasing timeout is highly undesirable because it would only slow everything down. Another practise (this time expensive) is to set a database cluster or/and queue updates and queries to database. But any of that moves requires expertise knowledge in every of touched areas (like distributed setup of databases and applications). But that is not the case here, tests are being run on defaults.&lt;/p&gt;
+&lt;hr /&gt;</summary><category term="bootzooka"></category><category term="scala"></category><category term="scalatra"></category><category term="akka-http"></category><category term="gatling"></category></entry><entry><title>Outdated bootzooka changes</title><link href="https://hanskoff.github.io/latest-bootzooka-changes.html" rel="alternate"></link><updated>2014-11-11T17:28:00+01:00</updated><author><name>Jan</name></author><id>tag:hanskoff.github.io,2014-11-11:latest-bootzooka-changes.html</id><summary type="html">&lt;p&gt;[2015-07-08]
+Bootzooka has been strongly simplified lately and there were some conceptual changes that is why this post is no longer valid.&lt;/p&gt;
+&lt;h2&gt;Outdated:&lt;/h2&gt;
+&lt;p&gt;At the beginning of my carrer in Softwaremill I was working on trial project for booking company. We were building demo app starting with bootzooka as a base. We've changed much in that code. After that experience I brought back some of them to bootzooka.&lt;/p&gt;
+&lt;p&gt;Definition:
+    &lt;a href="https://github.com/softwaremill/bootzooka"&gt;Bootzooka&lt;/a&gt; is a simple application scaffolding project to allow quick start of development for modern web based applications.
+    Live demo is available on &lt;a href="http://bootzooka.softwaremill.com"&gt;http://bootzooka.softwaremill.com&lt;/a&gt;.&lt;/p&gt;
+&lt;h3&gt;Outdated changes:&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;bower support (dependency management tools for frontend dependencies) &lt;a href="https://github.com/softwaremill/bootzooka/commit/ed3afb89237c0c49e8d28f31e90ac4ed8258e3db"&gt;commit&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;fakeMongo for integration tests (replacing previous implementation) &lt;a href="https://github.com/softwaremill/bootzooka/commit/59cbebb34dcd16f3c912c1f6f867f543f01473d5"&gt;commit&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;migration from twitter boostrap 2 to 3 (it's good just to be up-to-date, right?)&lt;/li&gt;
+&lt;li&gt;"angular business value module reorganization" - accordingly to good practises from sources listed below&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;Sources:&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="http://google-styleguide.googlecode.com/svn/trunk/angularjs-google-style.html"&gt;An AngularJS Style Guide for Closure Users at Google&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://www.thoughtworks.com/insights/blog/good-practices-build-your-angularjs-application"&gt;Good Practices to Build Your AngularJS Application&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://medium.com/@dickeyxxx/best-practices-for-building-angular-js-apps-266c1a4a6917"&gt;Best Practices for Building Angular.js Apps&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://toddmotto.com/opinionated-angular-js-styleguide-for-teams/"&gt;Opinionated AngularJS styleguide for teams&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;h6&gt;TODO:&lt;/h6&gt;
+&lt;ul&gt;
+&lt;li&gt;dockerize app&lt;/li&gt;
+&lt;li&gt;add travis ci&lt;/li&gt;
+&lt;li&gt;refurbish old school way of notifying users about changes &lt;a href="http://keepachangelog.com/"&gt;keepachangelog.com&lt;/a&gt;, this post is a kind of changelog note ;)&lt;/li&gt;
+&lt;/ul&gt;</summary><category term="bootzooka"></category><category term="scala"></category><category term="angular"></category><category term="bower"></category><category term="grunt"></category></entry><entry><title>Fabtools - Tomcat - fast provisioning</title><link href="https://hanskoff.github.io/tomcat-installation-with-fabtools.html" rel="alternate"></link><updated>2014-04-25T14:36:00+02:00</updated><author><name>johny</name></author><id>tag:hanskoff.github.io,2014-04-25:tomcat-installation-with-fabtools.html</id><summary type="html">&lt;p&gt;As every other developer I'm a fun of easy developer life. I wish all open source projects could be build right away without any previous database or ldap mocking setup. Just fire it right away! That is why I like &lt;a href="http://www.vagrantup.com/"&gt;Vagrant&lt;/a&gt; so much. &lt;/p&gt;
+&lt;p&gt;Vagrant with puppet manifests [chef|ansible|bash] might help to completely separate your local development environment from office network. From now on you can work from the basement without network connection - is't that sweet? (You might just need to mock company's ldap server). &lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The main benefit of &lt;code&gt;Vagranfile&lt;/code&gt; (Vagrant’s setup file) is that you can keep it as a code in your favorite VCS. Each team member will build his own local developement environment from scratch. You don’t need to distribute huge .vmdk files anymore. &lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;em&gt;Fabric&lt;/em&gt; is great python tool that helps you to automate many tedious tasks: copy files from one to another host, link, create users, replace configurations etc. &lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Fabtools&lt;/em&gt; is a natural extension of Fabric possibilities. The idea behind it - is comparable to that from puppet and chef. It might be considered as another provisioner. &lt;/p&gt;
+&lt;p&gt;&lt;a href="http://fabtools.readthedocs.org/en/latest/api/python.html"&gt;In current 0.18 release of fabtools&lt;/a&gt; you are be able to find tomcat module which will help you to automatically provision virtual machine on you computer with apache tomcat server within few minutes.&lt;/p&gt;
+&lt;p&gt;You might need to install&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo apt-get install python-pip
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href="http://www.vagrantup.com/"&gt;Vagrant&lt;/a&gt; &lt;/li&gt;
+&lt;li&gt;&lt;a href="https://www.virtualbox.org/"&gt;Oracle VirtualBox&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://fabfile.org"&gt;Fabric&lt;/a&gt;  &lt;/li&gt;
+&lt;li&gt;&lt;a href="http://fabtools.readthedocs.org"&gt;Fabtools&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;last two you on ubuntu can simply type in terminal:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;pip install fabric
+pip install fabtools
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Example&lt;/h2&gt;
+&lt;p&gt;All you have to do is to create fabfile.py in your directory with vagranfile. For apache tomcat server you need java first.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;fabtools&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;require&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;tomcat&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;fabtools.vagrant&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;vagrant&lt;/span&gt;
+
+&lt;span class="nd"&gt;@task&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;provision&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="n"&gt;require&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;oracle_jdk&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;installed&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;version&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;7u55-b13&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;require&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;tomcat&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;installed&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;7.0.53&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;or go and &lt;a href="https://github.com/hanskoff/vagrant-fabric"&gt;clone my github repo&lt;/a&gt;,&lt;/p&gt;
+&lt;p&gt;navigate to tomcat and:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;fab vagrant provision
+vagrant ssh
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;As puppet manifest, fabtools fabfiles might be reused to provision remote boxes.&lt;/strong&gt;&lt;/p&gt;
+&lt;h2&gt;Reusing fabfile.py to provision remote box:&lt;/h2&gt;
+&lt;p&gt;When having fabfile already built for your local dev box you can then reuse it for automation of provisioning remote boxes.
+You can define your hosts in fabfile or you can just call&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;fab -H &amp;lt;user&amp;gt;@&amp;lt;hostname&amp;gt;:&amp;lt;sshPort&amp;gt; provision
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Above command will install java and apache tomcat on any &lt;code&gt;&amp;lt;hostname&amp;gt;&lt;/code&gt; with one bash call.&lt;/p&gt;</summary><category term="tomcat"></category><category term="fabtools"></category><category term="vagrant"></category><category term="python"></category></entry></feed>
