@@ -1,426 +1,413 @@
+
 <!DOCTYPE html>
-<html lang="en" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
-<head>
-    <title>Performance akka-http vs scalatra - johny's blog</title>
-    <!-- Using the latest rendering mode for IE -->
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="en">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta content="keyword 1, keyword 2, keyword 3" name="keywords">
+<meta content="Morten G. Johansen" name="author">
+<meta property="og:title" content="Performance akka-http vs scalatra - johny&#39;s blog">
+<meta property="og:url" content="https://hanskoff.github.io/bootzooka-akka-http-vs-scalatra.html">
+<meta property="og:description" content="Your description here">
+<meta property="og:type" content="website" />
+<title>Performance akka-http vs scalatra | johny&#39;s blog</title>
+<link rel="stylesheet" href="https://hanskoff.github.io//css/style.css">
+<link rel="shortcut icon" href="https://hanskoff.github.io//wave.ico">
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/github.min.css">
 
 
+<section class="section">
+  <div class="container">
+    <nav class="nav">
+      <div class="nav-left">
+        <a class="nav-item" href="https://hanskoff.github.io/"><h1 class="title is-4">johny&#39;s blog</h1></a>
+      </div>
+      <div class="nav-right">
+        <nav class="nav-item level is-mobile">
+          
+          <a class="level-item" href="https://github.com/hanskoff" target="_blank">
+            <span class="icon">
+              <i class="fa fa-github"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="https://twitter.com/johnykov" target="_blank">
+            <span class="icon">
+              <i class="fa fa-twitter"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="https://linkedin.com/in/jankowalski" target="_blank">
+            <span class="icon">
+              <i class="fa fa-linkedin-square"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="http://www.emailmeform.com/builder/form/o1g7UmK48a0NF6wjq2Bv6ce4G" target="_blank">
+            <span class="icon">
+              <i class="fa fa-envelope"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="https://hanskoff.github.io/services/" target="_blank">
+            <span class="icon">
+              <i class="fa fa-globe"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="/index.xml" target="_blank">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+          </a>
+          
+        </nav>
+      </div>
+    </nav>
+  </div>
+</section>
 
-<link rel="canonical" href="https://hanskoff.github.io/bootzooka-akka-http-vs-scalatra.html">
-
-        <meta name="author" content="johny" />
-        <meta name="keywords" content="bootzooka,scala,scalatra,akka-http,gatling" />
-        <meta name="description" content="Some time ago we changed how Bootzooka handles HTTP requests. My goal is to compare two great tools: complete web framework scalatra 2.3.1 (latest stable) called by one of it&#39;s project leaders a web toolkit akka-http 2.4.2 from a performance perspective. I find both of ..." />
-
-        <meta property="og:site_name" content="johny's blog" />
-        <meta property="og:type" content="article"/>
-        <meta property="og:title" content="Performance akka-http vs scalatra"/>
-        <meta property="og:url" content="https://hanskoff.github.io/bootzooka-akka-http-vs-scalatra.html"/>
-        <meta property="og:description" content="Some time ago we changed how Bootzooka handles HTTP requests. My goal is to compare two great tools: complete web framework scalatra 2.3.1 (latest stable) called by one of it&#39;s project leaders a web toolkit akka-http 2.4.2 from a performance perspective. I find both of ..."/>
-        <meta property="article:published_time" content="2016-03-29" />
-            <meta property="article:section" content="bootzooka" />
-            <meta property="article:tag" content="bootzooka" />
-            <meta property="article:tag" content="scala" />
-            <meta property="article:tag" content="scalatra" />
-            <meta property="article:tag" content="akka-http" />
-            <meta property="article:tag" content="gatling" />
-            <meta property="article:author" content="johny" />
-
-
-    <!-- Bootstrap -->
-        <link rel="stylesheet" href="https://hanskoff.github.io/theme/css/bootstrap.flatly.min.css" type="text/css"/>
-    <link href="https://hanskoff.github.io/theme/css/font-awesome.min.css" rel="stylesheet">
-
-    <link href="https://hanskoff.github.io/theme/css/pygments/native.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://hanskoff.github.io/theme/css/style.css" type="text/css"/>
-
-        <link href="https://hanskoff.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate"
-              title="johny's blog ATOM Feed"/>
-
-
-
-        <link href="https://hanskoff.github.io/feeds/bootzooka.atom.xml" type="application/atom+xml" rel="alternate"
-              title="johny's blog bootzooka ATOM Feed"/>
-
-</head>
-<body>
-
-<div class="navbar navbar-default navbar-fixed-top" role="navigation">
-	<div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a href="https://hanskoff.github.io/" class="navbar-brand">
-johny's blog            </a>
-        </div>
-        <div class="collapse navbar-collapse navbar-ex1-collapse">
-            <ul class="nav navbar-nav">
-                         <li><a href="https://hanskoff.github.io/pages/about.html">
-                             About
-                          </a></li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-              <li><a href="https://hanskoff.github.io/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archives</span></a></li>
-            </ul>
-        </div>
-        <!-- /.navbar-collapse -->
-    </div>
-</div> <!-- /.navbar -->
-<!-- Banner -->
-<!-- End Banner -->
-<div class="container">
-    <div class="row">
-        <div class="col-lg-12">
-            <ol class="breadcrumb">
-                <li><a href="https://hanskoff.github.io" title="johny's blog"><i class="fa fa-home fa-lg"></i></a></li>
-                <li class="active">Performance akka-http vs scalatra</li>
-            </ol>
-    <section id="content">
-        <article>
-            <header class="page-header">
-                <h1>
-                    <a href="https://hanskoff.github.io/bootzooka-akka-http-vs-scalatra.html"
-                       rel="bookmark"
-                       title="Permalink to Performance akka-http vs scalatra">
-                        Performance akka-http vs scalatra
-                    </a>
-                </h1>
-            </header>
-            <div class="entry-content">
-                <div class="panel">
-                    <div class="panel-body">
-<footer class="post-info">
-    <span class="label label-default">Date</span>
-    <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2016-03-29T11:28:00+02:00"> Tue 29 March 2016</time>
-    </span>
-
-
-
-
-
-<span class="label label-default">Tags</span>
-	<a href="https://hanskoff.github.io/tag/bootzooka.html">bootzooka</a>
-        /
-	<a href="https://hanskoff.github.io/tag/scala.html">scala</a>
-        /
-	<a href="https://hanskoff.github.io/tag/scalatra.html">scalatra</a>
-        /
-	<a href="https://hanskoff.github.io/tag/akka-http.html">akka-http</a>
-        /
-	<a href="https://hanskoff.github.io/tag/gatling.html">gatling</a>
+<section class="section">
+  <div class="container">
+    <h1 class="title">Performance akka-http vs scalatra</h1>
+    <h2 class="subtitle is-5">March 29, 2016 by johny</h2>
     
-</footer><!-- /.post-info -->                    </div>
-                </div>
-                <p><a href="https://softwaremill.com/bootzooka-akka-http-based/">Some time ago we changed how Bootzooka handles HTTP requests.</a></p>
+    <div class="content">
+      
+
+<p><a href="https://softwaremill.com/bootzooka-akka-http-based/">Some time ago we changed how Bootzooka handles HTTP requests.</a></p>
+
 <p>My goal is to compare two great tools:</p>
+
 <ol>
 <li>complete web framework <a href="http://scalatra.org/">scalatra 2.3.1</a> (latest stable)</li>
-<li>called by one of it's project leaders a web toolkit <a href="http://doc.akka.io/docs/akka/2.4.2/scala/http/">akka-http 2.4.2</a></li>
+<li>called by one of it&rsquo;s project leaders a web toolkit <a href="http://doc.akka.io/docs/akka/2.4.2/scala/http/">akka-http 2.4.2</a></li>
 </ol>
-<p>from a performance perspective. I find both of them very helpful but they work in different ways so the idea is to see how much that impacts the application and it's users. </p>
-<p>Whenever you buy a car - you look at its specification. How fast it is, how amazing is the acceleration, how much petrol does it burn, how much load it can carry. I'd like to know such metrics for tools I use to build web applications. Authors don't always publish such metrics and often Google doesn't find any. One such metric would be to compare benchmarks but there are none so let’s make a comparison.</p>
-<p>From the Great Jez Humble's Continuous Delivery book, introduction to chapter 9, comes the definition of app performance:</p>
+
+<p>from a performance perspective. I find both of them very helpful but they work in different ways so the idea is to see how much that impacts the application and it&rsquo;s users.</p>
+
+<p>Whenever you buy a car - you look at its specification. How fast it is, how amazing is the acceleration, how much petrol does it burn, how much load it can carry. I&rsquo;d like to know such metrics for tools I use to build web applications. Authors don&rsquo;t always publish such metrics and often Google doesn&rsquo;t find any. One such metric would be to compare benchmarks but there are none so let’s make a comparison.</p>
+
+<p>From the Great Jez Humble&rsquo;s Continuous Delivery book, introduction to chapter 9, comes the definition of app performance:</p>
+
 <blockquote>
 <p>First of all, let’s clear up some confusion around the terms. We’ll use the same terminology as Michael Nygard.1 To paraphrase, performance is a measure of the time taken to process a single transaction, and can be measured either in isolation or under load. Throughput is the number of transactions a system can process in a given timespan. It is always limited by some bottleneck in the system.
 The maximum throughput a system can sustain, for a given workload, while maintaining an acceptable response time for each individual request, is its capacity.
 Customers are usually interested in throughput or capacity. In real life, “performance” is often used as a catch-all term; we will try to be rather more careful in this chapter.</p>
 </blockquote>
-<p>So I’ll try to find <strong>throughput</strong> and <strong>capacity</strong> for each versions of bootzooka.</p>
-<h3>Brief details of tested tools internals</h3>
-<p>The version of Scalatra that I've tested works in synchronous &amp; blocking way while akka-http is by default "reactive" (asynchronous and non-blocking - ”reactive” trait might be easily lost when the implementation is blocking, so our code also needs to process asnychronously).</p>
-<p>Scalatra is thread based, handling servlets and requires servlet container like jetty to run, it can delegate work to akka (from its docs, never tried this one), while akka-http is actor per request, doesn't require a container and writing actor model code is more natural pattern to follow in this case. Both have comparably pleasant DSLs for writing routes.</p>
-<h3>Setup</h3>
-<p>Equipped with <a href="http://gatling.io">gatling.io</a> (for generating fake traffic of user scenarios) and GCViewer (for watching a memory consumption, this is influenced by <a href="http://bandrzejczak.com/blog/2015/02/15/the-cost-of-the-garbage-collection/">Bartek's post</a> to see if something spectacular is going on) I can measure what happens to my beloved framework (bootzooka) after switching web frameworks. </p>
-<p>The test was performed on macbook pro, 2,5 GHz Intel Core i7 with 16 GB of ram.
-I use default JVM flags what is Xss=1 MB (thread stack size) and InitialHeapSize ~ 260 MB and Xmx ~ 4 GB (note: heroku 1 dyno standard is 350 MB). </p>
-<div class="highlight"><pre><span></span>$ java -XX:+PrintFlagsFinal version 
-    uintx InitialHeapSize                          :<span class="o">=</span> <span class="m">268435456</span>                           
-    uintx MaxHeapSize                              :<span class="o">=</span> <span class="m">4294967296</span>                          
-    uintx MaxNewSize                               :<span class="o">=</span> <span class="m">1431306240</span>                          
-    uintx NewSize                                  :<span class="o">=</span> <span class="m">89128960</span>                            
-    uintx OldSize                                  :<span class="o">=</span> <span class="m">179306496</span>                           
-     intx <span class="nv">ThreadStackSize</span>                           <span class="o">=</span> 1024
-</pre></div>
 
+<p>So I’ll try to find <strong>throughput</strong> and <strong>capacity</strong> for each versions of bootzooka.</p>
+
+<h3 id="brief-details-of-tested-tools-internals">Brief details of tested tools internals</h3>
+
+<p>The version of Scalatra that I&rsquo;ve tested works in synchronous &amp; blocking way while akka-http is by default &ldquo;reactive&rdquo; (asynchronous and non-blocking - ”reactive” trait might be easily lost when the implementation is blocking, so our code also needs to process asnychronously).</p>
+
+<p>Scalatra is thread based, handling servlets and requires servlet container like jetty to run, it can delegate work to akka (from its docs, never tried this one), while akka-http is actor per request, doesn&rsquo;t require a container and writing actor model code is more natural pattern to follow in this case. Both have comparably pleasant DSLs for writing routes.</p>
+
+<h3 id="setup">Setup</h3>
+
+<p>Equipped with <a href="http://gatling.io">gatling.io</a> (for generating fake traffic of user scenarios) and GCViewer (for watching a memory consumption, this is influenced by <a href="http://bandrzejczak.com/blog/2015/02/15/the-cost-of-the-garbage-collection/">Bartek&rsquo;s post</a> to see if something spectacular is going on) I can measure what happens to my beloved framework (bootzooka) after switching web frameworks.</p>
+
+<p>The test was performed on macbook pro, 2,5 GHz Intel Core i7 with 16 GB of ram.
+I use default JVM flags what is Xss=1 MB (thread stack size) and InitialHeapSize ~ 260 MB and Xmx ~ 4 GB (note: heroku 1 dyno standard is 350 MB).</p>
+
+<pre><code class="language-bash">$ java -XX:+PrintFlagsFinal version
+    uintx InitialHeapSize                          := 268435456                           
+    uintx MaxHeapSize                              := 4294967296                          
+    uintx MaxNewSize                               := 1431306240                          
+    uintx NewSize                                  := 89128960                            
+    uintx OldSize                                  := 179306496                           
+     intx ThreadStackSize                           = 1024                                
+</code></pre>
 
 <p>I’m running postgres 9.4 database locally with two separate schemas one for each scalatra and akka-http versions of bootzooka. So database configuration is same for each system. Gatling scenarios are being run on same local machine as bootzooka backends are deployed ( frontend is written in angular and it’s performance is fine). <strong>This configuration is a kind of “lab environment” where network latency and bandwidth doesn’t play any role, there is no data transmission over the wire what often is the main issue of webapp performance.</strong></p>
+
 <ul>
 <li><a href="https://github.com/softwaremill/bootzooka/tree/446255c88">Scalatra bootzooka version (tag last-scalatra)</a></li>
 <li><a href="https://github.com/softwaremill/bootzooka/tree/83827361">Akka-http bootzooka version for this commit</a></li>
-<li><a href="https://github.com/hanskoff/gatling-bootzooka">Repository with simple scenario for the test</a> </li>
+<li><a href="https://github.com/hanskoff/gatling-bootzooka">Repository with simple scenario for the test</a></li>
 </ul>
-<h4>Provisioning</h4>
+
+<h4 id="provisioning">Provisioning</h4>
+
 <p>The <code>newbootzooka</code> schema is for akka-http bootzooka version and <code>oldbootzooka</code> schema is for scalatra.</p>
-<div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">DATABASE_URL</span><span class="o">=</span>postgres://newbootzooka:newbootzooka@localhost:5432/newbootzooka <span class="o">&amp;&amp;</span> <span class="se">\</span>
-java -Dserver.port<span class="o">=</span><span class="m">8081</span> -Xloggc:newbootzooka-<span class="k">$(</span>date +<span class="s2">&quot;%Y-%m-%d_%H-%M-%S&quot;</span><span class="k">)</span>.log <span class="se">\</span>
+
+<pre><code class="language-bash">export DATABASE_URL=postgres://newbootzooka:newbootzooka@localhost:5432/newbootzooka &amp;&amp; \
+java -Dserver.port=8081 -Xloggc:newbootzooka-$(date +&quot;%Y-%m-%d_%H-%M-%S&quot;).log \
 -XX:+PrintGCDetails -XX:+PrintGCDateStamps -verbose:gc -jar new-bootzooka/bootzooka.jar
 
-<span class="nb">export</span> <span class="nv">DATABASE_URL</span><span class="o">=</span>postgres://oldbootzooka:oldbootzooka@localhost:5432/oldbootzooka <span class="o">&amp;&amp;</span> <span class="se">\</span>
-java -Dembedded-jetty.port<span class="o">=</span><span class="m">8082</span> -Xloggc:oldbootzooka-<span class="k">$(</span>date +<span class="s2">&quot;%Y-%m-%d_%H-%M-%S&quot;</span><span class="k">)</span>.log <span class="se">\</span>
+export DATABASE_URL=postgres://oldbootzooka:oldbootzooka@localhost:5432/oldbootzooka &amp;&amp; \
+java -Dembedded-jetty.port=8082 -Xloggc:oldbootzooka-$(date +&quot;%Y-%m-%d_%H-%M-%S&quot;).log \
 -XX:+PrintGCDetails -XX:+PrintGCDateStamps -verbose:gc -jar old-bootzooka/bootzooka.jar
-</pre></div>
+</code></pre>
 
+<h3 id="scenario">Scenario</h3>
 
-<h3>Scenario</h3>
 <p>It’s very basic as bootzooka doesn’t do complicated stuff. In the first step user goes to <code>/</code>, waits for http 200 code and in second sends post request (to <code>/api/users/register</code>) to register himself and awaits for <code>success</code> string in response body.</p>
-<h4>Scenario setup 1</h4>
-<p>Throwing at each system 200 users at once just to see what happens <a href="https://github.com/hanskoff/gatling-bootzooka/blob/master/src/test/scala/pl/jan/BootzookaRegistrationScn.scala">BootzookaRegistrationScn</a></p>
-<h3>Bootzooka akka-http version:</h3>
-<div class="highlight"><pre><span></span>./gradlew -Dserver.port<span class="o">=</span><span class="m">8081</span> loadTest
-</pre></div>
 
+<h4 id="scenario-setup-1">Scenario setup 1</h4>
+
+<p>Throwing at each system 200 users at once just to see what happens <a href="https://github.com/hanskoff/gatling-bootzooka/blob/master/src/test/scala/pl/jan/BootzookaRegistrationScn.scala">BootzookaRegistrationScn</a></p>
+
+<h3 id="bootzooka-akka-http-version">Bootzooka akka-http version:</h3>
+
+<pre><code class="language-bash">./gradlew -Dserver.port=8081 loadTest
+</code></pre>
 
 <p>First round results:</p>
-<div class="highlight"><pre><span></span><span class="o">================================================================================</span>
----- Global Information --------------------------------------------------------
-&gt; request count                                        <span class="m">400</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">387</span>    <span class="nv">KO</span><span class="o">=</span><span class="m">13</span>    <span class="o">)</span>
-&gt; min response <span class="nb">time</span>                                     <span class="m">18</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">18</span>     <span class="nv">KO</span><span class="o">=</span><span class="m">111</span>   <span class="o">)</span>
-&gt; max response <span class="nb">time</span>                                   <span class="m">3991</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">3991</span>   <span class="nv">KO</span><span class="o">=</span><span class="m">1227</span>  <span class="o">)</span>
-&gt; mean response <span class="nb">time</span>                                  <span class="m">1364</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">1397</span>   <span class="nv">KO</span><span class="o">=</span><span class="m">403</span>   <span class="o">)</span>
-&gt; std deviation                                       <span class="m">1226</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">1232</span>   <span class="nv">KO</span><span class="o">=</span><span class="m">331</span>   <span class="o">)</span>
-&gt; response <span class="nb">time</span> 50th percentile                        <span class="m">957</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">1103</span>   <span class="nv">KO</span><span class="o">=</span><span class="m">333</span>   <span class="o">)</span>
-&gt; response <span class="nb">time</span> 75th percentile                       <span class="m">2445</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">2446</span>   <span class="nv">KO</span><span class="o">=</span><span class="m">552</span>   <span class="o">)</span>
-&gt; mean requests/sec                                 79.586 <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">77</span>     <span class="nv">KO</span><span class="o">=</span>2.587 <span class="o">)</span>
----- Response Time Distribution ------------------------------------------------
-&gt; t &lt; <span class="m">800</span> ms                                           <span class="m">170</span> <span class="o">(</span> 43%<span class="o">)</span>
-&gt; <span class="m">800</span> ms &lt; t &lt; <span class="m">1200</span> ms                                  <span class="m">33</span> <span class="o">(</span>  8%<span class="o">)</span>
-&gt; t &gt; <span class="m">1200</span> ms                                          <span class="m">184</span> <span class="o">(</span> 46%<span class="o">)</span>
-&gt; failed                                                <span class="m">13</span> <span class="o">(</span>  3%<span class="o">)</span>
----- Errors --------------------------------------------------------------------
-&gt; java.net.ConnectException: Connection reset by peer                <span class="m">13</span> <span class="o">(</span>100.0%<span class="o">)</span>
-<span class="o">================================================================================</span>
-</pre></div>
 
+<pre><code>    ================================================================================
+    ---- Global Information --------------------------------------------------------
+    &gt; request count                                        400 (OK=387    KO=13    )
+    &gt; min response time                                     18 (OK=18     KO=111   )
+    &gt; max response time                                   3991 (OK=3991   KO=1227  )
+    &gt; mean response time                                  1364 (OK=1397   KO=403   )
+    &gt; std deviation                                       1226 (OK=1232   KO=331   )
+    &gt; response time 50th percentile                        957 (OK=1103   KO=333   )
+    &gt; response time 75th percentile                       2445 (OK=2446   KO=552   )
+    &gt; mean requests/sec                                 79.586 (OK=77     KO=2.587 )
+    ---- Response Time Distribution ------------------------------------------------
+    &gt; t &lt; 800 ms                                           170 ( 43%)
+    &gt; 800 ms &lt; t &lt; 1200 ms                                  33 (  8%)
+    &gt; t &gt; 1200 ms                                          184 ( 46%)
+    &gt; failed                                                13 (  3%)
+    ---- Errors --------------------------------------------------------------------
+    &gt; java.net.ConnectException: Connection reset by peer                13 (100.0%)
+    ================================================================================
+</code></pre>
 
 <p>You can see there was 400 requests as each user makes 2 requests.
-There were 13 timeouts, so maybe because of JIT compilation, let's run test a second round:</p>
-<div class="highlight"><pre><span></span><span class="o">================================================================================</span>
----- Global Information --------------------------------------------------------
-&gt; request count                                        <span class="m">400</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">400</span>    <span class="nv">KO</span><span class="o">=</span><span class="m">0</span>     <span class="o">)</span>
-&gt; min response <span class="nb">time</span>                                      <span class="m">7</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">7</span>      <span class="nv">KO</span><span class="o">=</span>-     <span class="o">)</span>
-&gt; max response <span class="nb">time</span>                                    <span class="m">679</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">679</span>    <span class="nv">KO</span><span class="o">=</span>-     <span class="o">)</span>
-&gt; mean response <span class="nb">time</span>                                   <span class="m">193</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">193</span>    <span class="nv">KO</span><span class="o">=</span>-     <span class="o">)</span>
-&gt; std deviation                                        <span class="m">215</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">215</span>    <span class="nv">KO</span><span class="o">=</span>-     <span class="o">)</span>
-&gt; response <span class="nb">time</span> 50th percentile                         <span class="m">45</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">45</span>     <span class="nv">KO</span><span class="o">=</span>-     <span class="o">)</span>
-&gt; response <span class="nb">time</span> 75th percentile                        <span class="m">404</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">404</span>    <span class="nv">KO</span><span class="o">=</span>-     <span class="o">)</span>
-&gt; mean requests/sec                                171.969 <span class="o">(</span><span class="nv">OK</span><span class="o">=</span>171.969 <span class="nv">KO</span><span class="o">=</span>-     <span class="o">)</span>
----- Response Time Distribution ------------------------------------------------
-&gt; t &lt; <span class="m">800</span> ms                                           <span class="m">400</span> <span class="o">(</span>100%<span class="o">)</span>
-&gt; <span class="m">800</span> ms &lt; t &lt; <span class="m">1200</span> ms                                   <span class="m">0</span> <span class="o">(</span>  0%<span class="o">)</span>
-&gt; t &gt; <span class="m">1200</span> ms                                            <span class="m">0</span> <span class="o">(</span>  0%<span class="o">)</span>
-&gt; failed                                                 <span class="m">0</span> <span class="o">(</span>  0%<span class="o">)</span>
-<span class="o">================================================================================</span>
-</pre></div>
+There were 13 timeouts, so maybe because of JIT compilation, let&rsquo;s run test a second round:</p>
 
+<pre><code>    ================================================================================
+    ---- Global Information --------------------------------------------------------
+    &gt; request count                                        400 (OK=400    KO=0     )
+    &gt; min response time                                      7 (OK=7      KO=-     )
+    &gt; max response time                                    679 (OK=679    KO=-     )
+    &gt; mean response time                                   193 (OK=193    KO=-     )
+    &gt; std deviation                                        215 (OK=215    KO=-     )
+    &gt; response time 50th percentile                         45 (OK=45     KO=-     )
+    &gt; response time 75th percentile                        404 (OK=404    KO=-     )
+    &gt; mean requests/sec                                171.969 (OK=171.969 KO=-     )
+    ---- Response Time Distribution ------------------------------------------------
+    &gt; t &lt; 800 ms                                           400 (100%)
+    &gt; 800 ms &lt; t &lt; 1200 ms                                   0 (  0%)
+    &gt; t &gt; 1200 ms                                            0 (  0%)
+    &gt; failed                                                 0 (  0%)
+    ================================================================================
+</code></pre>
 
 <p>Looks good, how about doubling number to 400 users at once, third round:</p>
-<div class="highlight"><pre><span></span><span class="o">================================================================================</span>
----- Global Information --------------------------------------------------------
-&gt; request count                                        <span class="m">800</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">800</span>    <span class="nv">KO</span><span class="o">=</span><span class="m">0</span>     <span class="o">)</span>
-&gt; min response <span class="nb">time</span>                                      <span class="m">7</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">7</span>      <span class="nv">KO</span><span class="o">=</span>-     <span class="o">)</span>
-&gt; max response <span class="nb">time</span>                                   <span class="m">1443</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">1443</span>   <span class="nv">KO</span><span class="o">=</span>-     <span class="o">)</span>
-&gt; mean response <span class="nb">time</span>                                   <span class="m">440</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">440</span>    <span class="nv">KO</span><span class="o">=</span>-     <span class="o">)</span>
-&gt; std deviation                                        <span class="m">471</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">471</span>    <span class="nv">KO</span><span class="o">=</span>-     <span class="o">)</span>
-&gt; response <span class="nb">time</span> 50th percentile                        <span class="m">200</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">200</span>    <span class="nv">KO</span><span class="o">=</span>-     <span class="o">)</span>
-&gt; response <span class="nb">time</span> 75th percentile                        <span class="m">920</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">920</span>    <span class="nv">KO</span><span class="o">=</span>-     <span class="o">)</span>
-&gt; mean requests/sec                                212.993 <span class="o">(</span><span class="nv">OK</span><span class="o">=</span>212.993 <span class="nv">KO</span><span class="o">=</span>-     <span class="o">)</span>
----- Response Time Distribution ------------------------------------------------
-&gt; t &lt; <span class="m">800</span> ms                                           <span class="m">541</span> <span class="o">(</span> 68%<span class="o">)</span>
-&gt; <span class="m">800</span> ms &lt; t &lt; <span class="m">1200</span> ms                                 <span class="m">183</span> <span class="o">(</span> 23%<span class="o">)</span>
-&gt; t &gt; <span class="m">1200</span> ms                                           <span class="m">76</span> <span class="o">(</span> 10%<span class="o">)</span>
-&gt; failed                                                 <span class="m">0</span> <span class="o">(</span>  0%<span class="o">)</span>
-<span class="o">================================================================================</span>
-</pre></div>
 
+<pre><code>    ================================================================================
+    ---- Global Information --------------------------------------------------------
+    &gt; request count                                        800 (OK=800    KO=0     )
+    &gt; min response time                                      7 (OK=7      KO=-     )
+    &gt; max response time                                   1443 (OK=1443   KO=-     )
+    &gt; mean response time                                   440 (OK=440    KO=-     )
+    &gt; std deviation                                        471 (OK=471    KO=-     )
+    &gt; response time 50th percentile                        200 (OK=200    KO=-     )
+    &gt; response time 75th percentile                        920 (OK=920    KO=-     )
+    &gt; mean requests/sec                                212.993 (OK=212.993 KO=-     )
+    ---- Response Time Distribution ------------------------------------------------
+    &gt; t &lt; 800 ms                                           541 ( 68%)
+    &gt; 800 ms &lt; t &lt; 1200 ms                                 183 ( 23%)
+    &gt; t &gt; 1200 ms                                           76 ( 10%)
+    &gt; failed                                                 0 (  0%)
+    ================================================================================
+</code></pre>
 
-<p>No failed requests, mean req/sec ~ 212. Let's double users for forth round:</p>
-<div class="highlight"><pre><span></span><span class="o">================================================================================</span>
----- Global Information --------------------------------------------------------
-&gt; request count                                       <span class="m">1600</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">1565</span>   <span class="nv">KO</span><span class="o">=</span><span class="m">35</span>    <span class="o">)</span>
-&gt; min response <span class="nb">time</span>                                      <span class="m">4</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">4</span>      <span class="nv">KO</span><span class="o">=</span><span class="m">159</span>   <span class="o">)</span>
-&gt; max response <span class="nb">time</span>                                   <span class="m">4167</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">4167</span>   <span class="nv">KO</span><span class="o">=</span><span class="m">1625</span>  <span class="o">)</span>
-&gt; mean response <span class="nb">time</span>                                  <span class="m">1016</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">1016</span>   <span class="nv">KO</span><span class="o">=</span><span class="m">991</span>   <span class="o">)</span>
-&gt; std deviation                                       <span class="m">1032</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">1041</span>   <span class="nv">KO</span><span class="o">=</span><span class="m">428</span>   <span class="o">)</span>
-&gt; response <span class="nb">time</span> 50th percentile                        <span class="m">896</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">895</span>    <span class="nv">KO</span><span class="o">=</span><span class="m">1285</span>  <span class="o">)</span>
-&gt; response <span class="nb">time</span> 75th percentile                       <span class="m">1515</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">1519</span>   <span class="nv">KO</span><span class="o">=</span><span class="m">1288</span>  <span class="o">)</span>
-&gt; mean requests/sec                                228.571 <span class="o">(</span><span class="nv">OK</span><span class="o">=</span>223.571 <span class="nv">KO</span><span class="o">=</span><span class="m">5</span>     <span class="o">)</span>
----- Response Time Distribution ------------------------------------------------
-&gt; t &lt; <span class="m">800</span> ms                                           <span class="m">720</span> <span class="o">(</span> 45%<span class="o">)</span>
-&gt; <span class="m">800</span> ms &lt; t &lt; <span class="m">1200</span> ms                                 <span class="m">157</span> <span class="o">(</span> 10%<span class="o">)</span>
-&gt; t &gt; <span class="m">1200</span> ms                                          <span class="m">688</span> <span class="o">(</span> 43%<span class="o">)</span>
-&gt; failed                                                <span class="m">35</span> <span class="o">(</span>  2%<span class="o">)</span>
----- Errors --------------------------------------------------------------------
-&gt; java.net.ConnectException: Connection reset by peer                <span class="m">35</span> <span class="o">(</span>100.0%<span class="o">)</span>
-<span class="o">================================================================================</span>
-</pre></div>
+<p>No failed requests, mean req/sec ~ 212. Let&rsquo;s double users for forth round:</p>
 
+<pre><code>    ================================================================================
+    ---- Global Information --------------------------------------------------------
+    &gt; request count                                       1600 (OK=1565   KO=35    )
+    &gt; min response time                                      4 (OK=4      KO=159   )
+    &gt; max response time                                   4167 (OK=4167   KO=1625  )
+    &gt; mean response time                                  1016 (OK=1016   KO=991   )
+    &gt; std deviation                                       1032 (OK=1041   KO=428   )
+    &gt; response time 50th percentile                        896 (OK=895    KO=1285  )
+    &gt; response time 75th percentile                       1515 (OK=1519   KO=1288  )
+    &gt; mean requests/sec                                228.571 (OK=223.571 KO=5     )
+    ---- Response Time Distribution ------------------------------------------------
+    &gt; t &lt; 800 ms                                           720 ( 45%)
+    &gt; 800 ms &lt; t &lt; 1200 ms                                 157 ( 10%)
+    &gt; t &gt; 1200 ms                                          688 ( 43%)
+    &gt; failed                                                35 (  2%)
+    ---- Errors --------------------------------------------------------------------
+    &gt; java.net.ConnectException: Connection reset by peer                35 (100.0%)
+    ================================================================================
+</code></pre>
 
-<p>2% of failed requests but no error in logs (maybe we don't handle that case yet). And in logs I've found:</p>
-<div class="highlight"><pre><span></span>java.sql.SQLTimeoutException: Timeout after 1015ms of waiting for a connection.
-</pre></div>
+<p>2% of failed requests but no error in logs (maybe we don&rsquo;t handle that case yet). And in logs I&rsquo;ve found:</p>
 
+<pre><code>java.sql.SQLTimeoutException: Timeout after 1015ms of waiting for a connection.
+</code></pre>
 
 <p>and more:</p>
-<p>13:53:45.304 [main-akka.actor.default-dispatcher-82] ERROR c.s.b.Main$$anon$1 - Exception during client request processing: Task slick.backend.DatabaseComponent$DatabaseDef$$anon$2@71688eb2 rejected from java.util.concurrent.ThreadPoolExecutor@4131e49e[Running, pool size = 20, active threads = 20, queued tasks = 1000, completed tasks = 4067]</p>
-<p>Let's repeat, same setup, fifth round:</p>
-<div class="highlight"><pre><span></span><span class="o">================================================================================</span>
----- Global Information --------------------------------------------------------
-&gt; request count                                       <span class="m">1600</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">1600</span>   <span class="nv">KO</span><span class="o">=</span><span class="m">0</span>     <span class="o">)</span>
-&gt; min response <span class="nb">time</span>                                      <span class="m">4</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">4</span>      <span class="nv">KO</span><span class="o">=</span>-     <span class="o">)</span>
-&gt; max response <span class="nb">time</span>                                   <span class="m">1905</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">1905</span>   <span class="nv">KO</span><span class="o">=</span>-     <span class="o">)</span>
-&gt; mean response <span class="nb">time</span>                                   <span class="m">378</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">378</span>    <span class="nv">KO</span><span class="o">=</span>-     <span class="o">)</span>
-&gt; std deviation                                        <span class="m">631</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">631</span>    <span class="nv">KO</span><span class="o">=</span>-     <span class="o">)</span>
-&gt; response <span class="nb">time</span> 50th percentile                         <span class="m">57</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">57</span>     <span class="nv">KO</span><span class="o">=</span>-     <span class="o">)</span>
-&gt; response <span class="nb">time</span> 75th percentile                        <span class="m">300</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">300</span>    <span class="nv">KO</span><span class="o">=</span>-     <span class="o">)</span>
-&gt; mean requests/sec                                225.384 <span class="o">(</span><span class="nv">OK</span><span class="o">=</span>225.384 <span class="nv">KO</span><span class="o">=</span>-     <span class="o">)</span>
----- Response Time Distribution ------------------------------------------------
-&gt; t &lt; <span class="m">800</span> ms                                          <span class="m">1310</span> <span class="o">(</span> 82%<span class="o">)</span>
-&gt; <span class="m">800</span> ms &lt; t &lt; <span class="m">1200</span> ms                                  <span class="m">23</span> <span class="o">(</span>  1%<span class="o">)</span>
-&gt; t &gt; <span class="m">1200</span> ms                                          <span class="m">267</span> <span class="o">(</span> 17%<span class="o">)</span>
-&gt; failed                                                 <span class="m">0</span> <span class="o">(</span>  0%<span class="o">)</span>
-<span class="o">================================================================================</span>
-</pre></div>
 
+<p>13:53:45.304 [main-akka.actor.default-dispatcher-82] ERROR c.s.b.Main$$anon$1 - Exception during client request processing: Task slick.backend.DatabaseComponent$DatabaseDef$$anon$2@71688eb2 rejected from java.util.concurrent.ThreadPoolExecutor@4131e49e[Running, pool size = 20, active threads = 20, queued tasks = 1000, completed tasks = 4067]</p>
+
+<p>Let&rsquo;s repeat, same setup, fifth round:</p>
+
+<pre><code>    ================================================================================
+    ---- Global Information --------------------------------------------------------
+    &gt; request count                                       1600 (OK=1600   KO=0     )
+    &gt; min response time                                      4 (OK=4      KO=-     )
+    &gt; max response time                                   1905 (OK=1905   KO=-     )
+    &gt; mean response time                                   378 (OK=378    KO=-     )
+    &gt; std deviation                                        631 (OK=631    KO=-     )
+    &gt; response time 50th percentile                         57 (OK=57     KO=-     )
+    &gt; response time 75th percentile                        300 (OK=300    KO=-     )
+    &gt; mean requests/sec                                225.384 (OK=225.384 KO=-     )
+    ---- Response Time Distribution ------------------------------------------------
+    &gt; t &lt; 800 ms                                          1310 ( 82%)
+    &gt; 800 ms &lt; t &lt; 1200 ms                                  23 (  1%)
+    &gt; t &gt; 1200 ms                                          267 ( 17%)
+    &gt; failed                                                 0 (  0%)
+    ================================================================================
+</code></pre>
 
 <p>No failed requests this time,75th percentile means: 75% of requests handled within below 300 milliseconds.</p>
-<h3>Bootzooka scalatra version:</h3>
-<div class="highlight"><pre><span></span>./gradlew -Dserver.port<span class="o">=</span><span class="m">8082</span> loadTest
-</pre></div>
 
+<h3 id="bootzooka-scalatra-version">Bootzooka scalatra version:</h3>
 
-<p>First round: </p>
-<div class="highlight"><pre><span></span><span class="o">================================================================================</span>
----- Global Information --------------------------------------------------------
-&gt; request count                                        <span class="m">400</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">284</span>    <span class="nv">KO</span><span class="o">=</span><span class="m">116</span>   <span class="o">)</span>
-&gt; min response <span class="nb">time</span>                                     <span class="m">61</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">61</span>     <span class="nv">KO</span><span class="o">=</span><span class="m">10486</span> <span class="o">)</span>
-&gt; max response <span class="nb">time</span>                                  <span class="m">11823</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">11823</span>  <span class="nv">KO</span><span class="o">=</span><span class="m">11805</span> <span class="o">)</span>
-&gt; mean response <span class="nb">time</span>                                  <span class="m">5800</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">3502</span>   <span class="nv">KO</span><span class="o">=</span><span class="m">11426</span> <span class="o">)</span>
-&gt; std deviation                                       <span class="m">5640</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">5156</span>   <span class="nv">KO</span><span class="o">=</span><span class="m">199</span>   <span class="o">)</span>
-&gt; response <span class="nb">time</span> 50th percentile                       <span class="m">1747</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">224</span>    <span class="nv">KO</span><span class="o">=</span><span class="m">11447</span> <span class="o">)</span>
-&gt; response <span class="nb">time</span> 75th percentile                      <span class="m">11470</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">11334</span>  <span class="nv">KO</span><span class="o">=</span><span class="m">11571</span> <span class="o">)</span>
-&gt; mean requests/sec                                 31.464 <span class="o">(</span><span class="nv">OK</span><span class="o">=</span>22.339 <span class="nv">KO</span><span class="o">=</span>9.125 <span class="o">)</span>
----- Response Time Distribution ------------------------------------------------
-&gt; t &lt; <span class="m">800</span> ms                                           <span class="m">200</span> <span class="o">(</span> 50%<span class="o">)</span>
-&gt; <span class="m">800</span> ms &lt; t &lt; <span class="m">1200</span> ms                                   <span class="m">0</span> <span class="o">(</span>  0%<span class="o">)</span>
-&gt; t &gt; <span class="m">1200</span> ms                                           <span class="m">84</span> <span class="o">(</span> 21%<span class="o">)</span>
-&gt; failed                                               <span class="m">116</span> <span class="o">(</span> 29%<span class="o">)</span>
----- Errors --------------------------------------------------------------------
-&gt; regex<span class="o">(</span>success<span class="o">)</span>.find<span class="o">(</span>0<span class="o">)</span>.exists, found nothing                      <span class="m">116</span> <span class="o">(</span>100.0%<span class="o">)</span>
-<span class="o">================================================================================</span>
-</pre></div>
+<pre><code class="language-bash">./gradlew -Dserver.port=8082 loadTest
+</code></pre>
 
+<p>First round:</p>
 
-<p>116 failed request, same case let's give a JIT a chance. Second round: </p>
-<div class="highlight"><pre><span></span><span class="o">================================================================================</span>
----- Global Information --------------------------------------------------------
-&gt; request count                                        <span class="m">400</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">327</span>    <span class="nv">KO</span><span class="o">=</span><span class="m">73</span>    <span class="o">)</span>
-&gt; min response <span class="nb">time</span>                                      <span class="m">1</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">1</span>      <span class="nv">KO</span><span class="o">=</span><span class="m">4298</span>  <span class="o">)</span>
-&gt; max response <span class="nb">time</span>                                   <span class="m">5015</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">5015</span>   <span class="nv">KO</span><span class="o">=</span><span class="m">4773</span>  <span class="o">)</span>
-&gt; mean response <span class="nb">time</span>                                  <span class="m">2016</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">1449</span>   <span class="nv">KO</span><span class="o">=</span><span class="m">4556</span>  <span class="o">)</span>
-&gt; std deviation                                       <span class="m">2279</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">2143</span>   <span class="nv">KO</span><span class="o">=</span><span class="m">101</span>   <span class="o">)</span>
-&gt; response <span class="nb">time</span> 50th percentile                         <span class="m">67</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">53</span>     <span class="nv">KO</span><span class="o">=</span><span class="m">4576</span>  <span class="o">)</span>
-&gt; response <span class="nb">time</span> 75th percentile                       <span class="m">4623</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">4583</span>   <span class="nv">KO</span><span class="o">=</span><span class="m">4627</span>  <span class="o">)</span>
-&gt; mean requests/sec                                 67.261 <span class="o">(</span><span class="nv">OK</span><span class="o">=</span>54.986 <span class="nv">KO</span><span class="o">=</span>12.275<span class="o">)</span>
----- Response Time Distribution ------------------------------------------------
-&gt; t &lt; <span class="m">800</span> ms                                           <span class="m">222</span> <span class="o">(</span> 56%<span class="o">)</span>
-&gt; <span class="m">800</span> ms &lt; t &lt; <span class="m">1200</span> ms                                   <span class="m">6</span> <span class="o">(</span>  2%<span class="o">)</span>
-&gt; t &gt; <span class="m">1200</span> ms                                           <span class="m">99</span> <span class="o">(</span> 25%<span class="o">)</span>
-&gt; failed                                                <span class="m">73</span> <span class="o">(</span> 18%<span class="o">)</span>
----- Errors --------------------------------------------------------------------
-&gt; regex<span class="o">(</span>success<span class="o">)</span>.find<span class="o">(</span>0<span class="o">)</span>.exists, found nothing                       <span class="m">73</span> <span class="o">(</span>100.0%<span class="o">)</span>
-<span class="o">================================================================================</span>
-</pre></div>
+<pre><code>    ================================================================================
+    ---- Global Information --------------------------------------------------------
+    &gt; request count                                        400 (OK=284    KO=116   )
+    &gt; min response time                                     61 (OK=61     KO=10486 )
+    &gt; max response time                                  11823 (OK=11823  KO=11805 )
+    &gt; mean response time                                  5800 (OK=3502   KO=11426 )
+    &gt; std deviation                                       5640 (OK=5156   KO=199   )
+    &gt; response time 50th percentile                       1747 (OK=224    KO=11447 )
+    &gt; response time 75th percentile                      11470 (OK=11334  KO=11571 )
+    &gt; mean requests/sec                                 31.464 (OK=22.339 KO=9.125 )
+    ---- Response Time Distribution ------------------------------------------------
+    &gt; t &lt; 800 ms                                           200 ( 50%)
+    &gt; 800 ms &lt; t &lt; 1200 ms                                   0 (  0%)
+    &gt; t &gt; 1200 ms                                           84 ( 21%)
+    &gt; failed                                               116 ( 29%)
+    ---- Errors --------------------------------------------------------------------
+    &gt; regex(success).find(0).exists, found nothing                      116 (100.0%)
+    ================================================================================
+</code></pre>
 
+<p>116 failed request, same case let&rsquo;s give a JIT a chance. Second round:</p>
 
-<p>73 failed, ok it's better then 116 but let's keep it warming. Third round: </p>
-<div class="highlight"><pre><span></span><span class="o">================================================================================</span>
----- Global Information --------------------------------------------------------
-&gt; request count                                        <span class="m">400</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">357</span>    <span class="nv">KO</span><span class="o">=</span><span class="m">43</span>    <span class="o">)</span>
-&gt; min response <span class="nb">time</span>                                      <span class="m">1</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">1</span>      <span class="nv">KO</span><span class="o">=</span><span class="m">3261</span>  <span class="o">)</span>
-&gt; max response <span class="nb">time</span>                                   <span class="m">3929</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">3929</span>   <span class="nv">KO</span><span class="o">=</span><span class="m">3667</span>  <span class="o">)</span>
-&gt; mean response <span class="nb">time</span>                                  <span class="m">1505</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">1269</span>   <span class="nv">KO</span><span class="o">=</span><span class="m">3463</span>  <span class="o">)</span>
-&gt; std deviation                                       <span class="m">1626</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">1563</span>   <span class="nv">KO</span><span class="o">=</span><span class="m">109</span>   <span class="o">)</span>
-&gt; response <span class="nb">time</span> 50th percentile                        <span class="m">291</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">250</span>    <span class="nv">KO</span><span class="o">=</span><span class="m">3468</span>  <span class="o">)</span>
-&gt; response <span class="nb">time</span> 75th percentile                       <span class="m">3507</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">3462</span>   <span class="nv">KO</span><span class="o">=</span><span class="m">3553</span>  <span class="o">)</span>
-&gt; mean requests/sec                                  80.89 <span class="o">(</span><span class="nv">OK</span><span class="o">=</span>72.194 <span class="nv">KO</span><span class="o">=</span>8.696 <span class="o">)</span>
----- Response Time Distribution ------------------------------------------------
-&gt; t &lt; <span class="m">800</span> ms                                           <span class="m">229</span> <span class="o">(</span> 57%<span class="o">)</span>
-&gt; <span class="m">800</span> ms &lt; t &lt; <span class="m">1200</span> ms                                   <span class="m">9</span> <span class="o">(</span>  2%<span class="o">)</span>
-&gt; t &gt; <span class="m">1200</span> ms                                          <span class="m">119</span> <span class="o">(</span> 30%<span class="o">)</span>
-&gt; failed                                                <span class="m">43</span> <span class="o">(</span> 11%<span class="o">)</span>
----- Errors --------------------------------------------------------------------
-&gt; regex<span class="o">(</span>success<span class="o">)</span>.find<span class="o">(</span>0<span class="o">)</span>.exists, found nothing                       <span class="m">43</span> <span class="o">(</span>100.0%<span class="o">)</span>
-<span class="o">================================================================================</span>
-</pre></div>
+<pre><code>    ================================================================================
+    ---- Global Information --------------------------------------------------------
+    &gt; request count                                        400 (OK=327    KO=73    )
+    &gt; min response time                                      1 (OK=1      KO=4298  )
+    &gt; max response time                                   5015 (OK=5015   KO=4773  )
+    &gt; mean response time                                  2016 (OK=1449   KO=4556  )
+    &gt; std deviation                                       2279 (OK=2143   KO=101   )
+    &gt; response time 50th percentile                         67 (OK=53     KO=4576  )
+    &gt; response time 75th percentile                       4623 (OK=4583   KO=4627  )
+    &gt; mean requests/sec                                 67.261 (OK=54.986 KO=12.275)
+    ---- Response Time Distribution ------------------------------------------------
+    &gt; t &lt; 800 ms                                           222 ( 56%)
+    &gt; 800 ms &lt; t &lt; 1200 ms                                   6 (  2%)
+    &gt; t &gt; 1200 ms                                           99 ( 25%)
+    &gt; failed                                                73 ( 18%)
+    ---- Errors --------------------------------------------------------------------
+    &gt; regex(success).find(0).exists, found nothing                       73 (100.0%)
+    ================================================================================
+</code></pre>
 
+<p>73 failed, ok it&rsquo;s better then 116 but let&rsquo;s keep it warming. Third round:</p>
+
+<pre><code>    ================================================================================
+    ---- Global Information --------------------------------------------------------
+    &gt; request count                                        400 (OK=357    KO=43    )
+    &gt; min response time                                      1 (OK=1      KO=3261  )
+    &gt; max response time                                   3929 (OK=3929   KO=3667  )
+    &gt; mean response time                                  1505 (OK=1269   KO=3463  )
+    &gt; std deviation                                       1626 (OK=1563   KO=109   )
+    &gt; response time 50th percentile                        291 (OK=250    KO=3468  )
+    &gt; response time 75th percentile                       3507 (OK=3462   KO=3553  )
+    &gt; mean requests/sec                                  80.89 (OK=72.194 KO=8.696 )
+    ---- Response Time Distribution ------------------------------------------------
+    &gt; t &lt; 800 ms                                           229 ( 57%)
+    &gt; 800 ms &lt; t &lt; 1200 ms                                   9 (  2%)
+    &gt; t &gt; 1200 ms                                          119 ( 30%)
+    &gt; failed                                                43 ( 11%)
+    ---- Errors --------------------------------------------------------------------
+    &gt; regex(success).find(0).exists, found nothing                       43 (100.0%)
+    ================================================================================
+</code></pre>
 
 <p>43 failed, number is decreasing but we see mean 80 req/sec with 11% of failures. Forth round:</p>
-<div class="highlight"><pre><span></span><span class="o">================================================================================</span>
----- Global Information --------------------------------------------------------
-&gt; request count                                        <span class="m">400</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">339</span>    <span class="nv">KO</span><span class="o">=</span><span class="m">61</span>    <span class="o">)</span>
-&gt; min response <span class="nb">time</span>                                      <span class="m">1</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">1</span>      <span class="nv">KO</span><span class="o">=</span><span class="m">2005</span>  <span class="o">)</span>
-&gt; max response <span class="nb">time</span>                                   <span class="m">5830</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">5830</span>   <span class="nv">KO</span><span class="o">=</span><span class="m">5528</span>  <span class="o">)</span>
-&gt; mean response <span class="nb">time</span>                                  <span class="m">2162</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">1648</span>   <span class="nv">KO</span><span class="o">=</span><span class="m">5021</span>  <span class="o">)</span>
-&gt; std deviation                                       <span class="m">2601</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">2466</span>   <span class="nv">KO</span><span class="o">=</span><span class="m">957</span>   <span class="o">)</span>
-&gt; response <span class="nb">time</span> 50th percentile                         <span class="m">61</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">21</span>     <span class="nv">KO</span><span class="o">=</span><span class="m">5370</span>  <span class="o">)</span>
-&gt; response <span class="nb">time</span> 75th percentile                       <span class="m">5412</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">5318</span>   <span class="nv">KO</span><span class="o">=</span><span class="m">5451</span>  <span class="o">)</span>
-&gt; mean requests/sec                                 58.651 <span class="o">(</span><span class="nv">OK</span><span class="o">=</span>49.707 <span class="nv">KO</span><span class="o">=</span>8.944 <span class="o">)</span>
----- Response Time Distribution ------------------------------------------------
-&gt; t &lt; <span class="m">800</span> ms                                           <span class="m">230</span> <span class="o">(</span> 58%<span class="o">)</span>
-&gt; <span class="m">800</span> ms &lt; t &lt; <span class="m">1200</span> ms                                   <span class="m">7</span> <span class="o">(</span>  2%<span class="o">)</span>
-&gt; t &gt; <span class="m">1200</span> ms                                          <span class="m">102</span> <span class="o">(</span> 26%<span class="o">)</span>
-&gt; failed                                                <span class="m">61</span> <span class="o">(</span> 15%<span class="o">)</span>
----- Errors --------------------------------------------------------------------
-&gt; regex<span class="o">(</span>success<span class="o">)</span>.find<span class="o">(</span>0<span class="o">)</span>.exists, found nothing                       <span class="m">61</span> <span class="o">(</span>100.0%<span class="o">)</span>
-<span class="o">================================================================================</span>
-</pre></div>
 
+<pre><code>    ================================================================================
+    ---- Global Information --------------------------------------------------------
+    &gt; request count                                        400 (OK=339    KO=61    )
+    &gt; min response time                                      1 (OK=1      KO=2005  )
+    &gt; max response time                                   5830 (OK=5830   KO=5528  )
+    &gt; mean response time                                  2162 (OK=1648   KO=5021  )
+    &gt; std deviation                                       2601 (OK=2466   KO=957   )
+    &gt; response time 50th percentile                         61 (OK=21     KO=5370  )
+    &gt; response time 75th percentile                       5412 (OK=5318   KO=5451  )
+    &gt; mean requests/sec                                 58.651 (OK=49.707 KO=8.944 )
+    ---- Response Time Distribution ------------------------------------------------
+    &gt; t &lt; 800 ms                                           230 ( 58%)
+    &gt; 800 ms &lt; t &lt; 1200 ms                                   7 (  2%)
+    &gt; t &gt; 1200 ms                                          102 ( 26%)
+    &gt; failed                                                61 ( 15%)
+    ---- Errors --------------------------------------------------------------------
+    &gt; regex(success).find(0).exists, found nothing                       61 (100.0%)
+    ================================================================================
+</code></pre>
 
-<p>61 failed, looks like won't be better, however let's double users to compare it with akka-http system. Fifth round:</p>
+<p>61 failed, looks like won&rsquo;t be better, however let&rsquo;s double users to compare it with akka-http system. Fifth round:</p>
+
 <p>400 requests at once:</p>
-<div class="highlight"><pre><span></span><span class="o">================================================================================</span>
----- Global Information --------------------------------------------------------
-&gt; request count                                        <span class="m">800</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">572</span>    <span class="nv">KO</span><span class="o">=</span><span class="m">228</span>   <span class="o">)</span>
-&gt; min response <span class="nb">time</span>                                      <span class="m">1</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">1</span>      <span class="nv">KO</span><span class="o">=</span><span class="m">1993</span>  <span class="o">)</span>
-&gt; max response <span class="nb">time</span>                                  <span class="m">14464</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">14464</span>  <span class="nv">KO</span><span class="o">=</span><span class="m">14065</span> <span class="o">)</span>
-&gt; mean response <span class="nb">time</span>                                  <span class="m">5533</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">2370</span>   <span class="nv">KO</span><span class="o">=</span><span class="m">13468</span> <span class="o">)</span>
-&gt; std deviation                                       <span class="m">6667</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">5087</span>   <span class="nv">KO</span><span class="o">=</span><span class="m">1723</span>  <span class="o">)</span>
-&gt; response <span class="nb">time</span> 50th percentile                        <span class="m">116</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">35</span>     <span class="nv">KO</span><span class="o">=</span><span class="m">13728</span> <span class="o">)</span>
-&gt; response <span class="nb">time</span> 75th percentile                      <span class="m">13715</span> <span class="o">(</span><span class="nv">OK</span><span class="o">=</span><span class="m">144</span>    <span class="nv">KO</span><span class="o">=</span><span class="m">13827</span> <span class="o">)</span>
-&gt; mean requests/sec                                 50.614 <span class="o">(</span><span class="nv">OK</span><span class="o">=</span>36.189 <span class="nv">KO</span><span class="o">=</span>14.425<span class="o">)</span>
----- Response Time Distribution ------------------------------------------------
-&gt; t &lt; <span class="m">800</span> ms                                           <span class="m">458</span> <span class="o">(</span> 57%<span class="o">)</span>
-&gt; <span class="m">800</span> ms &lt; t &lt; <span class="m">1200</span> ms                                   <span class="m">5</span> <span class="o">(</span>  1%<span class="o">)</span>
-&gt; t &gt; <span class="m">1200</span> ms                                          <span class="m">109</span> <span class="o">(</span> 14%<span class="o">)</span>
-&gt; failed                                               <span class="m">228</span> <span class="o">(</span> 29%<span class="o">)</span>
----- Errors --------------------------------------------------------------------
-&gt; regex<span class="o">(</span>success<span class="o">)</span>.find<span class="o">(</span>0<span class="o">)</span>.exists, found nothing                      <span class="m">228</span> <span class="o">(</span>100.0%<span class="o">)</span>
-<span class="o">================================================================================</span>
-</pre></div>
 
+<pre><code>    ================================================================================
+    ---- Global Information --------------------------------------------------------
+    &gt; request count                                        800 (OK=572    KO=228   )
+    &gt; min response time                                      1 (OK=1      KO=1993  )
+    &gt; max response time                                  14464 (OK=14464  KO=14065 )
+    &gt; mean response time                                  5533 (OK=2370   KO=13468 )
+    &gt; std deviation                                       6667 (OK=5087   KO=1723  )
+    &gt; response time 50th percentile                        116 (OK=35     KO=13728 )
+    &gt; response time 75th percentile                      13715 (OK=144    KO=13827 )
+    &gt; mean requests/sec                                 50.614 (OK=36.189 KO=14.425)
+    ---- Response Time Distribution ------------------------------------------------
+    &gt; t &lt; 800 ms                                           458 ( 57%)
+    &gt; 800 ms &lt; t &lt; 1200 ms                                   5 (  1%)
+    &gt; t &gt; 1200 ms                                          109 ( 14%)
+    &gt; failed                                               228 ( 29%)
+    ---- Errors --------------------------------------------------------------------
+    &gt; regex(success).find(0).exists, found nothing                      228 (100.0%)
+    ================================================================================
+</code></pre>
 
 <p>50 mean req/sec with 29% of failed and in app logs I see:</p>
-<div class="highlight"><pre><span></span>java.sql.SQLTimeoutException: Timeout after 1003ms of waiting for a connection.
-</pre></div>
 
+<pre><code>java.sql.SQLTimeoutException: Timeout after 1003ms of waiting for a connection.
+</code></pre>
 
-<h4>Memory usage</h4>
+<h4 id="memory-usage">Memory usage</h4>
+
 <p>In both cases, memory usage is comparable, I saw same 99.97% of jvm code throughput and even almost same number of GC pauses. I have two files but nothing spectacular here. The upper window is akka-http bootzooka version the lower is scalatra version.</p>
-<p><img src="https://hanskoff.github.io/blog/img/gcviewer.jpg" alt="GCviewer bootzooka comparision" style="width: 1000px; height:1000px;" /></p>
+
+<p><img src="/img/gcviewer.jpg" alt="GCviewer bootzooka comparision" /></p>
+
 <ul>
 <li>newjvm-2016-03-29_15-11-42.log</li>
 <li>oldjvm-2016-03-29_15-33-13.log</li>
 </ul>
-<h3>Conclusion after scenario setup 1</h3>
-<p>This first scenario setup is naive and should show "something" and that is <code>akka-http app behaves better than scalatra</code> and continue to operate while getting bigger traffic too. Akka-http stops responding under much bigger load 800 users vs scalatra 200 users (mean 225 req/sec vs 50-80req/sec). It looks like akka-http version has better default configuration (thread pool size) and integrates well with <a href="http://slick.typesafe.com/">slick</a> (functional relational mapping tool) and hikari-cp (tool that managed database connection pool) which overall handles resources in more efficient way.</p>
+
+<h3 id="conclusion-after-scenario-setup-1">Conclusion after scenario setup 1</h3>
+
+<p>This first scenario setup is naive and should show &ldquo;something&rdquo; and that is <code>akka-http app behaves better than scalatra</code> and continue to operate while getting bigger traffic too. Akka-http stops responding under much bigger load 800 users vs scalatra 200 users (mean 225 req/sec vs 50-80req/sec). It looks like akka-http version has better default configuration (thread pool size) and integrates well with <a href="http://slick.typesafe.com/">slick</a> (functional relational mapping tool) and hikari-cp (tool that managed database connection pool) which overall handles resources in more efficient way.</p>
+
 <style type="text/css">
 table {
   padding: 0; }
@@ -448,8 +435,10 @@ table {
       margin-bottom: 0; }
 </style>
 
-<h4>Comparison of second round of both frameworks:</h4>
-<p>For comparison I've used <a href="https://github.com/nuxeo/gatling-report">gatling-reports</a> and the <a href="https://github.com/nuxeo/gatling-report#output-csv-stats">legend</a>.</p>
+<h4 id="comparison-of-second-round-of-both-frameworks">Comparison of second round of both frameworks:</h4>
+
+<p>For comparison I&rsquo;ve used <a href="https://github.com/nuxeo/gatling-report">gatling-reports</a> and the <a href="https://github.com/nuxeo/gatling-report#output-csv-stats">legend</a>.</p>
+
 <table>
 <thead>
 <tr>
@@ -469,6 +458,7 @@ table {
 <th align="center">rating</th>
 </tr>
 </thead>
+
 <tbody>
 <tr>
 <td align="center">akka-http</td>
@@ -486,6 +476,7 @@ table {
 <td align="center">1</td>
 <td align="center">Excellent</td>
 </tr>
+
 <tr>
 <td align="center">scalatra</td>
 <td align="center">5.48</td>
@@ -504,24 +495,22 @@ table {
 </tr>
 </tbody>
 </table>
+
 <ul>
 <li>duration = seconds</li>
 <li>succesCount = number of requests</li>
 <li>min, p50, p95, p99, max, avg, stddev = miliseconds</li>
 </ul>
-<div class="row">
-  <div class="col-md-4">errors
-    <img src="https://hanskoff.github.io/blog/img/secondErrors.jpg" alt="second round bootzooka comparision" />
-  </div>
-  <div class="col-md-4">duration
-    <img src="https://hanskoff.github.io/blog/img/secondDuration.jpg" alt="second round bootzooka comparision" />
-  </div>
-  <div class="col-md-4">throughput
-    <img src="https://hanskoff.github.io/blog/img/secondRps.jpg" alt="second round bootzooka comparision" />
-  </div>
-</div>
 
-<h4>Comparison of best runs for 200 users:</h4>
+<p>errors
+<img src="/img/secondErrors.jpg" alt="image alt" />
+duration
+<img src="/img/secondDuration.jpg" alt="image alt" />
+throughput
+<img src="/img/secondRps.jpg" alt="image alt" /></p>
+
+<h4 id="comparison-of-best-runs-for-200-users">Comparison of best runs for 200 users:</h4>
+
 <table>
 <thead>
 <tr>
@@ -541,6 +530,7 @@ table {
 <th align="center">rating</th>
 </tr>
 </thead>
+
 <tbody>
 <tr>
 <td align="center">akka-http</td>
@@ -558,6 +548,7 @@ table {
 <td align="center">1</td>
 <td align="center">Excellent</td>
 </tr>
+
 <tr>
 <td align="center">scalatra</td>
 <td align="center">4.49</td>
@@ -576,7 +567,9 @@ table {
 </tr>
 </tbody>
 </table>
-<h4>Comparison for 400 users:</h4>
+
+<h4 id="comparison-for-400-users">Comparison for 400 users:</h4>
+
 <table>
 <thead>
 <tr>
@@ -596,6 +589,7 @@ table {
 <th align="center">rating</th>
 </tr>
 </thead>
+
 <tbody>
 <tr>
 <td align="center">akka-http</td>
@@ -613,6 +607,7 @@ table {
 <td align="center">1</td>
 <td align="center">Excellent</td>
 </tr>
+
 <tr>
 <td align="center">scalatra</td>
 <td align="center">15.33</td>
@@ -631,19 +626,16 @@ table {
 </tr>
 </tbody>
 </table>
-<div class="row">
-  <div class="col-md-4">errors
-    <img src="https://hanskoff.github.io/blog/img/finalErrors.jpg" alt="final round bootzooka comparision" />
-  </div>
-  <div class="col-md-4">duration
-    <img src="https://hanskoff.github.io/blog/img/finalDuration.jpg" alt="final round bootzooka comparision" />
-  </div>
-  <div class="col-md-4">throughput
-    <img src="https://hanskoff.github.io/blog/img/finalRps.jpg" alt="final round bootzooka comparision" />
-  </div>
-</div>
 
-<h4>Comparison for 800 users (where akka-http started to have a problems):</h4>
+<p>errors
+<img src="/img/finalErrors.jpg" alt="image alt" />
+duration
+<img src="/img/finalDuration.jpg" alt="image alt" />
+throughput
+<img src="/img/finalRps.jpg" alt="image alt" /></p>
+
+<h4 id="comparison-for-800-users-where-akka-http-started-to-have-a-problems">Comparison for 800 users (where akka-http started to have a problems):</h4>
+
 <table>
 <thead>
 <tr>
@@ -663,6 +655,7 @@ table {
 <th align="center">rating</th>
 </tr>
 </thead>
+
 <tbody>
 <tr>
 <td align="center">akka-http</td>
@@ -682,100 +675,65 @@ table {
 </tr>
 </tbody>
 </table>
-<h4>Hints for tuning</h4>
-<p>Very often performance tests reveal that access to database is a bottleneck. In second (scalatra) of above cases we can observe it quite soon. </p>
+
+<h4 id="hints-for-tuning">Hints for tuning</h4>
+
+<p>Very often performance tests reveal that access to database is a bottleneck. In second (scalatra) of above cases we can observe it quite soon.</p>
+
 <p>First natural approach is to increase the database connection pool what should suffice for a while. Increasing timeout is highly undesirable because it would only slow everything down. Another practise (this time expensive) is to set a database cluster or/and queue updates and queries to database. But any of that moves requires expertise knowledge in every of touched areas (like distributed setup of databases and applications). But that is not the case here, tests are being run on defaults.</p>
+
 <hr />
-            </div>
-            <!-- /.entry-content -->
-    <hr/>
-    <section class="comments" id="comments">
-        <h2>Comments</h2>
 
-        <div id="disqus_thread"></div>
-        <script type="text/javascript">
-            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-            var disqus_shortname = 'hanskoff'; // required: replace example with your forum shortname
-
-                    var disqus_identifier = 'bootzooka-akka-http-vs-scalatra';
-                var disqus_url = 'https://hanskoff.github.io/bootzooka-akka-http-vs-scalatra.html';
-
-            var disqus_config = function () {
-                this.language = "en";
-            };
-
-            /* * * DON'T EDIT BELOW THIS LINE * * */
-            (function () {
-                var dsq = document.createElement('script');
-                dsq.type = 'text/javascript';
-                dsq.async = true;
-                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-            })();
-        </script>
-        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
-            Disqus.</a></noscript>
-        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-
-    </section>
-        </article>
-    </section>
-
-        </div>
     </div>
-</div>
-<footer>
-   <div class="container">
-      <hr>
-      <div class="row">
-         <div class="col-xs-10">&copy; 2016 johny
-            &middot; Powered by <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
-            <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
-            <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
-         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p></div>
-      </div>
-   </div>
-</footer>
-<script src="https://hanskoff.github.io/theme/js/jquery.min.js"></script>
+    
+        <div class="nav-left">
+    <a class="nav-item" href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fhanskoff.github.io%2fbootzooka-akka-http-vs-scalatra.html" title="Share on Facebook" target="_blank"><span class="fa fa-facebook fa-2x" aria-hidden="true"></span></a>
+    <a class="nav-item" href="https://plus.google.com/share?url=https%3a%2f%2fhanskoff.github.io%2fbootzooka-akka-http-vs-scalatra.html" title="Share on Google+" target="_blank"><span class="fa fa-google-plus fa-2x" aria-hidden="true"></span></a>
+    <a class="nav-item" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3a%2f%2fhanskoff.github.io%2fbootzooka-akka-http-vs-scalatra.html" title="Share on LinkedIn" target="_blank"><span class="fa fa-linkedin fa-2x" aria-hidden="true"></span></a>
+    <a class="nav-item" href="https://twitter.com/home?status=Performance%20akka-http%20vs%20scalatra - https%3a%2f%2fhanskoff.github.io%2fbootzooka-akka-http-vs-scalatra.html" title="Tweet this" target="_blank"><span class="fa fa-twitter fa-2x"></span></a>
+    <a class="nav-item" href="http://www.reddit.com/submit?url=https%3a%2f%2fhanskoff.github.io%2fbootzooka-akka-http-vs-scalatra.html&title=Performance%20akka-http%20vs%20scalatra" title="Share on Reddit" target="_blank"><span class="fa fa-reddit-alien fa-2x" aria-hidden="true"></span></a>
+    
+    </div>
+    
+  </div>
+</section>
 
-<!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="https://hanskoff.github.io/theme/js/bootstrap.min.js"></script>
-
-<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
-<script src="https://hanskoff.github.io/theme/js/respond.min.js"></script>
-
-    <!-- Disqus -->
+<section class="section">
+  <div class="container">
+    <aside><div id="disqus_thread"></div></aside>
     <script type="text/javascript">
-        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-        var disqus_shortname = 'hanskoff'; // required: replace example with your forum shortname
-
-        /* * * DON'T EDIT BELOW THIS LINE * * */
-        (function () {
-            var s = document.createElement('script');
-            s.async = true;
-            s.type = 'text/javascript';
-            s.src = '//' + disqus_shortname + '.disqus.com/count.js';
-            (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
-        }());
+      var disqus_shortname = 'hanskoff';
+      (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
     </script>
-    <!-- End Disqus Code -->
-    <!-- Google Analytics -->
-    <script type="text/javascript">
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
 
-        var _gaq = _gaq || [];
-        _gaq.push(['_setAccount', 'UA-20629244-7']);
-        _gaq.push(['_trackPageview']);
 
-        (function () {
-            var ga = document.createElement('script');
-            ga.type = 'text/javascript';
-            ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0];
-            s.parentNode.insertBefore(ga, s);
-        })();
-    </script>
-    <!-- End Google Analytics Code -->
+<section class="section">
+  <div class="container has-text-centered">
+    <p>&copy; 2017 | <a href="http://gohugo.io" target="_blank">Hugo</a> ♥</p>
+  </div>
+</section>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js" integrity="sha256-KbfTjB0WZ8vvXngdpJGY3Yp3xKk+tttbqClO11anCIU=" crossorigin="anonymous"></script>
 
-</body>
-</html>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/languages/go.min.js"></script>
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/languages/dockerfile.min.js"></script>
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-20629244-7', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+
+
