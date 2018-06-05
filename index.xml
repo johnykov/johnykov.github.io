@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>johny&#39;s blog</title>
-    <link>https://hanskoff.github.io/</link>
+    <link>https://johnykov.github.io/</link>
     <description>Recent content on johny&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>&amp;copy; 2017 | &lt;a href=&#34;http://gohugo.io&#34; target=&#34;_blank&#34;&gt;Hugo&lt;/a&gt; ♥</copyright>
     <lastBuildDate>Tue, 29 Mar 2016 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://hanskoff.github.io/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://johnykov.github.io/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Performance akka-http vs scalatra</title>
-      <link>https://hanskoff.github.io/bootzooka-akka-http-vs-scalatra.html</link>
+      <link>https://johnykov.github.io/bootzooka-akka-http-vs-scalatra.html</link>
       <pubDate>Tue, 29 Mar 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://hanskoff.github.io/bootzooka-akka-http-vs-scalatra.html</guid>
+      <guid>https://johnykov.github.io/bootzooka-akka-http-vs-scalatra.html</guid>
       <description>Some time ago we changed how Bootzooka handles HTTP requests.
 My goal is to compare two great tools:
  complete web framework scalatra 2.3.1 (latest stable) called by one of it&amp;rsquo;s project leaders a web toolkit akka-http 2.4.2  from a performance perspective. I find both of them very helpful but they work in different ways so the idea is to see how much that impacts the application and it&amp;rsquo;s users.</description>
@@ -25,20 +25,20 @@ My goal is to compare two great tools:
     
     <item>
       <title>Outdated bootzooka changes</title>
-      <link>https://hanskoff.github.io/latest-bootzooka-changes.html</link>
+      <link>https://johnykov.github.io/latest-bootzooka-changes.html</link>
       <pubDate>Tue, 11 Nov 2014 00:00:00 +0000</pubDate>
       
-      <guid>https://hanskoff.github.io/latest-bootzooka-changes.html</guid>
+      <guid>https://johnykov.github.io/latest-bootzooka-changes.html</guid>
       <description>[2015-07-08] Update Bootzooka has been strongly simplified lately and there were some conceptual changes that is why this post is no longer valid. Also frontend part is being build by webpack now.
 Outdated: At the beginning of my carrer in Softwaremill I was working on trial project for booking company. We were building demo app starting with bootzooka as a base. We&amp;rsquo;ve changed much in that code. After that experience I brought back some of them to bootzooka.</description>
     </item>
     
     <item>
       <title>Fabtools - Tomcat - fast provisioning</title>
-      <link>https://hanskoff.github.io/tomcat-installation-with-fabtools.html</link>
+      <link>https://johnykov.github.io/tomcat-installation-with-fabtools.html</link>
       <pubDate>Fri, 25 Apr 2014 00:00:00 +0000</pubDate>
       
-      <guid>https://hanskoff.github.io/tomcat-installation-with-fabtools.html</guid>
+      <guid>https://johnykov.github.io/tomcat-installation-with-fabtools.html</guid>
       <description>As every other developer I&amp;rsquo;m a fun of easy developer life. I wish all open source projects could be build right away without any previous database or ldap mocking setup. Just fire it right away! That is why I like Vagrant so much.
 Vagrant with puppet manifests [chef|ansible|bash] might help to completely separate your local development environment from office network. From now on you can work from the basement without network connection - is&amp;rsquo;t that sweet?</description>
     </item>
