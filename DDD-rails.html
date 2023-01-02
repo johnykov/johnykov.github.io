@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta content="keyword 1, keyword 2, keyword 3" name="keywords">
+<meta content="Morten G. Johansen" name="author">
+<meta property="og:title" content="Should I be writing Rails Apps in DDD? - johny&#39;s on webapp processing">
+<meta property="og:url" content="https://johnykov.github.io/DDD-rails.html">
+<meta property="og:description" content="Your description here">
+<meta property="og:type" content="website" />
+<title>Should I be writing Rails Apps in DDD? | johny&#39;s on webapp processing</title>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+<link rel="stylesheet" href="https://johnykov.github.io/css/style.css">
+<link rel="shortcut icon" href="https://johnykov.github.io/favicon.ico">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/github.min.css">
+
+</head>
+
+<body>
+<section class="section">
+  <div class="container">
+    <nav class="nav">
+      <div class="nav-left">
+        <a class="nav-item" href="https://johnykov.github.io"><h1 class="title is-4">johny&#39;s on webapp processing</h1></a>
+      </div>
+      <div class="nav-right">
+        <nav class="nav-item level is-mobile">
+          
+          <a class="level-item" href="https://github.com/johnykov" target="_blank">
+            <span class="icon">
+              <i class="fa fa-github"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="https://twitter.com/johnykov" target="_blank">
+            <span class="icon">
+              <i class="fa fa-twitter"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="https://linkedin.com/in/jankowalski" target="_blank">
+            <span class="icon">
+              <i class="fa fa-linkedin-square"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="http://www.emailmeform.com/builder/form/o1g7UmK48a0NF6wjq2Bv6ce4G" target="_blank">
+            <span class="icon">
+              <i class="fa fa-envelope"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="https://johnykov.github.io/services/" target="_blank">
+            <span class="icon">
+              <i class="fa fa-globe"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="/index.xml" target="_blank">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+          </a>
+          
+        </nav>
+      </div>
+    </nav>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h1 class="title">Should I be writing Rails Apps in DDD?</h1>
+    <h2 class="subtitle is-5">November 6, 2021 by johny</h2>
+    
+    <div class="content">
+      <h3 id="picking-the-right-rails-code-style">Picking the right Rails code style</h3>
+<p>Yesterday I&rsquo;ve seen this amazing 8 years old video <a href="https://www.youtube.com/watch?v=tg5RFeSfBM4">October CincyRb - Jim Weirich on Decoupling from Rails</a>. I always have a temptation to read only the newest articles to be up-to-date. The truth is, old resources give the most value. Looks on the mathematics. People struggle to head around concepts coming from XVII century. Lol look at<a href="https://www.popularmechanics.com/science/math/g29008356/hard-math-problems/"> Fermat’s Last Theorem</a>.
+The mentioned video presents interesting way of separating App Code - business domain core logic - from infrastructure, Rails (ActiveRecord) specific code.
+As I understand this is called DDD - Domain Driven Design. There are multiple books about this concept. Just google them if interested.
+Going against the main flow - with DDD Rails concept - requires a lot of discipline and patience to teach and adapt the whole team to stick to it. This might be a costly experiment.
+I guess there are multiple benefits of this kind architecture. I would look directly on one of them. Which would be FAST unit tests. The reason I fall in love with Nodejs and GO after working with Java Spring apps.</p>
+<p>The result of following DDD rules is to leave domain logic in pure ruby classes - PORO - so it&rsquo;s easier to unit test with rspec. Simple empty rails+rspec unit test (require <code>rails_spec_helper?</code>) takes 1,5 seconds to run conversely single similar rspec unit test takes 0.002 seconds to complete - huge difference - multiple orders of magnitude. Hard to achieve but gains are tempting. Maybe halfway solution is to only to <a href="https://www.honeybadger.io/blog/poro-plain-old-ruby-object-tests-and-specs/">Speed up Rails tests 10x by using PORO domain models</a></p>
+<p>I guess the majority of rails coders are those that follow <a href="https://guides.rubyonrails.org/v6.0/getting_started.html">default rails style</a> that comes out of <code>rails g scaffold</code>. Mixed concerns. Controllers methods like</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">create</span>
+</span></span><span style="display:flex;"><span>    @room <span style="color:#f92672">=</span> <span style="color:#66d9ef">Room</span><span style="color:#f92672">.</span>new(room_params)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    respond_to <span style="color:#66d9ef">do</span> <span style="color:#f92672">|</span>format<span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">if</span> @room<span style="color:#f92672">.</span>save
+</span></span><span style="display:flex;"><span>        format<span style="color:#f92672">.</span>html { redirect_to @room, <span style="color:#e6db74">notice</span>: <span style="color:#e6db74">&#39;Room was successfully created.&#39;</span> }
+</span></span><span style="display:flex;"><span>        format<span style="color:#f92672">.</span>json { render <span style="color:#e6db74">:show</span>, <span style="color:#e6db74">status</span>: <span style="color:#e6db74">:created</span>, <span style="color:#e6db74">location</span>: @room }
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>        format<span style="color:#f92672">.</span>html { render <span style="color:#e6db74">:new</span> }
+</span></span><span style="display:flex;"><span>        format<span style="color:#f92672">.</span>json { render <span style="color:#e6db74">json</span>: @room<span style="color:#f92672">.</span>errors, <span style="color:#e6db74">status</span>: <span style="color:#e6db74">:unprocessable_entity</span> }
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span></code></pre></div><p>This is totally fine for even big projects especially after reading <a href="https://growingrails.com/">Growing Rails</a> from people from <a href="http://www.makandra.com/">Makandra</a>.</p>
+<p>More on DDD Rails might be found related sources:</p>
+<ul>
+<li>DDD Rails leader <a href="https://arkency.com/">Arkency blog</a> - as I understand from this polish <a href="https://open.spotify.com/episode/5sfhEANvsIkauptjS0iMjw?si=fccebe458631423b">podcast</a></li>
+</ul>
+<p>Other great Ruby on Rails resources:</p>
+<ul>
+<li>rails code quality after <a href="https://www.therubyonrailspodcast.com/390">listening to Rails podcast</a></li>
+<li><a href="https://rubyweekly.com/">ruby weekly</a></li>
+</ul>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+
+    </div>
+    
+        <div class="nav-left">
+    <a class="nav-item" href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fjohnykov.github.io%2fDDD-rails.html" title="Share on Facebook" target="_blank"><span class="fa fa-facebook fa-2x" aria-hidden="true"></span></a>
+    <a class="nav-item" href="https://plus.google.com/share?url=https%3a%2f%2fjohnykov.github.io%2fDDD-rails.html" title="Share on Google+" target="_blank"><span class="fa fa-google-plus fa-2x" aria-hidden="true"></span></a>
+    <a class="nav-item" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3a%2f%2fjohnykov.github.io%2fDDD-rails.html" title="Share on LinkedIn" target="_blank"><span class="fa fa-linkedin fa-2x" aria-hidden="true"></span></a>
+    <a class="nav-item" href="https://twitter.com/home?status=Should%20I%20be%20writing%20Rails%20Apps%20in%20DDD%3f - https%3a%2f%2fjohnykov.github.io%2fDDD-rails.html" title="Tweet this" target="_blank"><span class="fa fa-twitter fa-2x"></span></a>
+    <a class="nav-item" href="http://www.reddit.com/submit?url=https%3a%2f%2fjohnykov.github.io%2fDDD-rails.html&title=Should%20I%20be%20writing%20Rails%20Apps%20in%20DDD%3f" title="Share on Reddit" target="_blank"><span class="fa fa-reddit-alien fa-2x" aria-hidden="true"></span></a>
+    
+    </div>
+    
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <aside><div id="disqus_thread"></div></aside>
+    <script type="text/javascript">
+      var disqus_shortname = 'hanskoff';
+      (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container has-text-centered">
+    <p>&copy; johny | <a href="http://gohugo.io" target="_blank">Hugo</a> ♥</p>
+  </div>
+</section>
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js" integrity="sha256-+bhVTaRmJ/c07eV80nU8gD2cBBF0rYkf1txqXlrbvb0=" crossorigin="anonymous"></script>
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/languages/go.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js"></script>
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/languages/dockerfile.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js"></script>
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-20629244-7', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</body>

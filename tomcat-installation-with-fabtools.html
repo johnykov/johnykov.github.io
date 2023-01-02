@@ -1,27 +1,38 @@
-
 <!DOCTYPE html>
 <html lang="en">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta content="keyword 1, keyword 2, keyword 3" name="keywords">
 <meta content="Morten G. Johansen" name="author">
-<meta property="og:title" content="Fabtools - Tomcat - fast provisioning - johny&#39;s blog">
+<meta property="og:title" content="Fabtools - Tomcat - fast provisioning - johny&#39;s on webapp processing">
 <meta property="og:url" content="https://johnykov.github.io/tomcat-installation-with-fabtools.html">
 <meta property="og:description" content="Your description here">
 <meta property="og:type" content="website" />
-<title>Fabtools - Tomcat - fast provisioning | johny&#39;s blog</title>
+<title>Fabtools - Tomcat - fast provisioning | johny&#39;s on webapp processing</title>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
 <link rel="stylesheet" href="https://johnykov.github.io/css/style.css">
-<link rel="shortcut icon" href="https://johnykov.github.io/wave.ico">
-<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://johnykov.github.io/favicon.ico">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
 
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/github.min.css">
 
+</head>
 
+<body>
 <section class="section">
   <div class="container">
     <nav class="nav">
       <div class="nav-left">
-        <a class="nav-item" href="https://johnykov.github.io"><h1 class="title is-4">johny&#39;s blog</h1></a>
+        <a class="nav-item" href="https://johnykov.github.io"><h1 class="title is-4">johny&#39;s on webapp processing</h1></a>
       </div>
       <div class="nav-right">
         <nav class="nav-item level is-mobile">
@@ -50,7 +61,7 @@
             </span>
           </a>
           
-          <a class="level-item" href="https://hanskoff.github.io/services/" target="_blank">
+          <a class="level-item" href="https://johnykov.github.io/services/" target="_blank">
             <span class="icon">
               <i class="fa fa-globe"></i>
             </span>
@@ -74,72 +85,44 @@
     <h2 class="subtitle is-5">April 25, 2014 by johny</h2>
     
     <div class="content">
-      
-
-<p>As every other developer I&rsquo;m a fun of easy developer life. I wish all open source projects could be build right away without any previous database or ldap mocking setup. Just fire it right away! That is why I like <a href="http://www.vagrantup.com/">Vagrant</a> so much.</p>
-
+      <p>As every other developer I&rsquo;m a fun of easy developer life. I wish all open source projects could be build right away without any previous database or ldap mocking setup. Just fire it right away! That is why I like <a href="http://www.vagrantup.com/">Vagrant</a> so much.</p>
 <p>Vagrant with puppet manifests [chef|ansible|bash] might help to completely separate your local development environment from office network. From now on you can work from the basement without network connection - is&rsquo;t that sweet? (You might just need to mock company&rsquo;s ldap server).</p>
-
 <blockquote>
 <p>The main benefit of <code>Vagranfile</code> (Vagrant’s setup file) is that you can keep it as a code in your favorite VCS. Each team member will build his own local developement environment from scratch. You don’t need to distribute huge .vmdk files anymore.</p>
 </blockquote>
-
 <p><em>Fabric</em> is great python tool that helps you to automate many tedious tasks: copy files from one to another host, link, create users, replace configurations etc.</p>
-
 <p><em>Fabtools</em> is a natural extension of Fabric possibilities. The idea behind it - is comparable to that from puppet and chef. It might be considered as another provisioner.</p>
-
 <p><a href="http://fabtools.readthedocs.org/en/latest/api/python.html">In current 0.18 release of fabtools</a> you are be able to find tomcat module which will help you to automatically provision virtual machine on you computer with apache tomcat server within few minutes.</p>
-
 <p>You might need to install</p>
-
-<pre><code class="language-bash">sudo apt-get install python-pip
-</code></pre>
-
-<ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo apt-get install python-pip
+</span></span></code></pre></div><ol>
 <li><a href="http://www.vagrantup.com/">Vagrant</a></li>
 <li><a href="https://www.virtualbox.org/">Oracle VirtualBox</a></li>
-<li><a href="http://fabfile.org">Fabric</a><br /></li>
+<li><a href="http://fabfile.org">Fabric</a></li>
 <li><a href="http://fabtools.readthedocs.org">Fabtools</a></li>
 </ol>
-
 <p>last two you on ubuntu can simply type in terminal:</p>
-
-<pre><code class="language-bash">pip install fabric
-pip install fabtools
-</code></pre>
-
-<h2 id="example">Example</h2>
-
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>pip install fabric
+</span></span><span style="display:flex;"><span>pip install fabtools
+</span></span></code></pre></div><h2 id="example">Example</h2>
 <p>All you have to do is to create fabfile.py in your directory with vagranfile. For apache tomcat server you need java first.</p>
-
-<pre><code class="language-python">from fabtools import require, tomcat
-from fabtools.vagrant import vagrant
-
-@task
-def provision():
-    require.oracle_jdk.installed(version='7u55-b13')
-    require.tomcat.installed('7.0.53')
-</code></pre>
-
-<p>or go and <a href="https://github.com/hanskoff/vagrant-fabric">clone my github repo</a>, navigate to tomcat and:</p>
-
-<pre><code class="language-bash">fab vagrant provision
-vagrant ssh
-</code></pre>
-
-<p><strong>As puppet manifest, fabtools fabfiles might be reused to provision remote boxes.</strong></p>
-
-<h2 id="reusing-fabfile-py-to-provision-remote-box">Reusing fabfile.py to provision remote box:</h2>
-
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> fabtools <span style="color:#f92672">import</span> require, tomcat
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> fabtools.vagrant <span style="color:#f92672">import</span> vagrant
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@task</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">provision</span>():
+</span></span><span style="display:flex;"><span>    require<span style="color:#f92672">.</span>oracle_jdk<span style="color:#f92672">.</span>installed(version<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;7u55-b13&#39;</span>)
+</span></span><span style="display:flex;"><span>    require<span style="color:#f92672">.</span>tomcat<span style="color:#f92672">.</span>installed(<span style="color:#e6db74">&#39;7.0.53&#39;</span>)
+</span></span></code></pre></div><p>or go and <a href="https://github.com/hanskoff/vagrant-fabric">clone my github repo</a>, navigate to tomcat and:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>fab vagrant provision
+</span></span><span style="display:flex;"><span>vagrant ssh
+</span></span></code></pre></div><p><strong>As puppet manifest, fabtools fabfiles might be reused to provision remote boxes.</strong></p>
+<h2 id="reusing-fabfilepy-to-provision-remote-box">Reusing fabfile.py to provision remote box:</h2>
 <p>When having fabfile already built for your local dev box you can then reuse it for automation of provisioning remote boxes.
 You can define your hosts in fabfile or you can just call</p>
-
-<pre><code class="language-bash">fab -H &lt;user&gt;@&lt;hostname&gt;:&lt;sshPort&gt; provision
-</code></pre>
-
-<p>Above command will install java and apache tomcat on any <code>&lt;hostname&gt;</code> with one bash call.</p>
-
-<hr />
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>fab -H &lt;user&gt;@&lt;hostname&gt;:&lt;sshPort&gt; provision
+</span></span></code></pre></div><p>Above command will install java and apache tomcat on any <code>&lt;hostname&gt;</code> with one bash call.</p>
+<hr>
 
     </div>
     
@@ -173,24 +156,33 @@ You can define your hosts in fabfile or you can just call</p>
 
 <section class="section">
   <div class="container has-text-centered">
-    <p>&copy; 2017 | <a href="http://gohugo.io" target="_blank">Hugo</a> ♥</p>
+    <p>&copy; johny | <a href="http://gohugo.io" target="_blank">Hugo</a> ♥</p>
   </div>
 </section>
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js" integrity="sha256-KbfTjB0WZ8vvXngdpJGY3Yp3xKk+tttbqClO11anCIU=" crossorigin="anonymous"></script>
 
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/languages/go.min.js"></script>
 
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/languages/dockerfile.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js" integrity="sha256-+bhVTaRmJ/c07eV80nU8gD2cBBF0rYkf1txqXlrbvb0=" crossorigin="anonymous"></script>
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/languages/go.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js"></script>
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/languages/dockerfile.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js"></script>
 
 <script>hljs.initHighlightingOnLoad();</script>
 
 
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-20629244-7', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-20629244-7', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
 
 
+</body>

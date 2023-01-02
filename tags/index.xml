@@ -1,15 +1,11 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Tags on johny&#39;s blog</title>
+    <title>Tags on johny&#39;s on webapp processing</title>
     <link>https://johnykov.github.io/tags/</link>
-    <description>Recent content in Tags on johny&#39;s blog</description>
+    <description>Recent content in Tags on johny&#39;s on webapp processing</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <copyright>&amp;copy; 2017 | &lt;a href=&#34;http://gohugo.io&#34; target=&#34;_blank&#34;&gt;Hugo&lt;/a&gt; ♥</copyright>
-    
-	<atom:link href="https://johnykov.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <copyright>&amp;copy; johny | &lt;a href=&#34;http://gohugo.io&#34; target=&#34;_blank&#34;&gt;Hugo&lt;/a&gt; ♥</copyright><atom:link href="https://johnykov.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
   </channel>
 </rss>

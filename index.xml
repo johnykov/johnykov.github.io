@@ -1,16 +1,29 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>johny&#39;s blog</title>
+    <title>johny&#39;s on webapp processing</title>
     <link>https://johnykov.github.io/</link>
-    <description>Recent content on johny&#39;s blog</description>
+    <description>Recent content on johny&#39;s on webapp processing</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <copyright>&amp;copy; 2017 | &lt;a href=&#34;http://gohugo.io&#34; target=&#34;_blank&#34;&gt;Hugo&lt;/a&gt; ♥</copyright>
-    <lastBuildDate>Tue, 29 Mar 2016 00:00:00 +0000</lastBuildDate>
+    <copyright>&amp;copy; johny | &lt;a href=&#34;http://gohugo.io&#34; target=&#34;_blank&#34;&gt;Hugo&lt;/a&gt; ♥</copyright><atom:link href="https://johnykov.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Should I be writing Rails Apps in DDD?</title>
+      <link>https://johnykov.github.io/DDD-rails.html</link>
+      <pubDate>Sat, 06 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://johnykov.github.io/DDD-rails.html</guid>
+      <description>Picking the right Rails code style Yesterday I&amp;rsquo;ve seen this amazing 8 years old video October CincyRb - Jim Weirich on Decoupling from Rails. I always have a temptation to read only the newest articles to be up-to-date. The truth is, old resources give the most value. Looks on the mathematics. People struggle to head around concepts coming from XVII century. Lol look at Fermat’s Last Theorem. The mentioned video presents interesting way of separating App Code - business domain core logic - from infrastructure, Rails (ActiveRecord) specific code.</description>
+    </item>
     
-	<atom:link href="https://johnykov.github.io/index.xml" rel="self" type="application/rss+xml" />
-    
+    <item>
+      <title>Johny&#39;s favorite dev tools</title>
+      <link>https://johnykov.github.io/johnys-favorite-dev-tools.html</link>
+      <pubDate>Fri, 05 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://johnykov.github.io/johnys-favorite-dev-tools.html</guid>
+      <description>Editors intelij idea sublime text mate visual studio code Cmd tools httpie git, gitk git cola k9s aws-vault apache bench or fortio grep, vim </description>
+    </item>
     
     <item>
       <title>Performance akka-http vs scalatra</title>
@@ -20,7 +33,8 @@
       <guid>https://johnykov.github.io/bootzooka-akka-http-vs-scalatra.html</guid>
       <description>Some time ago we changed how Bootzooka handles HTTP requests.
 My goal is to compare two great tools:
- complete web framework scalatra 2.3.1 (latest stable) called by one of it&amp;rsquo;s project leaders a web toolkit akka-http 2.4.2  from a performance perspective. I find both of them very helpful but they work in different ways so the idea is to see how much that impacts the application and it&amp;rsquo;s users.</description>
+complete web framework scalatra 2.3.1 (latest stable) called by one of it&amp;rsquo;s project leaders a web toolkit akka-http 2.4.2 from a performance perspective. I find both of them very helpful but they work in different ways so the idea is to see how much that impacts the application and it&amp;rsquo;s users.
+Whenever you buy a car - you look at its specification.</description>
     </item>
     
     <item>

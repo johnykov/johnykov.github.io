@@ -1,26 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
+<head>
+	<meta name="generator" content="Hugo 0.109.0">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta content="keyword 1, keyword 2, keyword 3" name="keywords">
 <meta content="Morten G. Johansen" name="author">
-<meta property="og:title" content="johny&#39;s blog">
+<meta property="og:title" content="johny&#39;s on webapp processing">
 <meta property="og:url" content="https://johnykov.github.io/">
 <meta property="og:description" content="Your description here">
 <meta property="og:type" content="website" />
-<title>johny&#39;s blog</title>
+<title>johny&#39;s on webapp processing</title>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
 <link rel="stylesheet" href="https://johnykov.github.io/css/style.css">
-<link rel="shortcut icon" href="https://johnykov.github.io/wave.ico">
-<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://johnykov.github.io/favicon.ico">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
 
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/github.min.css">
 
+</head>
 
 <section class="section">
   <div class="container">
     <nav class="nav">
       <div class="nav-left">
-        <a class="nav-item" href="https://johnykov.github.io"><h1 class="title is-4">johny&#39;s blog</h1></a>
+        <a class="nav-item" href="https://johnykov.github.io"><h1 class="title is-4">johny&#39;s on webapp processing</h1></a>
       </div>
       <div class="nav-right">
         <nav class="nav-item level is-mobile">
@@ -71,13 +83,41 @@
   <div class="container">
     
     <article>
+      <h1 class="title"><a href="https://johnykov.github.io/DDD-rails.html">Should I be writing Rails Apps in DDD?</a></h1>
+      <h2 class="subtitle is-5">November 6, 2021</h2>
+      
+      <div class="content">
+        Picking the right Rails code style Yesterday I&rsquo;ve seen this amazing 8 years old video October CincyRb - Jim Weirich on Decoupling from Rails. I always have a temptation to read only the newest articles to be up-to-date. The truth is, old resources give the most value. Looks on the mathematics. People struggle to head around concepts coming from XVII century. Lol look at Fermat’s Last Theorem. The mentioned video presents interesting way of separating App Code - business domain core logic - from infrastructure, Rails (ActiveRecord) specific code.
+        
+        ...<a class="button is-link" href="https://johnykov.github.io/DDD-rails.html" style="height:28px">
+          Read more
+          <span class="icon is-small">
+            <i class="fa fa-angle-double-right"></i>
+          </span>
+        </a>
+        
+      </div>
+    </article>
+    
+    <article>
+      <h1 class="title"><a href="https://johnykov.github.io/johnys-favorite-dev-tools.html">Johny&#39;s favorite dev tools</a></h1>
+      <h2 class="subtitle is-5">November 5, 2021</h2>
+      
+      <div class="content">
+        Editors intelij idea sublime text mate visual studio code Cmd tools httpie git, gitk git cola k9s aws-vault apache bench or fortio grep, vim 
+        
+      </div>
+    </article>
+    
+    <article>
       <h1 class="title"><a href="https://johnykov.github.io/bootzooka-akka-http-vs-scalatra.html">Performance akka-http vs scalatra</a></h1>
       <h2 class="subtitle is-5">March 29, 2016</h2>
       
       <div class="content">
         Some time ago we changed how Bootzooka handles HTTP requests.
 My goal is to compare two great tools:
- complete web framework scalatra 2.3.1 (latest stable) called by one of it&rsquo;s project leaders a web toolkit akka-http 2.4.2  from a performance perspective. I find both of them very helpful but they work in different ways so the idea is to see how much that impacts the application and it&rsquo;s users.
+complete web framework scalatra 2.3.1 (latest stable) called by one of it&rsquo;s project leaders a web toolkit akka-http 2.4.2 from a performance perspective. I find both of them very helpful but they work in different ways so the idea is to see how much that impacts the application and it&rsquo;s users.
+Whenever you buy a car - you look at its specification.
         
         ...<a class="button is-link" href="https://johnykov.github.io/bootzooka-akka-http-vs-scalatra.html" style="height:28px">
           Read more
@@ -133,24 +173,10 @@ Vagrant with puppet manifests [chef|ansible|bash] might help to completely separ
       <div class="level-left">
         <div class="level-item">
           
-          <a class="button is-disabled">
-            <span class="icon is-small is-marginless">
-              <i class="fa fa-angle-left"></i>
-            </span>
-            Newer
-          </a>
-          
         </div>
       </div>
       <div class="level-right is-marginless">
         <div class="level-item">
-          
-          <a class="button is-disabled">
-            Older
-            <span class="icon is-small is-marginless">
-              <i class="fa fa-angle-right"></i>
-            </span>
-          </a>
           
         </div>
       </div>
@@ -160,24 +186,32 @@ Vagrant with puppet manifests [chef|ansible|bash] might help to completely separ
 
 <section class="section">
   <div class="container has-text-centered">
-    <p>&copy; 2017 | <a href="http://gohugo.io" target="_blank">Hugo</a> ♥</p>
+    <p>&copy; johny | <a href="http://gohugo.io" target="_blank">Hugo</a> ♥</p>
   </div>
 </section>
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js" integrity="sha256-KbfTjB0WZ8vvXngdpJGY3Yp3xKk+tttbqClO11anCIU=" crossorigin="anonymous"></script>
 
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/languages/go.min.js"></script>
 
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/languages/dockerfile.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js" integrity="sha256-+bhVTaRmJ/c07eV80nU8gD2cBBF0rYkf1txqXlrbvb0=" crossorigin="anonymous"></script>
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/languages/go.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js"></script>
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/languages/dockerfile.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js"></script>
 
 <script>hljs.initHighlightingOnLoad();</script>
 
 
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-20629244-7', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-20629244-7', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
 
 

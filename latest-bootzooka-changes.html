@@ -1,27 +1,38 @@
-
 <!DOCTYPE html>
 <html lang="en">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta content="keyword 1, keyword 2, keyword 3" name="keywords">
 <meta content="Morten G. Johansen" name="author">
-<meta property="og:title" content="Outdated bootzooka changes - johny&#39;s blog">
+<meta property="og:title" content="Outdated bootzooka changes - johny&#39;s on webapp processing">
 <meta property="og:url" content="https://johnykov.github.io/latest-bootzooka-changes.html">
 <meta property="og:description" content="Your description here">
 <meta property="og:type" content="website" />
-<title>Outdated bootzooka changes | johny&#39;s blog</title>
+<title>Outdated bootzooka changes | johny&#39;s on webapp processing</title>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
 <link rel="stylesheet" href="https://johnykov.github.io/css/style.css">
-<link rel="shortcut icon" href="https://johnykov.github.io/wave.ico">
-<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://johnykov.github.io/favicon.ico">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
 
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/github.min.css">
 
+</head>
 
+<body>
 <section class="section">
   <div class="container">
     <nav class="nav">
       <div class="nav-left">
-        <a class="nav-item" href="https://johnykov.github.io"><h1 class="title is-4">johny&#39;s blog</h1></a>
+        <a class="nav-item" href="https://johnykov.github.io"><h1 class="title is-4">johny&#39;s on webapp processing</h1></a>
       </div>
       <div class="nav-right">
         <nav class="nav-item level is-mobile">
@@ -50,7 +61,7 @@
             </span>
           </a>
           
-          <a class="level-item" href="https://hanskoff.github.io/services/" target="_blank">
+          <a class="level-item" href="https://johnykov.github.io/services/" target="_blank">
             <span class="icon">
               <i class="fa fa-globe"></i>
             </span>
@@ -74,47 +85,34 @@
     <h2 class="subtitle is-5">November 11, 2014 by johny</h2>
     
     <div class="content">
-      
-
-<h3 id="2015-07-08-update">[2015-07-08] Update</h3>
-
-<p>Bootzooka has been strongly simplified lately and there were some conceptual changes that is why this post is no longer valid. <a href="https://softwaremill.com/bootzooka-ui-with-webpack/">Also frontend part is being build by webpack now.</a></p>
-
+      <h3 id="2015-07-08-update">[2015-07-08] Update</h3>
+<p>Bootzooka has been strongly simplified lately and there were some conceptual changes that is why this post is no longer valid. <!-- raw HTML omitted -->Also frontend part is being build by webpack now.<!-- raw HTML omitted --></p>
 <h2 id="outdated">Outdated:</h2>
-
 <p>At the beginning of my carrer in Softwaremill I was working on trial project for booking company. We were building demo app starting with bootzooka as a base. We&rsquo;ve changed much in that code. After that experience I brought back some of them to bootzooka.</p>
-
 <p>Definition:
-    <a href="https://github.com/softwaremill/bootzooka">Bootzooka</a> is a simple application scaffolding project to allow quick start of development for modern web based applications.
-    Live demo is available on <a href="http://bootzooka.softwaremill.com">http://bootzooka.softwaremill.com</a>.</p>
-
+<a href="https://github.com/softwaremill/bootzooka">Bootzooka</a> is a simple application scaffolding project to allow quick start of development for modern web based applications.
+Live demo is available on <a href="http://bootzooka.softwaremill.com">http://bootzooka.softwaremill.com</a>.</p>
 <h3 id="outdated-changes">Outdated changes:</h3>
-
 <ul>
 <li>bower support (dependency management tools for frontend dependencies) <a href="https://github.com/softwaremill/bootzooka/commit/ed3afb89237c0c49e8d28f31e90ac4ed8258e3db">commit</a></li>
 <li>fakeMongo for integration tests (replacing previous implementation) <a href="https://github.com/softwaremill/bootzooka/commit/59cbebb34dcd16f3c912c1f6f867f543f01473d5">commit</a></li>
 <li>migration from twitter boostrap 2 to 3 (it&rsquo;s good just to be up-to-date, right?)</li>
 <li>&ldquo;angular business value module reorganization&rdquo; - accordingly to good practises from sources listed below</li>
 </ul>
-
 <h3 id="sources">Sources:</h3>
-
 <ul>
 <li><a href="http://google-styleguide.googlecode.com/svn/trunk/angularjs-google-style.html">An AngularJS Style Guide for Closure Users at Google</a></li>
 <li><a href="http://www.thoughtworks.com/insights/blog/good-practices-build-your-angularjs-application">Good Practices to Build Your AngularJS Application</a></li>
 <li><a href="https://medium.com/@dickeyxxx/best-practices-for-building-angular-js-apps-266c1a4a6917">Best Practices for Building Angular.js Apps</a></li>
 <li><a href="http://toddmotto.com/opinionated-angular-js-styleguide-for-teams/">Opinionated AngularJS styleguide for teams</a></li>
 </ul>
-
 <h3 id="todo">TODO:</h3>
-
 <ul>
 <li>dockerize app</li>
 <li>add travis ci</li>
 <li>refurbish old school way of notifying users about changes <a href="http://keepachangelog.com/">keepachangelog.com</a>, this post is a kind of changelog note ;)</li>
 </ul>
-
-<hr />
+<hr>
 
     </div>
     
@@ -148,24 +146,33 @@
 
 <section class="section">
   <div class="container has-text-centered">
-    <p>&copy; 2017 | <a href="http://gohugo.io" target="_blank">Hugo</a> ♥</p>
+    <p>&copy; johny | <a href="http://gohugo.io" target="_blank">Hugo</a> ♥</p>
   </div>
 </section>
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js" integrity="sha256-KbfTjB0WZ8vvXngdpJGY3Yp3xKk+tttbqClO11anCIU=" crossorigin="anonymous"></script>
 
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/languages/go.min.js"></script>
 
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/languages/dockerfile.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js" integrity="sha256-+bhVTaRmJ/c07eV80nU8gD2cBBF0rYkf1txqXlrbvb0=" crossorigin="anonymous"></script>
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/languages/go.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js"></script>
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/languages/dockerfile.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js"></script>
 
 <script>hljs.initHighlightingOnLoad();</script>
 
 
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-20629244-7', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-20629244-7', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
 
 
+</body>

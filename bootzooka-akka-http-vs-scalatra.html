@@ -1,27 +1,38 @@
-
 <!DOCTYPE html>
 <html lang="en">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta content="keyword 1, keyword 2, keyword 3" name="keywords">
 <meta content="Morten G. Johansen" name="author">
-<meta property="og:title" content="Performance akka-http vs scalatra - johny&#39;s blog">
+<meta property="og:title" content="Performance akka-http vs scalatra - johny&#39;s on webapp processing">
 <meta property="og:url" content="https://johnykov.github.io/bootzooka-akka-http-vs-scalatra.html">
 <meta property="og:description" content="Your description here">
 <meta property="og:type" content="website" />
-<title>Performance akka-http vs scalatra | johny&#39;s blog</title>
+<title>Performance akka-http vs scalatra | johny&#39;s on webapp processing</title>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
 <link rel="stylesheet" href="https://johnykov.github.io/css/style.css">
-<link rel="shortcut icon" href="https://johnykov.github.io/wave.ico">
-<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://johnykov.github.io/favicon.ico">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
 
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/github.min.css">
 
+</head>
 
+<body>
 <section class="section">
   <div class="container">
     <nav class="nav">
       <div class="nav-left">
-        <a class="nav-item" href="https://johnykov.github.io"><h1 class="title is-4">johny&#39;s blog</h1></a>
+        <a class="nav-item" href="https://johnykov.github.io"><h1 class="title is-4">johny&#39;s on webapp processing</h1></a>
       </div>
       <div class="nav-right">
         <nav class="nav-item level is-mobile">
@@ -50,7 +61,7 @@
             </span>
           </a>
           
-          <a class="level-item" href="https://hanskoff.github.io/services/" target="_blank">
+          <a class="level-item" href="https://johnykov.github.io/services/" target="_blank">
             <span class="icon">
               <i class="fa fa-globe"></i>
             </span>
@@ -74,90 +85,58 @@
     <h2 class="subtitle is-5">March 29, 2016 by johny</h2>
     
     <div class="content">
-      
-
-<p><a href="https://softwaremill.com/bootzooka-akka-http-based/">Some time ago we changed how Bootzooka handles HTTP requests.</a></p>
-
+      <p><a href="https://softwaremill.com/bootzooka-akka-http-based/">Some time ago we changed how Bootzooka handles HTTP requests.</a></p>
 <p>My goal is to compare two great tools:</p>
-
 <ol>
 <li>complete web framework <a href="http://scalatra.org/">scalatra 2.3.1</a> (latest stable)</li>
 <li>called by one of it&rsquo;s project leaders a web toolkit <a href="http://doc.akka.io/docs/akka/2.4.2/scala/http/">akka-http 2.4.2</a></li>
 </ol>
-
 <p>from a performance perspective. I find both of them very helpful but they work in different ways so the idea is to see how much that impacts the application and it&rsquo;s users.</p>
-
 <p>Whenever you buy a car - you look at its specification. How fast it is, how amazing is the acceleration, how much petrol does it burn, how much load it can carry. I&rsquo;d like to know such metrics for tools I use to build web applications. Authors don&rsquo;t always publish such metrics and often Google doesn&rsquo;t find any. One such metric would be to compare benchmarks but there are none so let’s make a comparison.</p>
-
 <p>From the Great Jez Humble&rsquo;s Continuous Delivery book, introduction to chapter 9, comes the definition of app performance:</p>
-
 <blockquote>
 <p>First of all, let’s clear up some confusion around the terms. We’ll use the same terminology as Michael Nygard.1 To paraphrase, performance is a measure of the time taken to process a single transaction, and can be measured either in isolation or under load. Throughput is the number of transactions a system can process in a given timespan. It is always limited by some bottleneck in the system.
 The maximum throughput a system can sustain, for a given workload, while maintaining an acceptable response time for each individual request, is its capacity.
 Customers are usually interested in throughput or capacity. In real life, “performance” is often used as a catch-all term; we will try to be rather more careful in this chapter.</p>
 </blockquote>
-
 <p>So I’ll try to find <strong>throughput</strong> and <strong>capacity</strong> for each versions of bootzooka.</p>
-
 <h3 id="brief-details-of-tested-tools-internals">Brief details of tested tools internals</h3>
-
 <p>The version of Scalatra that I&rsquo;ve tested works in synchronous &amp; blocking way while akka-http is by default &ldquo;reactive&rdquo; (asynchronous and non-blocking - ”reactive” trait might be easily lost when the implementation is blocking, so our code also needs to process asnychronously).</p>
-
 <p>Scalatra is thread based, handling servlets and requires servlet container like jetty to run, it can delegate work to akka (from its docs, never tried this one), while akka-http is actor per request, doesn&rsquo;t require a container and writing actor model code is more natural pattern to follow in this case. Both have comparably pleasant DSLs for writing routes.</p>
-
 <h3 id="setup">Setup</h3>
-
 <p>Equipped with <a href="http://gatling.io">gatling.io</a> (for generating fake traffic of user scenarios) and GCViewer (for watching a memory consumption, this is influenced by <a href="http://bandrzejczak.com/blog/2015/02/15/the-cost-of-the-garbage-collection/">Bartek&rsquo;s post</a> to see if something spectacular is going on) I can measure what happens to my beloved framework (bootzooka) after switching web frameworks.</p>
-
 <p>The test was performed on macbook pro, 2,5 GHz Intel Core i7 with 16 GB of ram.
 I use default JVM flags what is Xss=1 MB (thread stack size) and InitialHeapSize ~ 260 MB and Xmx ~ 4 GB (note: heroku 1 dyno standard is 350 MB).</p>
-
-<pre><code class="language-bash">$ java -XX:+PrintFlagsFinal version
-    uintx InitialHeapSize                          := 268435456                           
-    uintx MaxHeapSize                              := 4294967296                          
-    uintx MaxNewSize                               := 1431306240                          
-    uintx NewSize                                  := 89128960                            
-    uintx OldSize                                  := 179306496                           
-     intx ThreadStackSize                           = 1024                                
-</code></pre>
-
-<p>I’m running postgres 9.4 database locally with two separate schemas one for each scalatra and akka-http versions of bootzooka. So database configuration is same for each system. Gatling scenarios are being run on same local machine as bootzooka backends are deployed ( frontend is written in angular and it’s performance is fine). <strong>This configuration is a kind of “lab environment” where network latency and bandwidth doesn’t play any role, there is no data transmission over the wire what often is the main issue of webapp performance.</strong></p>
-
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ java -XX:+PrintFlagsFinal version
+</span></span><span style="display:flex;"><span>    uintx InitialHeapSize                          :<span style="color:#f92672">=</span> <span style="color:#ae81ff">268435456</span>                           
+</span></span><span style="display:flex;"><span>    uintx MaxHeapSize                              :<span style="color:#f92672">=</span> <span style="color:#ae81ff">4294967296</span>                          
+</span></span><span style="display:flex;"><span>    uintx MaxNewSize                               :<span style="color:#f92672">=</span> <span style="color:#ae81ff">1431306240</span>                          
+</span></span><span style="display:flex;"><span>    uintx NewSize                                  :<span style="color:#f92672">=</span> <span style="color:#ae81ff">89128960</span>                            
+</span></span><span style="display:flex;"><span>    uintx OldSize                                  :<span style="color:#f92672">=</span> <span style="color:#ae81ff">179306496</span>                           
+</span></span><span style="display:flex;"><span>     intx ThreadStackSize                           <span style="color:#f92672">=</span> <span style="color:#ae81ff">1024</span>                                
+</span></span></code></pre></div><p>I’m running postgres 9.4 database locally with two separate schemas one for each scalatra and akka-http versions of bootzooka. So database configuration is same for each system. Gatling scenarios are being run on same local machine as bootzooka backends are deployed ( frontend is written in angular and it’s performance is fine). <strong>This configuration is a kind of “lab environment” where network latency and bandwidth doesn’t play any role, there is no data transmission over the wire what often is the main issue of webapp performance.</strong></p>
 <ul>
 <li><a href="https://github.com/softwaremill/bootzooka/tree/446255c88">Scalatra bootzooka version (tag last-scalatra)</a></li>
 <li><a href="https://github.com/softwaremill/bootzooka/tree/83827361">Akka-http bootzooka version for this commit</a></li>
 <li><a href="https://github.com/hanskoff/gatling-bootzooka">Repository with simple scenario for the test</a></li>
 </ul>
-
 <h4 id="provisioning">Provisioning</h4>
-
 <p>The <code>newbootzooka</code> schema is for akka-http bootzooka version and <code>oldbootzooka</code> schema is for scalatra.</p>
-
-<pre><code class="language-bash">export DATABASE_URL=postgres://newbootzooka:newbootzooka@localhost:5432/newbootzooka &amp;&amp; \
-java -Dserver.port=8081 -Xloggc:newbootzooka-$(date +&quot;%Y-%m-%d_%H-%M-%S&quot;).log \
--XX:+PrintGCDetails -XX:+PrintGCDateStamps -verbose:gc -jar new-bootzooka/bootzooka.jar
-
-export DATABASE_URL=postgres://oldbootzooka:oldbootzooka@localhost:5432/oldbootzooka &amp;&amp; \
-java -Dembedded-jetty.port=8082 -Xloggc:oldbootzooka-$(date +&quot;%Y-%m-%d_%H-%M-%S&quot;).log \
--XX:+PrintGCDetails -XX:+PrintGCDateStamps -verbose:gc -jar old-bootzooka/bootzooka.jar
-</code></pre>
-
-<h3 id="scenario">Scenario</h3>
-
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>export DATABASE_URL<span style="color:#f92672">=</span>postgres://newbootzooka:newbootzooka@localhost:5432/newbootzooka <span style="color:#f92672">&amp;&amp;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>java -Dserver.port<span style="color:#f92672">=</span><span style="color:#ae81ff">8081</span> -Xloggc:newbootzooka-<span style="color:#66d9ef">$(</span>date +<span style="color:#e6db74">&#34;%Y-%m-%d_%H-%M-%S&#34;</span><span style="color:#66d9ef">)</span>.log <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>-XX:+PrintGCDetails -XX:+PrintGCDateStamps -verbose:gc -jar new-bootzooka/bootzooka.jar
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>export DATABASE_URL<span style="color:#f92672">=</span>postgres://oldbootzooka:oldbootzooka@localhost:5432/oldbootzooka <span style="color:#f92672">&amp;&amp;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>java -Dembedded-jetty.port<span style="color:#f92672">=</span><span style="color:#ae81ff">8082</span> -Xloggc:oldbootzooka-<span style="color:#66d9ef">$(</span>date +<span style="color:#e6db74">&#34;%Y-%m-%d_%H-%M-%S&#34;</span><span style="color:#66d9ef">)</span>.log <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>-XX:+PrintGCDetails -XX:+PrintGCDateStamps -verbose:gc -jar old-bootzooka/bootzooka.jar
+</span></span></code></pre></div><h3 id="scenario">Scenario</h3>
 <p>It’s very basic as bootzooka doesn’t do complicated stuff. In the first step user goes to <code>/</code>, waits for http 200 code and in second sends post request (to <code>/api/users/register</code>) to register himself and awaits for <code>success</code> string in response body.</p>
-
 <h4 id="scenario-setup-1">Scenario setup 1</h4>
-
 <p>Throwing at each system 200 users at once just to see what happens <a href="https://github.com/hanskoff/gatling-bootzooka/blob/master/src/test/scala/pl/jan/BootzookaRegistrationScn.scala">BootzookaRegistrationScn</a></p>
-
 <h3 id="bootzooka-akka-http-version">Bootzooka akka-http version:</h3>
-
-<pre><code class="language-bash">./gradlew -Dserver.port=8081 loadTest
-</code></pre>
-
-<p>First round results:</p>
-
-<pre><code>    ================================================================================
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>./gradlew -Dserver.port<span style="color:#f92672">=</span><span style="color:#ae81ff">8081</span> loadTest
+</span></span></code></pre></div><p>First round results:</p>
+<pre tabindex="0"><code>    ================================================================================
     ---- Global Information --------------------------------------------------------
     &gt; request count                                        400 (OK=387    KO=13    )
     &gt; min response time                                     18 (OK=18     KO=111   )
@@ -175,12 +154,9 @@ java -Dembedded-jetty.port=8082 -Xloggc:oldbootzooka-$(date +&quot;%Y-%m-%d_%H-%
     ---- Errors --------------------------------------------------------------------
     &gt; java.net.ConnectException: Connection reset by peer                13 (100.0%)
     ================================================================================
-</code></pre>
-
-<p>You can see there was 400 requests as each user makes 2 requests.
+</code></pre><p>You can see there was 400 requests as each user makes 2 requests.
 There were 13 timeouts, so maybe because of JIT compilation, let&rsquo;s run test a second round:</p>
-
-<pre><code>    ================================================================================
+<pre tabindex="0"><code>    ================================================================================
     ---- Global Information --------------------------------------------------------
     &gt; request count                                        400 (OK=400    KO=0     )
     &gt; min response time                                      7 (OK=7      KO=-     )
@@ -196,11 +172,8 @@ There were 13 timeouts, so maybe because of JIT compilation, let&rsquo;s run tes
     &gt; t &gt; 1200 ms                                            0 (  0%)
     &gt; failed                                                 0 (  0%)
     ================================================================================
-</code></pre>
-
-<p>Looks good, how about doubling number to 400 users at once, third round:</p>
-
-<pre><code>    ================================================================================
+</code></pre><p>Looks good, how about doubling number to 400 users at once, third round:</p>
+<pre tabindex="0"><code>    ================================================================================
     ---- Global Information --------------------------------------------------------
     &gt; request count                                        800 (OK=800    KO=0     )
     &gt; min response time                                      7 (OK=7      KO=-     )
@@ -216,11 +189,8 @@ There were 13 timeouts, so maybe because of JIT compilation, let&rsquo;s run tes
     &gt; t &gt; 1200 ms                                           76 ( 10%)
     &gt; failed                                                 0 (  0%)
     ================================================================================
-</code></pre>
-
-<p>No failed requests, mean req/sec ~ 212. Let&rsquo;s double users for forth round:</p>
-
-<pre><code>    ================================================================================
+</code></pre><p>No failed requests, mean req/sec ~ 212. Let&rsquo;s double users for forth round:</p>
+<pre tabindex="0"><code>    ================================================================================
     ---- Global Information --------------------------------------------------------
     &gt; request count                                       1600 (OK=1565   KO=35    )
     &gt; min response time                                      4 (OK=4      KO=159   )
@@ -238,20 +208,12 @@ There were 13 timeouts, so maybe because of JIT compilation, let&rsquo;s run tes
     ---- Errors --------------------------------------------------------------------
     &gt; java.net.ConnectException: Connection reset by peer                35 (100.0%)
     ================================================================================
-</code></pre>
-
-<p>2% of failed requests but no error in logs (maybe we don&rsquo;t handle that case yet). And in logs I&rsquo;ve found:</p>
-
-<pre><code>java.sql.SQLTimeoutException: Timeout after 1015ms of waiting for a connection.
-</code></pre>
-
-<p>and more:</p>
-
+</code></pre><p>2% of failed requests but no error in logs (maybe we don&rsquo;t handle that case yet). And in logs I&rsquo;ve found:</p>
+<pre tabindex="0"><code>java.sql.SQLTimeoutException: Timeout after 1015ms of waiting for a connection.
+</code></pre><p>and more:</p>
 <p>13:53:45.304 [main-akka.actor.default-dispatcher-82] ERROR c.s.b.Main$$anon$1 - Exception during client request processing: Task slick.backend.DatabaseComponent$DatabaseDef$$anon$2@71688eb2 rejected from java.util.concurrent.ThreadPoolExecutor@4131e49e[Running, pool size = 20, active threads = 20, queued tasks = 1000, completed tasks = 4067]</p>
-
 <p>Let&rsquo;s repeat, same setup, fifth round:</p>
-
-<pre><code>    ================================================================================
+<pre tabindex="0"><code>    ================================================================================
     ---- Global Information --------------------------------------------------------
     &gt; request count                                       1600 (OK=1600   KO=0     )
     &gt; min response time                                      4 (OK=4      KO=-     )
@@ -267,18 +229,11 @@ There were 13 timeouts, so maybe because of JIT compilation, let&rsquo;s run tes
     &gt; t &gt; 1200 ms                                          267 ( 17%)
     &gt; failed                                                 0 (  0%)
     ================================================================================
-</code></pre>
-
-<p>No failed requests this time,75th percentile means: 75% of requests handled within below 300 milliseconds.</p>
-
+</code></pre><p>No failed requests this time,75th percentile means: 75% of requests handled within below 300 milliseconds.</p>
 <h3 id="bootzooka-scalatra-version">Bootzooka scalatra version:</h3>
-
-<pre><code class="language-bash">./gradlew -Dserver.port=8082 loadTest
-</code></pre>
-
-<p>First round:</p>
-
-<pre><code>    ================================================================================
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>./gradlew -Dserver.port<span style="color:#f92672">=</span><span style="color:#ae81ff">8082</span> loadTest
+</span></span></code></pre></div><p>First round:</p>
+<pre tabindex="0"><code>    ================================================================================
     ---- Global Information --------------------------------------------------------
     &gt; request count                                        400 (OK=284    KO=116   )
     &gt; min response time                                     61 (OK=61     KO=10486 )
@@ -296,11 +251,8 @@ There were 13 timeouts, so maybe because of JIT compilation, let&rsquo;s run tes
     ---- Errors --------------------------------------------------------------------
     &gt; regex(success).find(0).exists, found nothing                      116 (100.0%)
     ================================================================================
-</code></pre>
-
-<p>116 failed request, same case let&rsquo;s give a JIT a chance. Second round:</p>
-
-<pre><code>    ================================================================================
+</code></pre><p>116 failed request, same case let&rsquo;s give a JIT a chance. Second round:</p>
+<pre tabindex="0"><code>    ================================================================================
     ---- Global Information --------------------------------------------------------
     &gt; request count                                        400 (OK=327    KO=73    )
     &gt; min response time                                      1 (OK=1      KO=4298  )
@@ -318,11 +270,8 @@ There were 13 timeouts, so maybe because of JIT compilation, let&rsquo;s run tes
     ---- Errors --------------------------------------------------------------------
     &gt; regex(success).find(0).exists, found nothing                       73 (100.0%)
     ================================================================================
-</code></pre>
-
-<p>73 failed, ok it&rsquo;s better then 116 but let&rsquo;s keep it warming. Third round:</p>
-
-<pre><code>    ================================================================================
+</code></pre><p>73 failed, ok it&rsquo;s better then 116 but let&rsquo;s keep it warming. Third round:</p>
+<pre tabindex="0"><code>    ================================================================================
     ---- Global Information --------------------------------------------------------
     &gt; request count                                        400 (OK=357    KO=43    )
     &gt; min response time                                      1 (OK=1      KO=3261  )
@@ -340,11 +289,8 @@ There were 13 timeouts, so maybe because of JIT compilation, let&rsquo;s run tes
     ---- Errors --------------------------------------------------------------------
     &gt; regex(success).find(0).exists, found nothing                       43 (100.0%)
     ================================================================================
-</code></pre>
-
-<p>43 failed, number is decreasing but we see mean 80 req/sec with 11% of failures. Forth round:</p>
-
-<pre><code>    ================================================================================
+</code></pre><p>43 failed, number is decreasing but we see mean 80 req/sec with 11% of failures. Forth round:</p>
+<pre tabindex="0"><code>    ================================================================================
     ---- Global Information --------------------------------------------------------
     &gt; request count                                        400 (OK=339    KO=61    )
     &gt; min response time                                      1 (OK=1      KO=2005  )
@@ -362,13 +308,9 @@ There were 13 timeouts, so maybe because of JIT compilation, let&rsquo;s run tes
     ---- Errors --------------------------------------------------------------------
     &gt; regex(success).find(0).exists, found nothing                       61 (100.0%)
     ================================================================================
-</code></pre>
-
-<p>61 failed, looks like won&rsquo;t be better, however let&rsquo;s double users to compare it with akka-http system. Fifth round:</p>
-
+</code></pre><p>61 failed, looks like won&rsquo;t be better, however let&rsquo;s double users to compare it with akka-http system. Fifth round:</p>
 <p>400 requests at once:</p>
-
-<pre><code>    ================================================================================
+<pre tabindex="0"><code>    ================================================================================
     ---- Global Information --------------------------------------------------------
     &gt; request count                                        800 (OK=572    KO=228   )
     &gt; min response time                                      1 (OK=1      KO=1993  )
@@ -386,303 +328,245 @@ There were 13 timeouts, so maybe because of JIT compilation, let&rsquo;s run tes
     ---- Errors --------------------------------------------------------------------
     &gt; regex(success).find(0).exists, found nothing                      228 (100.0%)
     ================================================================================
-</code></pre>
-
-<p>50 mean req/sec with 29% of failed and in app logs I see:</p>
-
-<pre><code>java.sql.SQLTimeoutException: Timeout after 1003ms of waiting for a connection.
-</code></pre>
-
-<h4 id="memory-usage">Memory usage</h4>
-
+</code></pre><p>50 mean req/sec with 29% of failed and in app logs I see:</p>
+<pre tabindex="0"><code>java.sql.SQLTimeoutException: Timeout after 1003ms of waiting for a connection.
+</code></pre><h4 id="memory-usage">Memory usage</h4>
 <p>In both cases, memory usage is comparable, I saw same 99.97% of jvm code throughput and even almost same number of GC pauses. I have two files but nothing spectacular here. The upper window is akka-http bootzooka version the lower is scalatra version.</p>
-
-<p><img src="/img/gcviewer.jpg" alt="GCviewer bootzooka comparision" /></p>
-
+<p><img src="/img/gcviewer.jpg" alt="GCviewer bootzooka comparision"></p>
 <ul>
 <li>newjvm-2016-03-29_15-11-42.log</li>
 <li>oldjvm-2016-03-29_15-33-13.log</li>
 </ul>
-
 <h3 id="conclusion-after-scenario-setup-1">Conclusion after scenario setup 1</h3>
-
 <p>This first scenario setup is naive and should show &ldquo;something&rdquo; and that is <code>akka-http app behaves better than scalatra</code> and continue to operate while getting bigger traffic too. Akka-http stops responding under much bigger load 800 users vs scalatra 200 users (mean 225 req/sec vs 50-80req/sec). It looks like akka-http version has better default configuration (thread pool size) and integrates well with <a href="http://slick.typesafe.com/">slick</a> (functional relational mapping tool) and hikari-cp (tool that managed database connection pool) which overall handles resources in more efficient way.</p>
-
-<style type="text/css">
-table {
-  padding: 0; }
-  table tr {
-    border-top: 1px solid #cccccc;
-    background-color: white;
-    margin: 0;
-    padding: 0; }
-    table tr:nth-child(2n) {
-      background-color: #f8f8f8; }
-    table tr th {
-      font-weight: bold;
-      border: 1px solid #cccccc;
-      text-align: left;
-      margin: 0;
-      padding: 6px 13px; }
-    table tr td {
-      border: 1px solid #cccccc;
-      text-align: left;
-      margin: 0;
-      padding: 6px 13px; }
-    table tr th :first-child, table tr td :first-child {
-      margin-top: 0; }
-    table tr th :last-child, table tr td :last-child {
-      margin-bottom: 0; }
-</style>
-
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
 <h4 id="comparison-of-second-round-of-both-frameworks">Comparison of second round of both frameworks:</h4>
-
 <p>For comparison I&rsquo;ve used <a href="https://github.com/nuxeo/gatling-report">gatling-reports</a> and the <a href="https://github.com/nuxeo/gatling-report#output-csv-stats">legend</a>.</p>
-
 <table>
 <thead>
 <tr>
-<th align="center">simulation</th>
-<th align="center">duration</th>
-<th align="center">successCount</th>
-<th align="center">errorCount</th>
-<th align="center">min</th>
-<th align="center">p50</th>
-<th align="center">p95</th>
-<th align="center">p99</th>
-<th align="center">max</th>
-<th align="center">avg</th>
-<th align="center">stddev</th>
-<th align="center">requestPerSecond</th>
-<th align="center">apdex</th>
-<th align="center">rating</th>
+<th style="text-align:center">simulation</th>
+<th style="text-align:center">duration</th>
+<th style="text-align:center">successCount</th>
+<th style="text-align:center">errorCount</th>
+<th style="text-align:center">min</th>
+<th style="text-align:center">p50</th>
+<th style="text-align:center">p95</th>
+<th style="text-align:center">p99</th>
+<th style="text-align:center">max</th>
+<th style="text-align:center">avg</th>
+<th style="text-align:center">stddev</th>
+<th style="text-align:center">requestPerSecond</th>
+<th style="text-align:center">apdex</th>
+<th style="text-align:center">rating</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="center">akka-http</td>
-<td align="center">1.98</td>
-<td align="center">400</td>
-<td align="center">0</td>
-<td align="center">4</td>
-<td align="center">43</td>
-<td align="center">581</td>
-<td align="center">678</td>
-<td align="center">679</td>
-<td align="center">191.2</td>
-<td align="center">217</td>
-<td align="center">201.71</td>
-<td align="center">1</td>
-<td align="center">Excellent</td>
+<td style="text-align:center">akka-http</td>
+<td style="text-align:center">1.98</td>
+<td style="text-align:center">400</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">43</td>
+<td style="text-align:center">581</td>
+<td style="text-align:center">678</td>
+<td style="text-align:center">679</td>
+<td style="text-align:center">191.2</td>
+<td style="text-align:center">217</td>
+<td style="text-align:center">201.71</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">Excellent</td>
 </tr>
-
 <tr>
-<td align="center">scalatra</td>
-<td align="center">5.48</td>
-<td align="center">327</td>
-<td align="center">73</td>
-<td align="center">0</td>
-<td align="center">65</td>
-<td align="center">4901</td>
-<td align="center">4984</td>
-<td align="center">5015</td>
-<td align="center">2014.55</td>
-<td align="center">2284</td>
-<td align="center">59.73</td>
-<td align="center">0.79</td>
-<td align="center">Fair</td>
+<td style="text-align:center">scalatra</td>
+<td style="text-align:center">5.48</td>
+<td style="text-align:center">327</td>
+<td style="text-align:center">73</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">65</td>
+<td style="text-align:center">4901</td>
+<td style="text-align:center">4984</td>
+<td style="text-align:center">5015</td>
+<td style="text-align:center">2014.55</td>
+<td style="text-align:center">2284</td>
+<td style="text-align:center">59.73</td>
+<td style="text-align:center">0.79</td>
+<td style="text-align:center">Fair</td>
 </tr>
 </tbody>
 </table>
-
 <ul>
 <li>duration = seconds</li>
 <li>succesCount = number of requests</li>
 <li>min, p50, p95, p99, max, avg, stddev = miliseconds</li>
 </ul>
-
 <p>errors
-<img src="/img/secondErrors.jpg" alt="image alt" />
+<img src="/img/secondErrors.jpg" alt="image alt">
 duration
-<img src="/img/secondDuration.jpg" alt="image alt" />
+<img src="/img/secondDuration.jpg" alt="image alt">
 throughput
-<img src="/img/secondRps.jpg" alt="image alt" /></p>
-
+<img src="/img/secondRps.jpg" alt="image alt"></p>
 <h4 id="comparison-of-best-runs-for-200-users">Comparison of best runs for 200 users:</h4>
-
 <table>
 <thead>
 <tr>
-<th align="center">simulation</th>
-<th align="center">duration</th>
-<th align="center">successCount</th>
-<th align="center">errorCount</th>
-<th align="center">min</th>
-<th align="center">p50</th>
-<th align="center">p95</th>
-<th align="center">p99</th>
-<th align="center">max</th>
-<th align="center">avg</th>
-<th align="center">stddev</th>
-<th align="center">requestPerSecond</th>
-<th align="center">apdex</th>
-<th align="center">rating</th>
+<th style="text-align:center">simulation</th>
+<th style="text-align:center">duration</th>
+<th style="text-align:center">successCount</th>
+<th style="text-align:center">errorCount</th>
+<th style="text-align:center">min</th>
+<th style="text-align:center">p50</th>
+<th style="text-align:center">p95</th>
+<th style="text-align:center">p99</th>
+<th style="text-align:center">max</th>
+<th style="text-align:center">avg</th>
+<th style="text-align:center">stddev</th>
+<th style="text-align:center">requestPerSecond</th>
+<th style="text-align:center">apdex</th>
+<th style="text-align:center">rating</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="center">akka-http</td>
-<td align="center">1.98</td>
-<td align="center">400</td>
-<td align="center">0</td>
-<td align="center">4</td>
-<td align="center">43</td>
-<td align="center">581</td>
-<td align="center">678</td>
-<td align="center">679</td>
-<td align="center">191.2</td>
-<td align="center">217</td>
-<td align="center">201.71</td>
-<td align="center">1</td>
-<td align="center">Excellent</td>
+<td style="text-align:center">akka-http</td>
+<td style="text-align:center">1.98</td>
+<td style="text-align:center">400</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">43</td>
+<td style="text-align:center">581</td>
+<td style="text-align:center">678</td>
+<td style="text-align:center">679</td>
+<td style="text-align:center">191.2</td>
+<td style="text-align:center">217</td>
+<td style="text-align:center">201.71</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">Excellent</td>
 </tr>
-
 <tr>
-<td align="center">scalatra</td>
-<td align="center">4.49</td>
-<td align="center">357</td>
-<td align="center">43</td>
-<td align="center">0</td>
-<td align="center">259</td>
-<td align="center">3770</td>
-<td align="center">3869</td>
-<td align="center">3928</td>
-<td align="center">1473.31</td>
-<td align="center">1654</td>
-<td align="center">79.49</td>
-<td align="center">0.8</td>
-<td align="center">Fair</td>
+<td style="text-align:center">scalatra</td>
+<td style="text-align:center">4.49</td>
+<td style="text-align:center">357</td>
+<td style="text-align:center">43</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">259</td>
+<td style="text-align:center">3770</td>
+<td style="text-align:center">3869</td>
+<td style="text-align:center">3928</td>
+<td style="text-align:center">1473.31</td>
+<td style="text-align:center">1654</td>
+<td style="text-align:center">79.49</td>
+<td style="text-align:center">0.8</td>
+<td style="text-align:center">Fair</td>
 </tr>
 </tbody>
 </table>
-
 <h4 id="comparison-for-400-users">Comparison for 400 users:</h4>
-
 <table>
 <thead>
 <tr>
-<th align="center">simulation</th>
-<th align="center">duration</th>
-<th align="center">successCount</th>
-<th align="center">errorCount</th>
-<th align="center">min</th>
-<th align="center">p50</th>
-<th align="center">p95</th>
-<th align="center">p99</th>
-<th align="center">max</th>
-<th align="center">avg</th>
-<th align="center">stddev</th>
-<th align="center">requestPerSecond</th>
-<th align="center">apdex</th>
-<th align="center">rating</th>
+<th style="text-align:center">simulation</th>
+<th style="text-align:center">duration</th>
+<th style="text-align:center">successCount</th>
+<th style="text-align:center">errorCount</th>
+<th style="text-align:center">min</th>
+<th style="text-align:center">p50</th>
+<th style="text-align:center">p95</th>
+<th style="text-align:center">p99</th>
+<th style="text-align:center">max</th>
+<th style="text-align:center">avg</th>
+<th style="text-align:center">stddev</th>
+<th style="text-align:center">requestPerSecond</th>
+<th style="text-align:center">apdex</th>
+<th style="text-align:center">rating</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="center">akka-http</td>
-<td align="center">3.41</td>
-<td align="center">800</td>
-<td align="center">0</td>
-<td align="center">4</td>
-<td align="center">199</td>
-<td align="center">1390</td>
-<td align="center">1438</td>
-<td align="center">1443</td>
-<td align="center">436.42</td>
-<td align="center">474</td>
-<td align="center">234.33</td>
-<td align="center">1</td>
-<td align="center">Excellent</td>
+<td style="text-align:center">akka-http</td>
+<td style="text-align:center">3.41</td>
+<td style="text-align:center">800</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">199</td>
+<td style="text-align:center">1390</td>
+<td style="text-align:center">1438</td>
+<td style="text-align:center">1443</td>
+<td style="text-align:center">436.42</td>
+<td style="text-align:center">474</td>
+<td style="text-align:center">234.33</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">Excellent</td>
 </tr>
-
 <tr>
-<td align="center">scalatra</td>
-<td align="center">15.33</td>
-<td align="center">572</td>
-<td align="center">228</td>
-<td align="center">0</td>
-<td align="center">111</td>
-<td align="center">14156</td>
-<td align="center">14398</td>
-<td align="center">14464</td>
-<td align="center">5529.42</td>
-<td align="center">6674</td>
-<td align="center">37.3</td>
-<td align="center">0.59</td>
-<td align="center">Poor</td>
+<td style="text-align:center">scalatra</td>
+<td style="text-align:center">15.33</td>
+<td style="text-align:center">572</td>
+<td style="text-align:center">228</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">111</td>
+<td style="text-align:center">14156</td>
+<td style="text-align:center">14398</td>
+<td style="text-align:center">14464</td>
+<td style="text-align:center">5529.42</td>
+<td style="text-align:center">6674</td>
+<td style="text-align:center">37.3</td>
+<td style="text-align:center">0.59</td>
+<td style="text-align:center">Poor</td>
 </tr>
 </tbody>
 </table>
-
 <p>errors
-<img src="/img/finalErrors.jpg" alt="image alt" />
+<img src="/img/finalErrors.jpg" alt="image alt">
 duration
-<img src="/img/finalDuration.jpg" alt="image alt" />
+<img src="/img/finalDuration.jpg" alt="image alt">
 throughput
-<img src="/img/finalRps.jpg" alt="image alt" /></p>
-
+<img src="/img/finalRps.jpg" alt="image alt"></p>
 <h4 id="comparison-for-800-users-where-akka-http-started-to-have-a-problems">Comparison for 800 users (where akka-http started to have a problems):</h4>
-
 <table>
 <thead>
 <tr>
-<th align="center">simulation</th>
-<th align="center">duration</th>
-<th align="center">successCount</th>
-<th align="center">errorCount</th>
-<th align="center">min</th>
-<th align="center">p50</th>
-<th align="center">p95</th>
-<th align="center">p99</th>
-<th align="center">max</th>
-<th align="center">avg</th>
-<th align="center">stddev</th>
-<th align="center">requestPerSecond</th>
-<th align="center">apdex</th>
-<th align="center">rating</th>
+<th style="text-align:center">simulation</th>
+<th style="text-align:center">duration</th>
+<th style="text-align:center">successCount</th>
+<th style="text-align:center">errorCount</th>
+<th style="text-align:center">min</th>
+<th style="text-align:center">p50</th>
+<th style="text-align:center">p95</th>
+<th style="text-align:center">p99</th>
+<th style="text-align:center">max</th>
+<th style="text-align:center">avg</th>
+<th style="text-align:center">stddev</th>
+<th style="text-align:center">requestPerSecond</th>
+<th style="text-align:center">apdex</th>
+<th style="text-align:center">rating</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="center">akka-http</td>
-<td align="center">8.69</td>
-<td align="center">1564</td>
-<td align="center">36</td>
-<td align="center">4</td>
-<td align="center">418</td>
-<td align="center">3095</td>
-<td align="center">3296</td>
-<td align="center">3345</td>
-<td align="center">1011.16</td>
-<td align="center">1117</td>
-<td align="center">180.06</td>
-<td align="center">0.85</td>
-<td align="center">Fair</td>
+<td style="text-align:center">akka-http</td>
+<td style="text-align:center">8.69</td>
+<td style="text-align:center">1564</td>
+<td style="text-align:center">36</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">418</td>
+<td style="text-align:center">3095</td>
+<td style="text-align:center">3296</td>
+<td style="text-align:center">3345</td>
+<td style="text-align:center">1011.16</td>
+<td style="text-align:center">1117</td>
+<td style="text-align:center">180.06</td>
+<td style="text-align:center">0.85</td>
+<td style="text-align:center">Fair</td>
 </tr>
 </tbody>
 </table>
-
 <h4 id="hints-for-tuning">Hints for tuning</h4>
-
 <p>Very often performance tests reveal that access to database is a bottleneck. In second (scalatra) of above cases we can observe it quite soon.</p>
-
 <p>First natural approach is to increase the database connection pool what should suffice for a while. Increasing timeout is highly undesirable because it would only slow everything down. Another practise (this time expensive) is to set a database cluster or/and queue updates and queries to database. But any of that moves requires expertise knowledge in every of touched areas (like distributed setup of databases and applications). But that is not the case here, tests are being run on defaults.</p>
-
-<hr />
+<hr>
 
     </div>
     
@@ -716,24 +600,33 @@ throughput
 
 <section class="section">
   <div class="container has-text-centered">
-    <p>&copy; 2017 | <a href="http://gohugo.io" target="_blank">Hugo</a> ♥</p>
+    <p>&copy; johny | <a href="http://gohugo.io" target="_blank">Hugo</a> ♥</p>
   </div>
 </section>
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js" integrity="sha256-KbfTjB0WZ8vvXngdpJGY3Yp3xKk+tttbqClO11anCIU=" crossorigin="anonymous"></script>
 
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/languages/go.min.js"></script>
 
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/languages/dockerfile.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js" integrity="sha256-+bhVTaRmJ/c07eV80nU8gD2cBBF0rYkf1txqXlrbvb0=" crossorigin="anonymous"></script>
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/languages/go.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js"></script>
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/languages/dockerfile.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js"></script>
 
 <script>hljs.initHighlightingOnLoad();</script>
 
 
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-20629244-7', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-20629244-7', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
 
 
+</body>
