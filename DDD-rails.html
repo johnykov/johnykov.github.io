@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta content="keyword 1, keyword 2, keyword 3" name="keywords">
-<meta content="Morten G. Johansen" name="author">
-<meta property="og:title" content="Should I be writing Rails Apps in DDD? - johny&#39;s on webapp processing">
+<meta content="johny" name="author">
+<meta property="og:title" content="Rails ActiveRecord or DDD? - johny&#39;s blog">
 <meta property="og:url" content="https://johnykov.github.io/DDD-rails.html">
 <meta property="og:description" content="Your description here">
 <meta property="og:type" content="website" />
-<title>Should I be writing Rails Apps in DDD? | johny&#39;s on webapp processing</title>
+<title>Rails ActiveRecord or DDD? | johny&#39;s blog</title>
 
 <script type="text/x-mathjax-config">
   MathJax.Hub.Config({
@@ -32,7 +32,9 @@
   <div class="container">
     <nav class="nav">
       <div class="nav-left">
-        <a class="nav-item" href="https://johnykov.github.io"><h1 class="title is-4">johny&#39;s on webapp processing</h1></a>
+        <a class="nav-item" href="https://johnykov.github.io"><h1 class="title is-4">johny&#39;s blog</h1></a>
+        <a class="nav-item" href="/about">about</a>
+        <a class="nav-item" href="/tags">tags </a>
       </div>
       <div class="nav-right">
         <nav class="nav-item level is-mobile">
@@ -81,18 +83,31 @@
 
 <section class="section">
   <div class="container">
-    <h1 class="title">Should I be writing Rails Apps in DDD?</h1>
+    <h1 class="title">Rails ActiveRecord or DDD?</h1>
     <h2 class="subtitle is-5">November 6, 2021 by johny</h2>
+    
+      <div class="tags">
+    
+        <a class="button is-link" href="/tags/development">development</a>
+    
+        <a class="button is-link" href="/tags/rails">rails</a>
+    
+        <a class="button is-link" href="/tags/ddd">DDD</a>
+    
+        <a class="button is-link" href="/tags/jim-weirich">Jim Weirich</a>
+    
+</div>
+
     
     <div class="content">
       <h3 id="picking-the-right-rails-code-style">Picking the right Rails code style</h3>
-<p>Yesterday I&rsquo;ve seen this amazing 8 years old video <a href="https://www.youtube.com/watch?v=tg5RFeSfBM4">October CincyRb - Jim Weirich on Decoupling from Rails</a>. I always have a temptation to read only the newest articles to be up-to-date. The truth is, old resources give the most value. Looks on the mathematics. People struggle to head around concepts coming from XVII century. Lol look at<a href="https://www.popularmechanics.com/science/math/g29008356/hard-math-problems/"> Fermat’s Last Theorem</a>.
+<p>Yesterday I&rsquo;ve seen this amazing 8 years old video <a href="https://www.youtube.com/watch?v=tg5RFeSfBM4">October CincyRb - Jim Weirich on Decoupling from Rails</a>.
 The mentioned video presents interesting way of separating App Code - business domain core logic - from infrastructure, Rails (ActiveRecord) specific code.
 As I understand this is called DDD - Domain Driven Design. There are multiple books about this concept. Just google them if interested.
-Going against the main flow - with DDD Rails concept - requires a lot of discipline and patience to teach and adapt the whole team to stick to it. This might be a costly experiment.
-I guess there are multiple benefits of this kind architecture. I would look directly on one of them. Which would be FAST unit tests. The reason I fall in love with Nodejs and GO after working with Java Spring apps.</p>
-<p>The result of following DDD rules is to leave domain logic in pure ruby classes - PORO - so it&rsquo;s easier to unit test with rspec. Simple empty rails+rspec unit test (require <code>rails_spec_helper?</code>) takes 1,5 seconds to run conversely single similar rspec unit test takes 0.002 seconds to complete - huge difference - multiple orders of magnitude. Hard to achieve but gains are tempting. Maybe halfway solution is to only to <a href="https://www.honeybadger.io/blog/poro-plain-old-ruby-object-tests-and-specs/">Speed up Rails tests 10x by using PORO domain models</a></p>
-<p>I guess the majority of rails coders are those that follow <a href="https://guides.rubyonrails.org/v6.0/getting_started.html">default rails style</a> that comes out of <code>rails g scaffold</code>. Mixed concerns. Controllers methods like</p>
+Going against the main flow - with DDD Rails concept - requires a lot of discipline and patience to learn, teach and adapt the whole team to stick to it. This might be a time consuming.
+I guess there are multiple benefits of this kind of architecture. I would look directly into one of them. Which would be FAST unit tests. The reason I fall in love with Nodejs and GO after working with Java Spring apps.</p>
+<p>The result of following DDD rules is to leave domain logic in pure ruby classes - POROs - so it&rsquo;s easier to unit test with rspec. Simple empty rails+rspec unit test (require <code>rails_spec_helper?</code>) takes 1,5 seconds to run conversely single similar rspec unit test takes 0.002 seconds to complete - huge difference - multiple orders of magnitude. Hard to achieve but gains are tempting. Maybe halfway solution is to only to <a href="https://www.honeybadger.io/blog/poro-plain-old-ruby-object-tests-and-specs/">Speed up Rails tests 10x by using PORO domain models</a></p>
+<p>The majority of rails coders follows <a href="https://guides.rubyonrails.org/v6.0/getting_started.html">default rails style</a> which comes out of <code>rails g scaffold</code>. Mixed concerns. Controllers methods like</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">create</span>
 </span></span><span style="display:flex;"><span>    @room <span style="color:#f92672">=</span> <span style="color:#66d9ef">Room</span><span style="color:#f92672">.</span>new(room_params)
 </span></span><span style="display:flex;"><span>
@@ -109,7 +124,8 @@ I guess there are multiple benefits of this kind architecture. I would look dire
 </span></span></code></pre></div><p>This is totally fine for even big projects especially after reading <a href="https://growingrails.com/">Growing Rails</a> from people from <a href="http://www.makandra.com/">Makandra</a>.</p>
 <p>More on DDD Rails might be found related sources:</p>
 <ul>
-<li>DDD Rails leader <a href="https://arkency.com/">Arkency blog</a> - as I understand from this polish <a href="https://open.spotify.com/episode/5sfhEANvsIkauptjS0iMjw?si=fccebe458631423b">podcast</a></li>
+<li>DDD Rails leader <a href="https://arkency.com/">Arkency blog</a></li>
+<li>polish podcast <a href="https://open.spotify.com/episode/5sfhEANvsIkauptjS0iMjw?si=fccebe458631423b">47. O nauce DDD i bi-temporalnych eventach domenowych z Andrzejem Krzywdą</a></li>
 </ul>
 <p>Other great Ruby on Rails resources:</p>
 <ul>
@@ -125,8 +141,8 @@ I guess there are multiple benefits of this kind architecture. I would look dire
     <a class="nav-item" href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fjohnykov.github.io%2fDDD-rails.html" title="Share on Facebook" target="_blank"><span class="fa fa-facebook fa-2x" aria-hidden="true"></span></a>
     <a class="nav-item" href="https://plus.google.com/share?url=https%3a%2f%2fjohnykov.github.io%2fDDD-rails.html" title="Share on Google+" target="_blank"><span class="fa fa-google-plus fa-2x" aria-hidden="true"></span></a>
     <a class="nav-item" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3a%2f%2fjohnykov.github.io%2fDDD-rails.html" title="Share on LinkedIn" target="_blank"><span class="fa fa-linkedin fa-2x" aria-hidden="true"></span></a>
-    <a class="nav-item" href="https://twitter.com/home?status=Should%20I%20be%20writing%20Rails%20Apps%20in%20DDD%3f - https%3a%2f%2fjohnykov.github.io%2fDDD-rails.html" title="Tweet this" target="_blank"><span class="fa fa-twitter fa-2x"></span></a>
-    <a class="nav-item" href="http://www.reddit.com/submit?url=https%3a%2f%2fjohnykov.github.io%2fDDD-rails.html&title=Should%20I%20be%20writing%20Rails%20Apps%20in%20DDD%3f" title="Share on Reddit" target="_blank"><span class="fa fa-reddit-alien fa-2x" aria-hidden="true"></span></a>
+    <a class="nav-item" href="https://twitter.com/home?status=Rails%20ActiveRecord%20or%20DDD%3f - https%3a%2f%2fjohnykov.github.io%2fDDD-rails.html" title="Tweet this" target="_blank"><span class="fa fa-twitter fa-2x"></span></a>
+    <a class="nav-item" href="http://www.reddit.com/submit?url=https%3a%2f%2fjohnykov.github.io%2fDDD-rails.html&title=Rails%20ActiveRecord%20or%20DDD%3f" title="Share on Reddit" target="_blank"><span class="fa fa-reddit-alien fa-2x" aria-hidden="true"></span></a>
     
     </div>
     
@@ -151,7 +167,7 @@ I guess there are multiple benefits of this kind architecture. I would look dire
 
 <section class="section">
   <div class="container has-text-centered">
-    <p>&copy; johny | <a href="http://gohugo.io" target="_blank">Hugo</a> ♥</p>
+    <p>&copy; <a href="https://github.com/mgjohansen/hucore.git" target="_blank">[Hu]Core theme</a> & <a href="http://gohugo.io" target="_blank">Hugo</a> ♥</p>
   </div>
 </section>
 

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>cloud development on johny&#39;s blog</title>
+    <link>https://johnykov.github.io/tags/cloud-development/</link>
+    <description>Recent content in cloud development on johny&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>&amp;copy; &lt;a href=&#34;https://github.com/mgjohansen/hucore.git&#34; target=&#34;_blank&#34;&gt;[Hu]Core theme&lt;/a&gt; &amp; &lt;a href=&#34;http://gohugo.io&#34; target=&#34;_blank&#34;&gt;Hugo&lt;/a&gt; ♥</copyright>
+    <lastBuildDate>Tue, 17 Jan 2023 13:11:59 +0100</lastBuildDate><atom:link href="https://johnykov.github.io/tags/cloud-development/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>The Journey to Cloud Development</title>
+      <link>https://johnykov.github.io/posts/the-journey-to-cloud-development/</link>
+      <pubDate>Tue, 17 Jan 2023 13:11:59 +0100</pubDate>
+      
+      <guid>https://johnykov.github.io/posts/the-journey-to-cloud-development/</guid>
+      <description>On Sunday (15-01-2023) I&amp;rsquo;ve came across great read.
+The Journey to Cloud Development: How Shopify Went All-in on Spin</description>
+    </item>
+    
+  </channel>
+</rss>
