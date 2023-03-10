@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta content="keyword 1, keyword 2, keyword 3" name="keywords">
+<meta content="johny" name="author">
+<meta property="og:title" content="Efficient CI pipeline With Github Actions - johny&#39;s blog">
+<meta property="og:url" content="https://johnykov.github.io/posts/20234610-perfect-ci-with-github-actions/">
+<meta property="og:description" content="Your description here">
+<meta property="og:type" content="website" />
+<title>Efficient CI pipeline With Github Actions | johny&#39;s blog</title>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+<link rel="stylesheet" href="https://johnykov.github.io/css/style.css">
+<link rel="shortcut icon" href="https://johnykov.github.io/favicon.ico">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/github.min.css">
+
+</head>
+
+<body>
+<section class="section">
+  <div class="container">
+    <nav class="nav">
+      <div class="nav-left">
+        <a class="nav-item" href="https://johnykov.github.io"><h1 class="title is-4">johny&#39;s blog</h1></a>
+        <a class="nav-item" href="/about">about</a>
+        <a class="nav-item" href="/tags">tags </a>
+      </div>
+      <div class="nav-right">
+        <nav class="nav-item level is-mobile">
+          
+          <a class="level-item" href="https://github.com/johnykov" target="_blank">
+            <span class="icon">
+              <i class="fa fa-github"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="https://twitter.com/johnykov" target="_blank">
+            <span class="icon">
+              <i class="fa fa-twitter"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="https://linkedin.com/in/jankowalski" target="_blank">
+            <span class="icon">
+              <i class="fa fa-linkedin-square"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="http://www.emailmeform.com/builder/form/o1g7UmK48a0NF6wjq2Bv6ce4G" target="_blank">
+            <span class="icon">
+              <i class="fa fa-envelope"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="https://johnykov.github.io/services/" target="_blank">
+            <span class="icon">
+              <i class="fa fa-globe"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="/index.xml" target="_blank">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+          </a>
+          
+        </nav>
+      </div>
+    </nav>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h1 class="title">Efficient CI pipeline With Github Actions</h1>
+    <h2 class="subtitle is-5">March 10, 2023 by johny</h2>
+    
+      <div class="tags">
+    
+        <a class="button is-link" href="/tags/flux">flux</a>
+    
+        <a class="button is-link" href="/tags/rails">rails</a>
+    
+        <a class="button is-link" href="/tags/github-actions">github actions</a>
+    
+        <a class="button is-link" href="/tags/ci">CI</a>
+    
+</div>
+
+    
+    <div class="content">
+      <p>This post might have multiple titles. &ldquo;How to speed up rails project CI build times&rdquo;, &ldquo;How to reduce docker images size&rdquo;, &ldquo;How to save planet by reducing carbon print with smaller docker conainers&rdquo; and so on.</p>
+<blockquote>
+<p>Optimizing Continous Delivery process is somewhat of my passion. I think it&rsquo;s the strong influence one book by Jez Humble&rsquo;s put on me.</p>
+</blockquote>
+<p>When I started helping VAS (first key OSO&rsquo;s client) with going cloud I wrote TBH very unefficient process of release. The complete build of docker images took place inside 3 phase Dockerfile which at best took 40 mintues to complete. Downloading gems, downloading nodejs packages, precompiling assets ended up with almost 2 GB docker image which was shipped to kubernetes cluster with the help of fluxcd.
+The second part of the unefficency was our git flow process which we had. Standard develop, feature, release, and main git branches each triggered docker image re-build invidually. After feature branch passed code review and got merged to develop the build process started to prepare image to deploy to dev environment. When preparing a batch of commit to ship to prod we first created release- branch which also triggered another build process (this time of release- branch) to deploy to uat env. And finally after merge to main branch prod build was triggered. 3x 40 minutes each, building docker image from scratch, downloading everything from web without  any middle tier package registry. On purpose I won&rsquo;t write how much time unit tests took which were running in separate github workflow and which also had dedicated dockerfile with postgres and chrome.
+We worked with this setup quite a long time. There were some attempts to cache and re-use final docker images which result in big ECR bills due to high data transfers.
+The first thought that helps with moving towards better process is &ldquo;promote currently built images&rdquo;. We annotate each docker image with tags like dev-x.x.x which is semi semver style with environment prefix. This is one of the default flux strategies we took from the shelf. So basically annotating docker image with uat- or prod- prefixes is a way to tell flux listener to deploy accordingly. This single step helped to save 2x 40 minutes of build times of uat- and prod- images.</p>
+<p>Another step is to get rid of middle layer docker images for assets precompilation and github cache utilization. Our final docker images are alpine linux distro and we are building app on ubuntu-latest. Both are x86 architecture both are linuxes. However bundler complains about some native packages for alpine and requires additional bundle install invocation but that action moved to the very end of the process helps a lot. The biggest gains are due to caches of gems, node packages and precompiled assets. Github actions caches name is created basing on hashFiles function. So until no changes are applied to any of TS, JS, TSX or yarn.lock files the assets are taken from cache. Additional benefit is there are no node_modules on final docker image. Only public/ directory. Modified dockerfile contains 2 phases and first one runs &ldquo;bundle clean&rdquo; which will remove development and test gems used only for build,test time.</p>
+<p>The complete build process went down to 5-6minutes and I see another optimisation which would take previous docker image and only copy /app directory to it if no frontend changes. Final  docker image is now 446 MB size. And we track that number in ever build summary.</p>
+<p>Tests execution was paralleized and whole suite was split into 15 groups with matrix github workflow directive and &ndash;only-group flag for parallel_rspec. Rspec examples in groups are not well balanced  in terms of execution times but right now the whole tests suit takes as long as the longest group which is usually up to 10 minutes.</p>
+<p>This app contains a few popular gems like device, sidekiq, draper, aasm, rolify, activeadmin, react-rails, turbo-rails. I find this very satifying when seeing cost savings, shorter image transfer times and overall quicker build times.</p>
+
+    </div>
+    
+        <div class="nav-left">
+    <a class="nav-item" href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fjohnykov.github.io%2fposts%2f20234610-perfect-ci-with-github-actions%2f" title="Share on Facebook" target="_blank"><span class="fa fa-facebook fa-2x" aria-hidden="true"></span></a>
+    <a class="nav-item" href="https://plus.google.com/share?url=https%3a%2f%2fjohnykov.github.io%2fposts%2f20234610-perfect-ci-with-github-actions%2f" title="Share on Google+" target="_blank"><span class="fa fa-google-plus fa-2x" aria-hidden="true"></span></a>
+    <a class="nav-item" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3a%2f%2fjohnykov.github.io%2fposts%2f20234610-perfect-ci-with-github-actions%2f" title="Share on LinkedIn" target="_blank"><span class="fa fa-linkedin fa-2x" aria-hidden="true"></span></a>
+    <a class="nav-item" href="https://twitter.com/home?status=Efficient%20CI%20pipeline%20With%20Github%20Actions - https%3a%2f%2fjohnykov.github.io%2fposts%2f20234610-perfect-ci-with-github-actions%2f" title="Tweet this" target="_blank"><span class="fa fa-twitter fa-2x"></span></a>
+    <a class="nav-item" href="http://www.reddit.com/submit?url=https%3a%2f%2fjohnykov.github.io%2fposts%2f20234610-perfect-ci-with-github-actions%2f&title=Efficient%20CI%20pipeline%20With%20Github%20Actions" title="Share on Reddit" target="_blank"><span class="fa fa-reddit-alien fa-2x" aria-hidden="true"></span></a>
+    
+    </div>
+    
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <aside><div id="disqus_thread"></div></aside>
+    <script type="text/javascript">
+      var disqus_shortname = 'hanskoff';
+      (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container has-text-centered">
+    <p>&copy; <a href="https://github.com/mgjohansen/hucore.git" target="_blank">[Hu]Core theme</a> & <a href="http://gohugo.io" target="_blank">Hugo</a> ♥</p>
+  </div>
+</section>
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js" integrity="sha256-+bhVTaRmJ/c07eV80nU8gD2cBBF0rYkf1txqXlrbvb0=" crossorigin="anonymous"></script>
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/languages/go.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js"></script>
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/languages/dockerfile.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js"></script>
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-20629244-7', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</body>

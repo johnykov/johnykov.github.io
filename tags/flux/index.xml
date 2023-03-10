@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>flux on johny&#39;s blog</title>
+    <link>https://johnykov.github.io/tags/flux/</link>
+    <description>Recent content in flux on johny&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>&amp;copy; &lt;a href=&#34;https://github.com/mgjohansen/hucore.git&#34; target=&#34;_blank&#34;&gt;[Hu]Core theme&lt;/a&gt; &amp; &lt;a href=&#34;http://gohugo.io&#34; target=&#34;_blank&#34;&gt;Hugo&lt;/a&gt; ♥</copyright>
+    <lastBuildDate>Fri, 10 Mar 2023 09:46:32 +0100</lastBuildDate><atom:link href="https://johnykov.github.io/tags/flux/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Efficient CI pipeline With Github Actions</title>
+      <link>https://johnykov.github.io/posts/20234610-perfect-ci-with-github-actions/</link>
+      <pubDate>Fri, 10 Mar 2023 09:46:32 +0100</pubDate>
+      
+      <guid>https://johnykov.github.io/posts/20234610-perfect-ci-with-github-actions/</guid>
+      <description>This post might have multiple titles. &amp;ldquo;How to speed up rails project CI build times&amp;rdquo;, &amp;ldquo;How to reduce docker images size&amp;rdquo;, &amp;ldquo;How to save planet by reducing carbon print with smaller docker conainers&amp;rdquo; and so on.
+Optimizing Continous Delivery process is somewhat of my passion. I think it&amp;rsquo;s the strong influence one book by Jez Humble&amp;rsquo;s put on me.
+When I started helping VAS (first key OSO&amp;rsquo;s client) with going cloud I wrote TBH very unefficient process of release.</description>
+    </item>
+    
+  </channel>
+</rss>
