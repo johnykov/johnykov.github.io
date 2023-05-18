@@ -14,7 +14,7 @@
       <pubDate>Fri, 10 Mar 2023 09:46:32 +0100</pubDate>
       
       <guid>https://johnykov.github.io/posts/efficient-ci-pipeline-with-github-actions/</guid>
-      <description>This post might have multiple titles. &amp;ldquo;How to speed up rails project CI build times&amp;rdquo;, &amp;ldquo;How to reduce docker images size&amp;rdquo;, &amp;ldquo;How to save planet by reducing carbon print with smaller docker conainers&amp;rdquo; and so on.
+      <description>This post might have multiple titles. &amp;ldquo;How to speed up rails project CI build times&amp;rdquo;, &amp;ldquo;How to reduce docker images size&amp;rdquo;, &amp;ldquo;How to save planet by reducing carbon print with smaller docker containers&amp;rdquo; and so on.
 Optimizing Continous Delivery process is somewhat of my passion. I think it&amp;rsquo;s the strong influence one book by Jez Humble&amp;rsquo;s put on me.
 When I started helping VAS (first key OSO&amp;rsquo;s client) with going cloud I wrote TBH very inefficient process of release.</description>
     </item>
