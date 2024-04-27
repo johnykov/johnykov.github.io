@@ -6,16 +6,15 @@
     <description>Recent content in DDD-WAW on johny&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <copyright>&amp;copy; &lt;a href=&#34;https://github.com/mgjohansen/hucore.git&#34; target=&#34;_blank&#34;&gt;[Hu]Core theme&lt;/a&gt; &amp; &lt;a href=&#34;http://gohugo.io&#34; target=&#34;_blank&#34;&gt;Hugo&lt;/a&gt; ♥</copyright>
-    <lastBuildDate>Tue, 17 Jan 2023 14:26:17 +0100</lastBuildDate><atom:link href="https://johnykov.github.io/tags/ddd-waw/index.xml" rel="self" type="application/rss+xml" />
+    <copyright>Jan</copyright>
+    <lastBuildDate>Tue, 17 Jan 2023 14:26:17 +0100</lastBuildDate>
+    <atom:link href="https://johnykov.github.io/tags/ddd-waw/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>DDD-WAW and From Kubernetes to Paas</title>
       <link>https://johnykov.github.io/posts/ddd-waw-and-from-kubernetes-to-paas/</link>
       <pubDate>Tue, 17 Jan 2023 14:26:17 +0100</pubDate>
-      
       <guid>https://johnykov.github.io/posts/ddd-waw-and-from-kubernetes-to-paas/</guid>
-      <description>Yesterday I&amp;rsquo;ve attended a DDD-WAW meetup with Andrzej Krzywda from Arkency which was great. Andrzej is a great guy. I’ve met him first time in real. Andrzej was talking about his programming career. He is a good storyteller. He was of course talking a lot about DDD and how they do it in Arkency. He showed off some examples. Pointed us to demo app of the DDD/CQRS/ES patterns applied - e-commerce.</description>
+      <description>Yesterday I&amp;rsquo;ve attended a DDD-WAW meetup with Andrzej Krzywda from Arkency which was great. Andrzej is a great guy. I’ve met him first time in real. Andrzej was talking about his programming career. He is a good storyteller. He was of course talking a lot about DDD and how they do it in Arkency. He showed off some examples. Pointed us to demo app of the DDD/CQRS/ES patterns applied - e-commerce .</description>
     </item>
-    
   </channel>
 </rss>

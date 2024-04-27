@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Blogging on johny&#39;s blog</title>
+    <link>https://johnykov.github.io/tags/blogging/</link>
+    <description>Recent content in Blogging on johny&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>Jan</copyright>
+    <lastBuildDate>Fri, 12 Apr 2024 11:45:35 +0200</lastBuildDate>
+    <atom:link href="https://johnykov.github.io/tags/blogging/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>NodeJS News Blog Ref</title>
+      <link>https://johnykov.github.io/posts/good-nodejs-news-blog-ref/</link>
+      <pubDate>Fri, 12 Apr 2024 11:45:35 +0200</pubDate>
+      <guid>https://johnykov.github.io/posts/good-nodejs-news-blog-ref/</guid>
+      <description>As typical NodeJS fan I&amp;rsquo;m not following closely their release notes. That&amp;rsquo;s why I go easy way and often read another bloggers posts. Seems that NodeJS blog or docs aren&amp;rsquo;t so comfortable to read. I found beautiful Pawel Grzybek blog with some handful NodeJS news. I find those useful and worth recommendation.&#xA;A few of interesting posts by Pawel:&#xA;You might not need Jest — the Node.js native test runner is great nodejs watch pnpm Looks like pnpm is gaining popularity and aims to be replacing npm.</description>
+    </item>
+  </channel>
+</rss>

@@ -1,183 +1,380 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta content="keyword 1, keyword 2, keyword 3" name="keywords">
-<meta content="johny" name="author">
-<meta property="og:title" content="DDD-WAW and From Kubernetes to Paas - johny&#39;s blog">
-<meta property="og:url" content="https://johnykov.github.io/posts/ddd-waw-and-from-kubernetes-to-paas/">
-<meta property="og:description" content="Your description here">
-<meta property="og:type" content="website" />
-<title>DDD-WAW and From Kubernetes to Paas | johny&#39;s blog</title>
+  <title>DDD-WAW and From Kubernetes to Paas :: johny&#39;s blog - Example site for hugo-theme-tailwind</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta
+  name="description"
+  content="Yesterday I&amp;rsquo;ve attended a DDD-WAW meetup with Andrzej Krzywda from Arkency which was great. Andrzej is a great guy. I’ve met him first time in real. Andrzej was talking about his programming career. He is a good storyteller. He was of course talking a lot about DDD and how they do it in Arkency. He showed off some examples. Pointed us to demo app of the DDD/CQRS/ES patterns applied - e-commerce ."
+/>
+<meta
+  name="keywords"
+  content="[keyword 1 keyword 2 keyword 3]"
+/>
+<meta name="robots" content="noodp" />
+<meta property="og:title" content="DDD-WAW and From Kubernetes to Paas" />
+<meta property="og:description" content="Yesterday I&rsquo;ve attended a DDD-WAW meetup with Andrzej Krzywda from Arkency which was great. Andrzej is a great guy. I’ve met him first time in real. Andrzej was talking about his programming career. He is a good storyteller. He was of course talking a lot about DDD and how they do it in Arkency. He showed off some examples. Pointed us to demo app of the DDD/CQRS/ES patterns applied - e-commerce ." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://johnykov.github.io/posts/ddd-waw-and-from-kubernetes-to-paas/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-01-17T14:26:17+01:00" />
+<meta property="article:modified_time" content="2023-01-17T14:26:17+01:00" />
 
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    tex2jax: {
-      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-      processEscapes: true
-    }
-  });
+<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="DDD-WAW and From Kubernetes to Paas"/>
+<meta name="twitter:description" content="Yesterday I&rsquo;ve attended a DDD-WAW meetup with Andrzej Krzywda from Arkency which was great. Andrzej is a great guy. I’ve met him first time in real. Andrzej was talking about his programming career. He is a good storyteller. He was of course talking a lot about DDD and how they do it in Arkency. He showed off some examples. Pointed us to demo app of the DDD/CQRS/ES patterns applied - e-commerce ."/>
+
+
+<link rel="canonical" href="https://johnykov.github.io/posts/ddd-waw-and-from-kubernetes-to-paas/" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="stylesheet" href="/css/index.min.6b36fefec2ed9f418034c92a2410b3c6970c05de2c1fa6751ca7da1b786b6e4f.css">
+
+
+
+
+
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-20629244-7', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<link rel="stylesheet" href="https://johnykov.github.io/css/style.css">
-<link rel="shortcut icon" href="https://johnykov.github.io/favicon.ico">
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
 
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/github.min.css">
 
+
+
+  
 </head>
-
-<body>
-<section class="section">
-  <div class="container">
-    <nav class="nav">
-      <div class="nav-left">
-        <a class="nav-item" href="https://johnykov.github.io"><h1 class="title is-4">johny&#39;s blog</h1></a>
-        <a class="nav-item" href="/about">about</a>
-        <a class="nav-item" href="/tags">tags </a>
-      </div>
-      <div class="nav-right">
-        <nav class="nav-item level is-mobile">
-          
-          <a class="level-item" href="https://github.com/johnykov" target="_blank">
-            <span class="icon">
-              <i class="fa fa-github"></i>
-            </span>
-          </a>
-          
-          <a class="level-item" href="https://twitter.com/johnykov" target="_blank">
-            <span class="icon">
-              <i class="fa fa-twitter"></i>
-            </span>
-          </a>
-          
-          <a class="level-item" href="https://linkedin.com/in/jankowalski" target="_blank">
-            <span class="icon">
-              <i class="fa fa-linkedin-square"></i>
-            </span>
-          </a>
-          
-          <a class="level-item" href="https://blog.jankowalski.pl/contact-me" target="_blank">
-            <span class="icon">
-              <i class="fa fa-envelope"></i>
-            </span>
-          </a>
-          
-          <a class="level-item" href="https://johnykov.github.io/services/" target="_blank">
-            <span class="icon">
-              <i class="fa fa-globe"></i>
-            </span>
-          </a>
-          
-          <a class="level-item" href="/index.xml" target="_blank">
-            <span class="icon">
-              <i class="fa fa-rss"></i>
-            </span>
-          </a>
-          
-        </nav>
-      </div>
-    </nav>
+<body class="flex flex-col min-h-screen w-full bg-slate-50 dark:bg-gray-800">
+  <header class="flex flex-none justify-center z-10">
+    <div class="flex flex-row gap justify-between w-full max-w-4xl lg:max-w-5xl h-12 mt-3">
+  <div class="flex-none ml-2 md:ml-0">
+    <a href="/" class="">
+      <img class="h-12 w-12 rounded-full object-cover bg-gray-100" src="/blacksmith.jpg" alt="logo">
+    </a>
   </div>
-</section>
+  <div class="flex-1"></div>
+  <div class="flex-none">
+    
 
-<section class="section">
-  <div class="container">
-    <h1 class="title">DDD-WAW and From Kubernetes to Paas</h1>
-    <h2 class="subtitle is-5">January 17, 2023 by johny</h2>
+
+
+<nav class="h-full static">
+  <button id="navbar-menu-toggle" type="button" class="inline-flex items-center p-2 text-sm text-slate-800 dark:text-slate-200 rounded-lg md:hidden" aria-controls="navbar-menu" aria-expanded="false">
+    <span class="sr-only">Open main menu</span>
+    <i class="w-8 h-8">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-menu-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 6l16 0" />
+  <path d="M4 12l16 0" />
+  <path d="M4 18l16 0" />
+</svg>
+
+    </i>
+  </button>
+  <div class="absolute md:static top-16 left-0 right-0 z-50 hidden w-full md:block md:w-auto" id="navbar-menu">
+    <ul class="flex flex-col mx-2 md:mx-0 md:flex-row md:border-0 rounded-sm md:rounded-full px-3 text-base font-medium text-slate-800 dark:text-slate-200 shadow-lg bg-white dark:bg-gray-600 shadow-slate-800/5 dark:shadow-slate-200/5 ring-1 ring-slate-900/5 dark:ring-slate-100/5">
     
-      <div class="tags">
+        <li id="about" class="">
+          <a class="block px-3 py-3 hover:text-emerald-600"
+            href="/about/" title="About">About</a>
+        </li>
+      
     
-        <a class="button is-link" href="/tags/kubernetes">kubernetes</a>
+        <li id="post" class="">
+          <a class="block px-3 py-3 hover:text-emerald-600 text-emerald-600"
+            href="/posts/" title="Post">Post</a>
+        </li>
+      
     
-        <a class="button is-link" href="/tags/paas">paas</a>
-    
-        <a class="button is-link" href="/tags/fly.io">fly.io</a>
-    
-        <a class="button is-link" href="/tags/ddd-waw">DDD-WAW</a>
-    
+    </ul>
+  </div>
+</nav>
+
+
+  </div>
+  
+  <div class="flex-none mx-1"></div>
+  
+  <div class="flex-none md:hidden">
+    <a href=/search/ class="inline-flex items-center p-2 text-sm text-slate-800 dark:text-slate-200 rounded-lg" aria-controls="navbar-menu" aria-expanded="false">
+      <span class="sr-only">Search</span>
+      <i class="w-8 h-8">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+    <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
+    <path d="M21 21l-6 -6" />
+</svg>
+
+      </i>
+    </a>
+  </div>
+  <div class="darkmode-toggle flex flex-none mr-2 md:mr-0">
+    <label for="darkmode-toggle" class="flex items-center px-3 cursor-pointer rounded-full bg-gray-100 dark:bg-gray-600" title="Toggle dark mode">
+      <input name="darkmode-toggle" id="darkmode-toggle" type="checkbox" class="sr-only peer" aria-label="Toggle dark mode">
+      <div class="group flex flex-row gap-1 justify-center h-8 px-1 rounded-full bg-white dark:bg-gray-700">
+        <i class="h-6 w-6 flex-none rounded-full bg-yellow-400 place-self-center peer-checked:group-[]:invisible">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brightness-down" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path>
+   <path d="M12 5l0 .01"></path>
+   <path d="M17 7l0 .01"></path>
+   <path d="M19 12l0 .01"></path>
+   <path d="M17 17l0 .01"></path>
+   <path d="M12 19l0 .01"></path>
+   <path d="M7 17l0 .01"></path>
+   <path d="M5 12l0 .01"></path>
+   <path d="M7 7l0 .01"></path>
+</svg>
+
+        </i>
+        <i class="h-6 w-6 flex-none rounded-full place-self-center invisible peer-checked:group-[]:visible">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-moon-stars" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"></path>
+   <path d="M17 4a2 2 0 0 0 2 2a2 2 0 0 0 -2 2a2 2 0 0 0 -2 -2a2 2 0 0 0 2 -2"></path>
+   <path d="M19 11h2m-1 -1v2"></path>
+</svg>
+
+        </i>
+      </div>
+    </label>
+  </div>
 </div>
 
+  </header>
+  <main class="flex flex-auto justify-center">
     
-    <div class="content">
-      <p>Yesterday I&rsquo;ve attended a DDD-WAW meetup with Andrzej Krzywda from Arkency which was great. Andrzej is a great guy. I’ve met him first time in real. Andrzej was talking about his programming career. He is a good storyteller. He was of course talking a lot about DDD and how they do it in Arkency. He showed off some examples. Pointed us to demo app of the DDD/CQRS/ES patterns applied - <a href="https://github.com/RailsEventStore/ecommerce">e-commerce</a>. Before yesterdays talk I listened to his interview on Mateusz Gil’s podcast on spotify. Thus I knew what to expect. I’ve got 3 takeaways from that talk.</p>
+<div class="w-full max-w-4xl lg:max-w-5xl">
+  <div class="flex flex-col gap-y-3 p-6 mt-6 mx-2 md:mx-0 rounded-lg shadow-md bg-white dark:bg-gray-700">
+    <h1 class="text-4xl font-semibold text-slate-800 dark:text-slate-100">
+      <a href="/posts/ddd-waw-and-from-kubernetes-to-paas/">DDD-WAW and From Kubernetes to Paas</a>
+    </h1>
+
+    
+    
+  <ul class="flex flex-row flex-wrap text-slate-500 dark:text-slate-300">
+    
+    
+      
+      <li>
+        <a href="/tags/kubernetes/"
+          class="flex flex-row text-sm mr-2 py-1">
+          <i class="h-5 w-5 flex-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <path d="M5 9l14 0"></path>
+   <path d="M5 15l14 0"></path>
+   <path d="M11 4l-4 16"></path>
+   <path d="M17 4l-4 16"></path>
+</svg>
+
+          </i>
+          <span class="ml-0">kubernetes</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/tags/paas/"
+          class="flex flex-row text-sm mr-2 py-1">
+          <i class="h-5 w-5 flex-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <path d="M5 9l14 0"></path>
+   <path d="M5 15l14 0"></path>
+   <path d="M11 4l-4 16"></path>
+   <path d="M17 4l-4 16"></path>
+</svg>
+
+          </i>
+          <span class="ml-0">paas</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/tags/fly.io/"
+          class="flex flex-row text-sm mr-2 py-1">
+          <i class="h-5 w-5 flex-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <path d="M5 9l14 0"></path>
+   <path d="M5 15l14 0"></path>
+   <path d="M11 4l-4 16"></path>
+   <path d="M17 4l-4 16"></path>
+</svg>
+
+          </i>
+          <span class="ml-0">fly.io</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/tags/ddd-waw/"
+          class="flex flex-row text-sm mr-2 py-1">
+          <i class="h-5 w-5 flex-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <path d="M5 9l14 0"></path>
+   <path d="M5 15l14 0"></path>
+   <path d="M11 4l-4 16"></path>
+   <path d="M17 4l-4 16"></path>
+</svg>
+
+          </i>
+          <span class="ml-0">DDD-WAW</span>
+        </a>
+      </li>
+      
+    
+  </ul>
+
+
+
+    <div class="flex flex-col gap-y-1 md:flex-row md:gap-y-0 md:gap-x-4 text-slate-500 dark:text-slate-300">
+  
+  
+  <div class="flex flex-row text-base gap-x-1">
+    <i class="h-6 w-6 flex-none">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z"></path>
+   <path d="M16 3v4"></path>
+   <path d="M8 3v4"></path>
+   <path d="M4 11h16"></path>
+   <path d="M11 15h1"></path>
+   <path d="M12 15v3"></path>
+</svg>
+
+    </i>
+    <time datetime="2023-01-17T14:26:17&#43;01:00">
+      2023-01-17
+    </time>
+  </div>
+
+  <div class="flex flex-row text-base gap-x-1">
+    <i class="h-6 w-6 flex-none">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hourglass-high" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <path d="M6.5 7h11"></path>
+   <path d="M6 20v-2a6 6 0 1 1 12 0v2a1 1 0 0 1 -1 1h-10a1 1 0 0 1 -1 -1z"></path>
+   <path d="M6 4v2a6 6 0 1 0 12 0v-2a1 1 0 0 0 -1 -1h-10a1 1 0 0 0 -1 1z"></path>
+</svg>
+
+    </i>
+    <span>
+      3 minutes to read
+    </span>
+  </div>
+</div>
+
+
+    
+      
+      <section class="prose prose-slate dark:prose-invert w-full max-w-4xl lg:max-w-5xl mt-6">
+        <h2>Table of Contents</h2>
+        <aside><nav id="TableOfContents"></nav></aside>
+      </section>
+      
+    
+
+    <article class="mt-6 w-full max-w-4xl lg:max-w-5xl prose prose-slate dark:prose-invert prose-quoteless post-content">
+      <p>Yesterday I&rsquo;ve attended a DDD-WAW meetup with Andrzej Krzywda from Arkency which was great. Andrzej is a great guy. I’ve met him first time in real. Andrzej was talking about his programming career. He is a good storyteller. He was of course talking a lot about DDD and how they do it in Arkency. He showed off some examples. Pointed us to demo app of the DDD/CQRS/ES patterns applied - <a href="https://github.com/RailsEventStore/ecommerce" target="_blank" rel="noopener">e-commerce</a>
+. Before yesterdays talk I listened to his interview on Mateusz Gil’s podcast on spotify. Thus I knew what to expect. I’ve got 3 takeaways from that talk.</p>
 <ol>
 <li>I should read a book by Martin Fowler named Refactoring. (I got this on my shelf since a few years)</li>
 <li>Another called E-Myth by Gerber - to help understand our business clients way of thinking.</li>
 <li>I should try Copilot from Github.</li>
 </ol>
 <p>DDD concept is known to me. I tried to learn it from either of books blue one by Eric Evans and red one by Vaughn Vernon. I failed on both. Someone from the audience recommended a Hands-on Domain-driven Design - by example by Michael Plot. Maybe I will give it a go.
-I find DDD more appealing to me as a hexagonal apps. If you are not familiar I really recommend this great article <a href="https://blog.allegro.tech/2020/05/hexagonal-architecture-by-example.html">Hexagonal Architecture</a> There are other great articles on the web on that topic. Essentially it’s putting all the core business logic into POROs (or in Java case POJOs), in good named modules and build a structure of an app NOT by technical role as it’s in default generated rails app. Some say it’s also a good practice in other technologies for example in NodeJS you can find <a href="https://github.com/goldbergyoni/nodebestpractices/blob/master/sections/projectstructre/breakintcomponents.md">Project Structure by self-contained component role</a>. TBH I find it so good that it should be applied in every single project. I&rsquo;ve learned this concept a few years ago thanks to Kent C Dodds from his egghead course introducing to webpack. I was migrating Bootzooka grunt or gulp to webpack back then. I think this is a rule which Kevlin Henney strongly emphasize. He is a great man.</p>
+I find DDD more appealing to me as a hexagonal apps. If you are not familiar I really recommend this great article <a href="https://blog.allegro.tech/2020/05/hexagonal-architecture-by-example.html" target="_blank" rel="noopener">Hexagonal Architecture</a>
+ There are other great articles on the web on that topic. Essentially it’s putting all the core business logic into POROs (or in Java case POJOs), in good named modules and build a structure of an app NOT by technical role as it’s in default generated rails app. Some say it’s also a good practice in other technologies for example in NodeJS you can find <a href="https://github.com/goldbergyoni/nodebestpractices/blob/master/sections/projectstructre/breakintcomponents.md" target="_blank" rel="noopener">Project Structure by self-contained component role</a>
+. TBH I find it so good that it should be applied in every single project. I&rsquo;ve learned this concept a few years ago thanks to Kent C Dodds from his egghead course introducing to webpack. I was migrating Bootzooka grunt or gulp to webpack back then. I think this is a rule which Kevlin Henney strongly emphasize. He is a great man.</p>
 <blockquote>
 <p>Extracting business logic from framework objects. That is a great concept of clean code with quick tests but hard to achieve IMO. It requires a lot of code hygiene and discipline. I find it as an alternative to the classic ActiveRecord pattern proposed by Rails guru DHH. Of course it requires some balance and taste to decide when to go with that.</p>
 </blockquote>
 <p>That DDD-WAW group (in Warsaw) is set by very pleasant gentlemen Przemek and Marcin. The second comes from dotNet world as I understood. He occasionally gives talks there, on meetup group strictly dedicated to .Net. That is why there were a lot of people on DDD-WAW meetup from around that area. It was great to meet excited coders live.</p>
-<p>On the way home I&rsquo;ve listened amazing podcast <a href="https://changelog.com/shipit/51">From Kubernetes to PaaS - now what?</a>
+<p>On the way home I&rsquo;ve listened amazing podcast <a href="https://changelog.com/shipit/51" target="_blank" rel="noopener">From Kubernetes to PaaS - now what?</a>
+
 From which I took 2 recommendations:</p>
 <ul>
 <li>I should give a try to move from nvm, rvm to asdf tool which is a package version manager for multiple tools</li>
 <li>I should learn more about nixOS - A few years back my friend praised it but it was a black magic for me back then</li>
 </ul>
 
-    </div>
+    </article>
+
     
-        <div class="nav-left">
-    <a class="nav-item" href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fjohnykov.github.io%2fposts%2fddd-waw-and-from-kubernetes-to-paas%2f" title="Share on Facebook" target="_blank"><span class="fa fa-facebook fa-2x" aria-hidden="true"></span></a>
-    <a class="nav-item" href="https://plus.google.com/share?url=https%3a%2f%2fjohnykov.github.io%2fposts%2fddd-waw-and-from-kubernetes-to-paas%2f" title="Share on Google+" target="_blank"><span class="fa fa-google-plus fa-2x" aria-hidden="true"></span></a>
-    <a class="nav-item" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3a%2f%2fjohnykov.github.io%2fposts%2fddd-waw-and-from-kubernetes-to-paas%2f" title="Share on LinkedIn" target="_blank"><span class="fa fa-linkedin fa-2x" aria-hidden="true"></span></a>
-    <a class="nav-item" href="https://twitter.com/home?status=DDD-WAW%20and%20From%20Kubernetes%20to%20Paas - https%3a%2f%2fjohnykov.github.io%2fposts%2fddd-waw-and-from-kubernetes-to-paas%2f" title="Tweet this" target="_blank"><span class="fa fa-twitter fa-2x"></span></a>
-    <a class="nav-item" href="http://www.reddit.com/submit?url=https%3a%2f%2fjohnykov.github.io%2fposts%2fddd-waw-and-from-kubernetes-to-paas%2f&title=DDD-WAW%20and%20From%20Kubernetes%20to%20Paas" title="Share on Reddit" target="_blank"><span class="fa fa-reddit-alien fa-2x" aria-hidden="true"></span></a>
+
+
+  <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
     
-    </div>
     
-  </div>
-</section>
-
-<section class="section">
-  <div class="container">
-    <aside><div id="disqus_thread"></div></aside>
-    <script type="text/javascript">
-      var disqus_shortname = 'hanskoff';
-      (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-      })();
-    </script>
-    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
-  </div>
-</section>
-
-
-<section class="section">
-  <div class="container has-text-centered">
-    <p>&copy; <a href="https://github.com/mgjohansen/hucore.git" target="_blank">[Hu]Core theme</a> & <a href="http://gohugo.io" target="_blank">Hugo</a> ♥</p>
-  </div>
-</section>
-
-
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js" integrity="sha256-+bhVTaRmJ/c07eV80nU8gD2cBBF0rYkf1txqXlrbvb0=" crossorigin="anonymous"></script>
-
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/languages/go.min.js"></script>
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js"></script>
-
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/languages/dockerfile.min.js"></script>
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js"></script>
-
-<script>hljs.initHighlightingOnLoad();</script>
-
-
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'UA-20629244-7', 'auto');
-	
-	ga('send', 'pageview');
-}
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hanskoff" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
 </script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+  </div>
+</div>
+
+  </main>
+  <footer class="flex flex-none justify-center">
+    <section class="flex flex-col md:flex-row mx-2 md:mx-0 gap-2 md:gap-0 justify-between w-full max-w-4xl lg:max-w-5xl py-6 text-slate-500 dark:text-slate-300">
+  <div class="flex flex-row">
+    
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+  </div>
+  <div class="grow"></div>
+  <div class="flex flex-row">
+    <i class="h-6 w-6 flex-none"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
+   <path d="M14 9.75a3.016 3.016 0 0 0 -4.163 .173a2.993 2.993 0 0 0 0 4.154a3.016 3.016 0 0 0 4.163 .173"></path>
+</svg>
+</i> 2014 - 2024 Jan
+    
+  </div>
+  
+</section>
+
+  </footer>
+  <script src="/main.min.c6372b6836971865bd94bfde974748aca8415824a2facab6ccd66a87384bfacb.js"></script>
+
 
 
 
 </body>
+</html>

@@ -6,87 +6,64 @@
     <description>Recent content in Posts on johny&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <copyright>&amp;copy; &lt;a href=&#34;https://github.com/mgjohansen/hucore.git&#34; target=&#34;_blank&#34;&gt;[Hu]Core theme&lt;/a&gt; &amp; &lt;a href=&#34;http://gohugo.io&#34; target=&#34;_blank&#34;&gt;Hugo&lt;/a&gt; ♥</copyright>
-    <lastBuildDate>Fri, 10 Mar 2023 09:46:32 +0100</lastBuildDate><atom:link href="https://johnykov.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <copyright>Jan</copyright>
+    <lastBuildDate>Fri, 12 Apr 2024 11:45:35 +0200</lastBuildDate>
+    <atom:link href="https://johnykov.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>NodeJS News Blog Ref</title>
+      <link>https://johnykov.github.io/posts/good-nodejs-news-blog-ref/</link>
+      <pubDate>Fri, 12 Apr 2024 11:45:35 +0200</pubDate>
+      <guid>https://johnykov.github.io/posts/good-nodejs-news-blog-ref/</guid>
+      <description>As typical NodeJS fan I&amp;rsquo;m not following closely their release notes. That&amp;rsquo;s why I go easy way and often read another bloggers posts. Seems that NodeJS blog or docs aren&amp;rsquo;t so comfortable to read. I found beautiful Pawel Grzybek blog with some handful NodeJS news. I find those useful and worth recommendation.&#xA;A few of interesting posts by Pawel:&#xA;You might not need Jest — the Node.js native test runner is great nodejs watch pnpm Looks like pnpm is gaining popularity and aims to be replacing npm.</description>
+    </item>
     <item>
       <title>Efficient CI pipeline With Github Actions</title>
       <link>https://johnykov.github.io/posts/efficient-ci-pipeline-with-github-actions/</link>
       <pubDate>Fri, 10 Mar 2023 09:46:32 +0100</pubDate>
-      
       <guid>https://johnykov.github.io/posts/efficient-ci-pipeline-with-github-actions/</guid>
-      <description>This post might have multiple titles. &amp;ldquo;How to speed up rails project CI build times&amp;rdquo;, &amp;ldquo;How to reduce docker images size&amp;rdquo;, &amp;ldquo;How to save planet by reducing carbon print with smaller docker containers&amp;rdquo; and so on.
-Optimizing Continous Delivery process is somewhat of my passion. I think it&amp;rsquo;s the strong influence one book by Jez Humble&amp;rsquo;s put on me.
-When I started helping VAS (first key OSO&amp;rsquo;s client) with going cloud I wrote TBH very inefficient process of release.</description>
+      <description>This post might have multiple titles. &amp;ldquo;How to speed up rails project CI build times&amp;rdquo;, &amp;ldquo;How to reduce docker images size&amp;rdquo;, &amp;ldquo;How to save planet by reducing carbon print with smaller docker containers&amp;rdquo; and so on.&#xA;Optimizing Continous Delivery process is somewhat of my passion. I think it&amp;rsquo;s the strong influence one book by Jez Humble&amp;rsquo;s put on me.&#xA;When I started helping VAS (first key OSO&amp;rsquo;s client) with going cloud I wrote TBH very inefficient process of release.</description>
     </item>
-    
     <item>
       <title>DDD-WAW and From Kubernetes to Paas</title>
       <link>https://johnykov.github.io/posts/ddd-waw-and-from-kubernetes-to-paas/</link>
       <pubDate>Tue, 17 Jan 2023 14:26:17 +0100</pubDate>
-      
       <guid>https://johnykov.github.io/posts/ddd-waw-and-from-kubernetes-to-paas/</guid>
-      <description>Yesterday I&amp;rsquo;ve attended a DDD-WAW meetup with Andrzej Krzywda from Arkency which was great. Andrzej is a great guy. I’ve met him first time in real. Andrzej was talking about his programming career. He is a good storyteller. He was of course talking a lot about DDD and how they do it in Arkency. He showed off some examples. Pointed us to demo app of the DDD/CQRS/ES patterns applied - e-commerce.</description>
+      <description>Yesterday I&amp;rsquo;ve attended a DDD-WAW meetup with Andrzej Krzywda from Arkency which was great. Andrzej is a great guy. I’ve met him first time in real. Andrzej was talking about his programming career. He is a good storyteller. He was of course talking a lot about DDD and how they do it in Arkency. He showed off some examples. Pointed us to demo app of the DDD/CQRS/ES patterns applied - e-commerce .</description>
     </item>
-    
     <item>
       <title>The Journey to Cloud Development</title>
       <link>https://johnykov.github.io/posts/the-journey-to-cloud-development/</link>
       <pubDate>Tue, 17 Jan 2023 13:11:59 +0100</pubDate>
-      
       <guid>https://johnykov.github.io/posts/the-journey-to-cloud-development/</guid>
-      <description>On Sunday (15-01-2023) I&amp;rsquo;ve came across great read.
-The Journey to Cloud Development: How Shopify Went All-in on Spin</description>
+      <description>On Sunday (15-01-2023) I&amp;rsquo;ve came across great read.&#xA;The Journey to Cloud Development: How Shopify Went All-in on Spin </description>
     </item>
-    
     <item>
       <title>Rails ActiveRecord or DDD?</title>
       <link>https://johnykov.github.io/DDD-rails.html</link>
       <pubDate>Sat, 06 Nov 2021 00:00:00 +0000</pubDate>
-      
       <guid>https://johnykov.github.io/DDD-rails.html</guid>
-      <description>Picking the right Rails code style Yesterday I&amp;rsquo;ve seen this amazing 8 years old video October CincyRb - Jim Weirich on Decoupling from Rails. The mentioned video presents interesting way of separating App Code - business domain core logic - from infrastructure, Rails (ActiveRecord) specific code. As I understand this is called DDD - Domain Driven Design. There are multiple books about this concept. Just google them if interested. Going against the main flow - with DDD Rails concept - requires a lot of discipline and patience to learn, teach and adapt the whole team to stick to it.</description>
+      <description>Picking the right Rails code style Yesterday I&amp;rsquo;ve seen this amazing 8 years old video October CincyRb - Jim Weirich on Decoupling from Rails . The mentioned video presents interesting way of separating App Code - business domain core logic - from infrastructure, Rails (ActiveRecord) specific code. As I understand this is called DDD - Domain Driven Design. There are multiple books about this concept. Just google them if interested. Going against the main flow - with DDD Rails concept - requires a lot of discipline and patience to learn, teach and adapt the whole team to stick to it.</description>
     </item>
-    
-    <item>
-      <title>React ingress routing</title>
-      <link>https://johnykov.github.io/react-ingress-routing.html</link>
-      <pubDate>Wed, 18 Aug 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://johnykov.github.io/react-ingress-routing.html</guid>
-      <description>Here a blog post I wrote in Polish React ingress routing</description>
-    </item>
-    
     <item>
       <title>Performance akka-http vs scalatra</title>
       <link>https://johnykov.github.io/bootzooka-akka-http-vs-scalatra.html</link>
       <pubDate>Tue, 29 Mar 2016 00:00:00 +0000</pubDate>
-      
       <guid>https://johnykov.github.io/bootzooka-akka-http-vs-scalatra.html</guid>
-      <description>Some time ago we changed how Bootzooka handles HTTP requests.
-My goal is to compare two great tools:
-complete web framework scalatra 2.3.1 (latest stable) called by one of it&amp;rsquo;s project leaders a web toolkit akka-http 2.4.2 from a performance perspective. I find both of them very helpful but they work in different ways so the idea is to see how much that impacts the application and it&amp;rsquo;s users.
-Whenever you buy a car - you look at its specification.</description>
+      <description>Some time ago we changed how Bootzooka handles HTTP requests. My goal is to compare two great tools:&#xA;complete web framework scalatra 2.3.1 (latest stable) called by one of it&amp;rsquo;s project leaders a web toolkit akka-http 2.4.2 from a performance perspective. I find both of them very helpful but they work in different ways so the idea is to see how much that impacts the application and it&amp;rsquo;s users.&#xA;Whenever you buy a car - you look at its specification.</description>
     </item>
-    
     <item>
       <title>Outdated bootzooka changes</title>
       <link>https://johnykov.github.io/latest-bootzooka-changes.html</link>
       <pubDate>Tue, 11 Nov 2014 00:00:00 +0000</pubDate>
-      
       <guid>https://johnykov.github.io/latest-bootzooka-changes.html</guid>
-      <description>[2015-07-08] Update Bootzooka has been strongly simplified lately and there were some conceptual changes that is why this post is no longer valid. Also frontend part is being build by webpack now.
-Outdated: At the beginning of my carrer in Softwaremill I was working on trial project for booking company. We were building demo app starting with bootzooka as a base. We&amp;rsquo;ve changed much in that code. After that experience I brought back some of them to bootzooka.</description>
+      <description>[2015-07-08] Update Bootzooka has been strongly simplified lately and there were some conceptual changes that is why this post is no longer valid. Also frontend part is being build by webpack now.&#xA;Outdated: At the beginning of my carrer in Softwaremill I was working on trial project for booking company. We were building demo app starting with bootzooka as a base. We&amp;rsquo;ve changed much in that code. After that experience I brought back some of them to bootzooka.</description>
     </item>
-    
     <item>
       <title>Fabtools - Tomcat - fast provisioning</title>
       <link>https://johnykov.github.io/tomcat-installation-with-fabtools.html</link>
       <pubDate>Fri, 25 Apr 2014 00:00:00 +0000</pubDate>
-      
       <guid>https://johnykov.github.io/tomcat-installation-with-fabtools.html</guid>
-      <description>As every other developer I&amp;rsquo;m a fun of easy developer life. I wish all open source projects could be build right away without any previous database or ldap mocking setup. Just fire it right away! That is why I like Vagrant so much.
-Vagrant with puppet manifests [chef|ansible|bash] might help to completely separate your local development environment from office network. From now on you can work from the basement without network connection - is&amp;rsquo;t that sweet?</description>
+      <description>As every other developer I&amp;rsquo;m a fun of easy developer life. I wish all open source projects could be build right away without any previous database or ldap mocking setup. Just fire it right away! That is why I like Vagrant so much.&#xA;Vagrant with puppet manifests [chef|ansible|bash] might help to completely separate your local development environment from office network. From now on you can work from the basement without network connection - is&amp;rsquo;t that sweet?</description>
     </item>
-    
   </channel>
 </rss>

@@ -1,113 +1,296 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta content="keyword 1, keyword 2, keyword 3" name="keywords">
-<meta content="johny" name="author">
-<meta property="og:title" content="Rails ActiveRecord or DDD? - johny&#39;s blog">
-<meta property="og:url" content="https://johnykov.github.io/DDD-rails.html">
-<meta property="og:description" content="Your description here">
-<meta property="og:type" content="website" />
-<title>Rails ActiveRecord or DDD? | johny&#39;s blog</title>
+  <title>Rails ActiveRecord or DDD? :: johny&#39;s blog - Example site for hugo-theme-tailwind</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta
+  name="description"
+  content="Picking the right Rails code style Yesterday I&amp;rsquo;ve seen this amazing 8 years old video October CincyRb - Jim Weirich on Decoupling from Rails . The mentioned video presents interesting way of separating App Code - business domain core logic - from infrastructure, Rails (ActiveRecord) specific code. As I understand this is called DDD - Domain Driven Design. There are multiple books about this concept. Just google them if interested. Going against the main flow - with DDD Rails concept - requires a lot of discipline and patience to learn, teach and adapt the whole team to stick to it."
+/>
+<meta
+  name="keywords"
+  content="[keyword 1 keyword 2 keyword 3]"
+/>
+<meta name="robots" content="noodp" />
+<meta property="og:title" content="Rails ActiveRecord or DDD?" />
+<meta property="og:description" content="Picking the right Rails code style Yesterday I&rsquo;ve seen this amazing 8 years old video October CincyRb - Jim Weirich on Decoupling from Rails . The mentioned video presents interesting way of separating App Code - business domain core logic - from infrastructure, Rails (ActiveRecord) specific code. As I understand this is called DDD - Domain Driven Design. There are multiple books about this concept. Just google them if interested. Going against the main flow - with DDD Rails concept - requires a lot of discipline and patience to learn, teach and adapt the whole team to stick to it." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://johnykov.github.io/DDD-rails.html" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-11-06T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-11-06T00:00:00+00:00" />
 
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    tex2jax: {
-      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-      processEscapes: true
-    }
-  });
+<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Rails ActiveRecord or DDD?"/>
+<meta name="twitter:description" content="Picking the right Rails code style Yesterday I&rsquo;ve seen this amazing 8 years old video October CincyRb - Jim Weirich on Decoupling from Rails . The mentioned video presents interesting way of separating App Code - business domain core logic - from infrastructure, Rails (ActiveRecord) specific code. As I understand this is called DDD - Domain Driven Design. There are multiple books about this concept. Just google them if interested. Going against the main flow - with DDD Rails concept - requires a lot of discipline and patience to learn, teach and adapt the whole team to stick to it."/>
+
+
+<link rel="canonical" href="https://johnykov.github.io/DDD-rails.html" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="stylesheet" href="/css/index.min.6b36fefec2ed9f418034c92a2410b3c6970c05de2c1fa6751ca7da1b786b6e4f.css">
+
+
+
+
+
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-20629244-7', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<link rel="stylesheet" href="https://johnykov.github.io/css/style.css">
-<link rel="shortcut icon" href="https://johnykov.github.io/favicon.ico">
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
 
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/github.min.css">
 
+
+
+  
 </head>
-
-<body>
-<section class="section">
-  <div class="container">
-    <nav class="nav">
-      <div class="nav-left">
-        <a class="nav-item" href="https://johnykov.github.io"><h1 class="title is-4">johny&#39;s blog</h1></a>
-        <a class="nav-item" href="/about">about</a>
-        <a class="nav-item" href="/tags">tags </a>
-      </div>
-      <div class="nav-right">
-        <nav class="nav-item level is-mobile">
-          
-          <a class="level-item" href="https://github.com/johnykov" target="_blank">
-            <span class="icon">
-              <i class="fa fa-github"></i>
-            </span>
-          </a>
-          
-          <a class="level-item" href="https://twitter.com/johnykov" target="_blank">
-            <span class="icon">
-              <i class="fa fa-twitter"></i>
-            </span>
-          </a>
-          
-          <a class="level-item" href="https://linkedin.com/in/jankowalski" target="_blank">
-            <span class="icon">
-              <i class="fa fa-linkedin-square"></i>
-            </span>
-          </a>
-          
-          <a class="level-item" href="https://blog.jankowalski.pl/contact-me" target="_blank">
-            <span class="icon">
-              <i class="fa fa-envelope"></i>
-            </span>
-          </a>
-          
-          <a class="level-item" href="https://johnykov.github.io/services/" target="_blank">
-            <span class="icon">
-              <i class="fa fa-globe"></i>
-            </span>
-          </a>
-          
-          <a class="level-item" href="/index.xml" target="_blank">
-            <span class="icon">
-              <i class="fa fa-rss"></i>
-            </span>
-          </a>
-          
-        </nav>
-      </div>
-    </nav>
+<body class="flex flex-col min-h-screen w-full bg-slate-50 dark:bg-gray-800">
+  <header class="flex flex-none justify-center z-10">
+    <div class="flex flex-row gap justify-between w-full max-w-4xl lg:max-w-5xl h-12 mt-3">
+  <div class="flex-none ml-2 md:ml-0">
+    <a href="/" class="">
+      <img class="h-12 w-12 rounded-full object-cover bg-gray-100" src="/blacksmith.jpg" alt="logo">
+    </a>
   </div>
-</section>
+  <div class="flex-1"></div>
+  <div class="flex-none">
+    
 
-<section class="section">
-  <div class="container">
-    <h1 class="title">Rails ActiveRecord or DDD?</h1>
-    <h2 class="subtitle is-5">November 6, 2021 by johny</h2>
+
+
+<nav class="h-full static">
+  <button id="navbar-menu-toggle" type="button" class="inline-flex items-center p-2 text-sm text-slate-800 dark:text-slate-200 rounded-lg md:hidden" aria-controls="navbar-menu" aria-expanded="false">
+    <span class="sr-only">Open main menu</span>
+    <i class="w-8 h-8">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-menu-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 6l16 0" />
+  <path d="M4 12l16 0" />
+  <path d="M4 18l16 0" />
+</svg>
+
+    </i>
+  </button>
+  <div class="absolute md:static top-16 left-0 right-0 z-50 hidden w-full md:block md:w-auto" id="navbar-menu">
+    <ul class="flex flex-col mx-2 md:mx-0 md:flex-row md:border-0 rounded-sm md:rounded-full px-3 text-base font-medium text-slate-800 dark:text-slate-200 shadow-lg bg-white dark:bg-gray-600 shadow-slate-800/5 dark:shadow-slate-200/5 ring-1 ring-slate-900/5 dark:ring-slate-100/5">
     
-      <div class="tags">
+        <li id="about" class="">
+          <a class="block px-3 py-3 hover:text-emerald-600"
+            href="/about/" title="About">About</a>
+        </li>
+      
     
-        <a class="button is-link" href="/tags/development">development</a>
+        <li id="post" class="">
+          <a class="block px-3 py-3 hover:text-emerald-600 text-emerald-600"
+            href="/posts/" title="Post">Post</a>
+        </li>
+      
     
-        <a class="button is-link" href="/tags/rails">rails</a>
-    
-        <a class="button is-link" href="/tags/ddd">DDD</a>
-    
-        <a class="button is-link" href="/tags/jim-weirich">Jim Weirich</a>
-    
+    </ul>
+  </div>
+</nav>
+
+
+  </div>
+  
+  <div class="flex-none mx-1"></div>
+  
+  <div class="flex-none md:hidden">
+    <a href=/search/ class="inline-flex items-center p-2 text-sm text-slate-800 dark:text-slate-200 rounded-lg" aria-controls="navbar-menu" aria-expanded="false">
+      <span class="sr-only">Search</span>
+      <i class="w-8 h-8">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+    <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
+    <path d="M21 21l-6 -6" />
+</svg>
+
+      </i>
+    </a>
+  </div>
+  <div class="darkmode-toggle flex flex-none mr-2 md:mr-0">
+    <label for="darkmode-toggle" class="flex items-center px-3 cursor-pointer rounded-full bg-gray-100 dark:bg-gray-600" title="Toggle dark mode">
+      <input name="darkmode-toggle" id="darkmode-toggle" type="checkbox" class="sr-only peer" aria-label="Toggle dark mode">
+      <div class="group flex flex-row gap-1 justify-center h-8 px-1 rounded-full bg-white dark:bg-gray-700">
+        <i class="h-6 w-6 flex-none rounded-full bg-yellow-400 place-self-center peer-checked:group-[]:invisible">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brightness-down" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path>
+   <path d="M12 5l0 .01"></path>
+   <path d="M17 7l0 .01"></path>
+   <path d="M19 12l0 .01"></path>
+   <path d="M17 17l0 .01"></path>
+   <path d="M12 19l0 .01"></path>
+   <path d="M7 17l0 .01"></path>
+   <path d="M5 12l0 .01"></path>
+   <path d="M7 7l0 .01"></path>
+</svg>
+
+        </i>
+        <i class="h-6 w-6 flex-none rounded-full place-self-center invisible peer-checked:group-[]:visible">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-moon-stars" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"></path>
+   <path d="M17 4a2 2 0 0 0 2 2a2 2 0 0 0 -2 2a2 2 0 0 0 -2 -2a2 2 0 0 0 2 -2"></path>
+   <path d="M19 11h2m-1 -1v2"></path>
+</svg>
+
+        </i>
+      </div>
+    </label>
+  </div>
 </div>
 
+  </header>
+  <main class="flex flex-auto justify-center">
     
-    <div class="content">
+<div class="w-full max-w-4xl lg:max-w-5xl">
+  <div class="flex flex-col gap-y-3 p-6 mt-6 mx-2 md:mx-0 rounded-lg shadow-md bg-white dark:bg-gray-700">
+    <h1 class="text-4xl font-semibold text-slate-800 dark:text-slate-100">
+      <a href="/DDD-rails.html">Rails ActiveRecord or DDD?</a>
+    </h1>
+
+    
+    
+  <ul class="flex flex-row flex-wrap text-slate-500 dark:text-slate-300">
+    
+    
+      
+      <li>
+        <a href="/tags/development/"
+          class="flex flex-row text-sm mr-2 py-1">
+          <i class="h-5 w-5 flex-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <path d="M5 9l14 0"></path>
+   <path d="M5 15l14 0"></path>
+   <path d="M11 4l-4 16"></path>
+   <path d="M17 4l-4 16"></path>
+</svg>
+
+          </i>
+          <span class="ml-0">development</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/tags/rails/"
+          class="flex flex-row text-sm mr-2 py-1">
+          <i class="h-5 w-5 flex-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <path d="M5 9l14 0"></path>
+   <path d="M5 15l14 0"></path>
+   <path d="M11 4l-4 16"></path>
+   <path d="M17 4l-4 16"></path>
+</svg>
+
+          </i>
+          <span class="ml-0">rails</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/tags/ddd/"
+          class="flex flex-row text-sm mr-2 py-1">
+          <i class="h-5 w-5 flex-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <path d="M5 9l14 0"></path>
+   <path d="M5 15l14 0"></path>
+   <path d="M11 4l-4 16"></path>
+   <path d="M17 4l-4 16"></path>
+</svg>
+
+          </i>
+          <span class="ml-0">DDD</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/tags/jim-weirich/"
+          class="flex flex-row text-sm mr-2 py-1">
+          <i class="h-5 w-5 flex-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <path d="M5 9l14 0"></path>
+   <path d="M5 15l14 0"></path>
+   <path d="M11 4l-4 16"></path>
+   <path d="M17 4l-4 16"></path>
+</svg>
+
+          </i>
+          <span class="ml-0">Jim Weirich</span>
+        </a>
+      </li>
+      
+    
+  </ul>
+
+
+
+    <div class="flex flex-col gap-y-1 md:flex-row md:gap-y-0 md:gap-x-4 text-slate-500 dark:text-slate-300">
+  
+  
+  <div class="flex flex-row text-base gap-x-1">
+    <i class="h-6 w-6 flex-none">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z"></path>
+   <path d="M16 3v4"></path>
+   <path d="M8 3v4"></path>
+   <path d="M4 11h16"></path>
+   <path d="M11 15h1"></path>
+   <path d="M12 15v3"></path>
+</svg>
+
+    </i>
+    <time datetime="2021-11-06T00:00:00&#43;00:00">
+      2021-11-06
+    </time>
+  </div>
+
+  <div class="flex flex-row text-base gap-x-1">
+    <i class="h-6 w-6 flex-none">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hourglass-high" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <path d="M6.5 7h11"></path>
+   <path d="M6 20v-2a6 6 0 1 1 12 0v2a1 1 0 0 1 -1 1h-10a1 1 0 0 1 -1 -1z"></path>
+   <path d="M6 4v2a6 6 0 1 0 12 0v-2a1 1 0 0 0 -1 -1h-10a1 1 0 0 0 -1 1z"></path>
+</svg>
+
+    </i>
+    <span>
+      2 minutes to read
+    </span>
+  </div>
+</div>
+
+
+    
+      
+    
+
+    <article class="mt-6 w-full max-w-4xl lg:max-w-5xl prose prose-slate dark:prose-invert prose-quoteless post-content">
       <h3 id="picking-the-right-rails-code-style">Picking the right Rails code style</h3>
-<p>Yesterday I&rsquo;ve seen this amazing 8 years old video <a href="https://www.youtube.com/watch?v=tg5RFeSfBM4">October CincyRb - Jim Weirich on Decoupling from Rails</a>.
+<p>Yesterday I&rsquo;ve seen this amazing 8 years old video <a href="https://www.youtube.com/watch?v=tg5RFeSfBM4" target="_blank" rel="noopener">October CincyRb - Jim Weirich on Decoupling from Rails</a>
+.
 The mentioned video presents interesting way of separating App Code - business domain core logic - from infrastructure, Rails (ActiveRecord) specific code.
 As I understand this is called DDD - Domain Driven Design. There are multiple books about this concept. Just google them if interested.
 Going against the main flow - with DDD Rails concept - requires a lot of discipline and patience to learn, teach and adapt the whole team to stick to it. This might be a time consuming.
 I guess there are multiple benefits of this kind of architecture. I would look directly into one of them. Which would be FAST unit tests. The reason I fall in love with Nodejs and GO after working with Java Spring apps.</p>
-<p>The result of following DDD rules is to leave domain logic in pure ruby classes - POROs - so it&rsquo;s easier to unit test with rspec. Simple empty rails+rspec unit test (require <code>rails_spec_helper?</code>) takes 1,5 seconds to run conversely single similar rspec unit test takes 0.002 seconds to complete - huge difference - multiple orders of magnitude. Hard to achieve but gains are tempting. Maybe halfway solution is to only to <a href="https://www.honeybadger.io/blog/poro-plain-old-ruby-object-tests-and-specs/">Speed up Rails tests 10x by using PORO domain models</a></p>
-<p>The majority of rails coders follows <a href="https://guides.rubyonrails.org/v6.0/getting_started.html">default rails style</a> which comes out of <code>rails g scaffold</code>. Mixed concerns. Controllers methods like</p>
+<p>The result of following DDD rules is to leave domain logic in pure ruby classes - POROs - so it&rsquo;s easier to unit test with rspec. Simple empty rails+rspec unit test (require <code>rails_spec_helper?</code>) takes 1,5 seconds to run conversely single similar rspec unit test takes 0.002 seconds to complete - huge difference - multiple orders of magnitude. Hard to achieve but gains are tempting. Maybe halfway solution is to only to <a href="https://www.honeybadger.io/blog/poro-plain-old-ruby-object-tests-and-specs/" target="_blank" rel="noopener">Speed up Rails tests 10x by using PORO domain models</a>
+</p>
+<p>The majority of rails coders follows <a href="https://guides.rubyonrails.org/v6.0/getting_started.html" target="_blank" rel="noopener">default rails style</a>
+ which comes out of <code>rails g scaffold</code>. Mixed concerns. Controllers methods like</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">create</span>
 </span></span><span style="display:flex;"><span>    @room <span style="color:#f92672">=</span> <span style="color:#66d9ef">Room</span><span style="color:#f92672">.</span>new(room_params)
 </span></span><span style="display:flex;"><span>
@@ -121,79 +304,114 @@ I guess there are multiple benefits of this kind of architecture. I would look d
 </span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">end</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">end</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
-</span></span></code></pre></div><p>This is totally fine for even big projects especially after reading <a href="https://growingrails.com/">Growing Rails</a> from people from <a href="http://www.makandra.com/">Makandra</a>.</p>
+</span></span></code></pre></div><p>This is totally fine for even big projects especially after reading <a href="https://growingrails.com/" target="_blank" rel="noopener">Growing Rails</a>
+ from people from <a href="http://www.makandra.com/" target="_blank" rel="noopener">Makandra</a>
+.</p>
 <p>More on DDD Rails might be found related sources:</p>
 <ul>
-<li>DDD Rails leader <a href="https://arkency.com/">Arkency blog</a></li>
-<li>polish podcast <a href="https://open.spotify.com/episode/5sfhEANvsIkauptjS0iMjw?si=fccebe458631423b">47. O nauce DDD i bi-temporalnych eventach domenowych z Andrzejem Krzywdą</a></li>
+<li>DDD Rails leader <a href="https://arkency.com/" target="_blank" rel="noopener">Arkency blog</a>
+</li>
+<li>polish podcast <a href="https://open.spotify.com/episode/5sfhEANvsIkauptjS0iMjw?si=fccebe458631423b" target="_blank" rel="noopener">47. O nauce DDD i bi-temporalnych eventach domenowych z Andrzejem Krzywdą</a>
+</li>
 </ul>
 <p>Other great Ruby on Rails resources:</p>
 <ul>
-<li>rails code quality after <a href="https://www.therubyonrailspodcast.com/390">listening to Rails podcast</a></li>
-<li><a href="https://rubyweekly.com/">ruby weekly</a></li>
+<li>rails code quality after <a href="https://www.therubyonrailspodcast.com/390" target="_blank" rel="noopener">listening to Rails podcast</a>
+</li>
+<li><a href="https://rubyweekly.com/" target="_blank" rel="noopener">ruby weekly</a>
+</li>
 </ul>
 <!-- raw HTML omitted -->
 <!-- raw HTML omitted -->
 
-    </div>
+    </article>
+
     
-        <div class="nav-left">
-    <a class="nav-item" href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fjohnykov.github.io%2fDDD-rails.html" title="Share on Facebook" target="_blank"><span class="fa fa-facebook fa-2x" aria-hidden="true"></span></a>
-    <a class="nav-item" href="https://plus.google.com/share?url=https%3a%2f%2fjohnykov.github.io%2fDDD-rails.html" title="Share on Google+" target="_blank"><span class="fa fa-google-plus fa-2x" aria-hidden="true"></span></a>
-    <a class="nav-item" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3a%2f%2fjohnykov.github.io%2fDDD-rails.html" title="Share on LinkedIn" target="_blank"><span class="fa fa-linkedin fa-2x" aria-hidden="true"></span></a>
-    <a class="nav-item" href="https://twitter.com/home?status=Rails%20ActiveRecord%20or%20DDD%3f - https%3a%2f%2fjohnykov.github.io%2fDDD-rails.html" title="Tweet this" target="_blank"><span class="fa fa-twitter fa-2x"></span></a>
-    <a class="nav-item" href="http://www.reddit.com/submit?url=https%3a%2f%2fjohnykov.github.io%2fDDD-rails.html&title=Rails%20ActiveRecord%20or%20DDD%3f" title="Share on Reddit" target="_blank"><span class="fa fa-reddit-alien fa-2x" aria-hidden="true"></span></a>
+
+
+  <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
     
-    </div>
     
-  </div>
-</section>
-
-<section class="section">
-  <div class="container">
-    <aside><div id="disqus_thread"></div></aside>
-    <script type="text/javascript">
-      var disqus_shortname = 'hanskoff';
-      (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-      })();
-    </script>
-    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
-  </div>
-</section>
-
-
-<section class="section">
-  <div class="container has-text-centered">
-    <p>&copy; <a href="https://github.com/mgjohansen/hucore.git" target="_blank">[Hu]Core theme</a> & <a href="http://gohugo.io" target="_blank">Hugo</a> ♥</p>
-  </div>
-</section>
-
-
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js" integrity="sha256-+bhVTaRmJ/c07eV80nU8gD2cBBF0rYkf1txqXlrbvb0=" crossorigin="anonymous"></script>
-
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/languages/go.min.js"></script>
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js"></script>
-
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/languages/dockerfile.min.js"></script>
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js"></script>
-
-<script>hljs.initHighlightingOnLoad();</script>
-
-
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'UA-20629244-7', 'auto');
-	
-	ga('send', 'pageview');
-}
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hanskoff" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
 </script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+  </div>
+</div>
+
+  </main>
+  <footer class="flex flex-none justify-center">
+    <section class="flex flex-col md:flex-row mx-2 md:mx-0 gap-2 md:gap-0 justify-between w-full max-w-4xl lg:max-w-5xl py-6 text-slate-500 dark:text-slate-300">
+  <div class="flex flex-row">
+    
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+  </div>
+  <div class="grow"></div>
+  <div class="flex flex-row">
+    <i class="h-6 w-6 flex-none"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
+   <path d="M14 9.75a3.016 3.016 0 0 0 -4.163 .173a2.993 2.993 0 0 0 0 4.154a3.016 3.016 0 0 0 4.163 .173"></path>
+</svg>
+</i> 2014 - 2024 Jan
+    
+  </div>
+  
+</section>
+
+  </footer>
+  <script src="/main.min.c6372b6836971865bd94bfde974748aca8415824a2facab6ccd66a87384bfacb.js"></script>
+
+<div class="hidden top-1 right-1" id="code-copy">
+  <i class="h-6 w-6 block">
+    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M7 7m0 2.667a2.667 2.667 0 0 1 2.667 -2.667h8.666a2.667 2.667 0 0 1 2.667 2.667v8.666a2.667 2.667 0 0 1 -2.667 2.667h-8.666a2.667 2.667 0 0 1 -2.667 -2.667z" />
+  <path d="M4.012 16.737a2.005 2.005 0 0 1 -1.012 -1.737v-10c0 -1.1 .9 -2 2 -2h10c.75 0 1.158 .385 1.5 1" />
+</svg>
+
+  </i>
+</div>
+<div class="hidden top-1 right-1" id="code-copy-done">
+  <i class="h-6 w-6 block">
+    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-check" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M5 12l5 5l10 -10" />
+</svg>
+
+  </i>
+</div><script src="/code-copy.min.4be95a7068ec721962fd0df64ce1c8673df8035fde465874f1e6e67e2aac7f71.js"></script>
+
+
 
 
 
 </body>
+</html>
